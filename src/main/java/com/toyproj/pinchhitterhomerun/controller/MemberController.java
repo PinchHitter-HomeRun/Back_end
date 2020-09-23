@@ -10,7 +10,7 @@ public class MemberController {
 
     @GetMapping("/user/test")
     public String test() {
-        return "hi2please";
+        return "hi2please2";
     }
 
 
