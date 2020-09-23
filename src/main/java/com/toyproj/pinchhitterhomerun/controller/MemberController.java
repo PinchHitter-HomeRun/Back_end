@@ -1,19 +1,31 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.service.MemberService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/members")
 public class MemberController {
 
-    @GetMapping("/{userId}")
-    public String test(@PathVariable String userId) {
-        return userId;
+    private final MemberService memberService;
+
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
-    @PostMapping("/")
+    @PostMapping("/{memberId}")
+    public String signUp(@PathVariable String memberId, String requestData) {
+        Member newMember = new Member(
+
+        );
+
+        memberService.join(newMember);
+        return memberId;
+    }
+
+    @GetMapping("/")
     public String test1(@RequestParam(value="msg") String msg) {
         return msg;
     }

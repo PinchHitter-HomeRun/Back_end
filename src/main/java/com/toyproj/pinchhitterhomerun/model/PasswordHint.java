@@ -8,8 +8,9 @@ import javax.persistence.*;
 @Getter
 @Table (name = "hint_code")
 public class PasswordHint {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String text;
 
     public Long getId() {
@@ -18,5 +19,8 @@ public class PasswordHint {
 
     public String getText() {
         return text;
+    }
+
+    public PasswordHint() {
     }
 }

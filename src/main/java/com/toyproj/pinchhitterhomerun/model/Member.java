@@ -9,27 +9,30 @@ import java.util.Date;
 @Entity
 @Getter
 public class Member {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String loginId;
 
+    @Column(name = "password")
     private String passWord;
 
-    @ManyToOne
-    @JoinColumn(name = "id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hint_code", insertable = false, updatable = false)
     private PasswordHint passwordHint;
 
     private String sns;
 
     private String name;
 
+    private int birthDay;
+
     private String sex;
 
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_code")
     private Role role;
 
     private String email;
@@ -53,12 +56,13 @@ public class Member {
     public Member() {
     }
 
-    public Member(String loginId, String passWord, PasswordHint passwordHint, String sns, String name, String sex, String phone, Role role, String email, String address, String profileImage) {
+    public Member(String loginId, String passWord, PasswordHint passwordHint, String sns, String name, int birthDay, String sex, String phone, Role role, String email, String address, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.passwordHint = passwordHint;
         this.sns = sns;
         this.name = name;
+        this.birthDay = birthDay;
         this.sex = sex;
         this.phone = phone;
         this.role = role;
