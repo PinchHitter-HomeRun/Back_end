@@ -1,8 +1,9 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,21 +16,31 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/{memberId}")
-    public String signUp(@PathVariable String memberId, String requestData) {
-        Member newMember = new Member(
+    @PostMapping("/")
+        public Member signUp(@RequestBody MemberJoin newMember) {
 
-        );
+        Member member = newMember.getMember();
 
-        memberService.join(newMember);
-        return memberId;
+        if(!memberService.isAvailable(member.getLoginId())) {
+            throw new IllegalStateException("이미 가입한 회원입니다.");
+        }
+
+        memberService.join(member, newMember.getAnswer());
+        return member;
+    }
+
+    @PostMapping("/{loginId}")
+    public Member signIn(@PathVariable String loginId, String passWord) {
+        return memberService.signIn(loginId, passWord);
+    }
+
+    @GetMapping("/{memberId}")
+    public Member getMemberInfo(@PathVariable Long memberId) {
+        return memberService.getMemberInfo(memberId);
     }
 
     @GetMapping("/")
     public String test1(@RequestParam(value="msg") String msg) {
         return msg;
     }
-
-
-
 }

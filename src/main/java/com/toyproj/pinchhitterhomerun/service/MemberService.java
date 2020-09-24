@@ -1,12 +1,11 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
 import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Transactional
@@ -20,12 +19,14 @@ public class MemberService {
         this.memberPasswordHintRepository = memberPasswordHintRepository;
     }
 
-    public Member join(@RequestBody Member member) {
+    public Member join(Member member, String hintAnswer) {
+        MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, member.getPasswordHint(),hintAnswer);
         memberRepository.save(member);
+        memberPasswordHintRepository.save(memberPasswordHint);
         return member;
     }
 
-    public boolean checkDuplicate(String loginId) {
+    public boolean isAvailable(String loginId) {
         try {
             memberRepository.findByLoginId(loginId);
         } catch (Exception e) {
@@ -34,15 +35,21 @@ public class MemberService {
         throw new IllegalStateException("이미 사용중인 아이디입니다.");
     }
 
-    public String getHintAnswer(Long memberId) {
-        return memberPasswordHintRepository.findByMemberId(memberId).getAnswer();
-    }
-
     public Member signIn(String loginId, String passWord){
         try {
-            return memberRepository.findByLoginId(loginId, passWord);
+            Member signMember = memberRepository.findByLoginId(loginId, passWord);
+            signMember.updateLastLoginDate();
+            return signMember;
         } catch (Exception e) {
             throw new IllegalStateException("아이디 혹은 비밀번호가 잘못 되었습니다.");
         }
+    }
+
+    public Member getMemberInfo(Long memberId) {
+        return memberRepository.findById(memberId);
+    }
+
+    public String getHintAnswer(Long memberId) {
+        return memberPasswordHintRepository.findByMemberId(memberId).getAnswer();
     }
 }

@@ -1,10 +1,11 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import com.toyproj.pinchhitterhomerun.type.SexType;
+import com.toyproj.pinchhitterhomerun.type.SnsType;
 import lombok.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,18 +19,22 @@ public class Member {
     private String passWord;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hint_code", insertable = false, updatable = false)
+    @JoinColumn(name = "password_hint", insertable = false, updatable = false)
     private PasswordHint passwordHint;
 
-    private String sns;
+    @Enumerated(EnumType.STRING)
+    private SnsType sns;
 
     private String name;
 
-    private int birthDay;
+    private Integer birthDay;
 
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private SexType sex;
 
     private String phone;
+
+    private Integer branchId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_code")
@@ -41,22 +46,18 @@ public class Member {
 
     private String profileImage;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLoginDate;
+    private LocalDateTime lastLoginDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedDate;
+    private LocalDateTime updatedDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deletedDate;
+    private LocalDateTime deletedDate;
 
     public Member() {
     }
 
-    public Member(String loginId, String passWord, PasswordHint passwordHint, String sns, String name, int birthDay, String sex, String phone, Role role, String email, String address, String profileImage) {
+    public Member(String loginId, String passWord, PasswordHint passwordHint, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String email, String address, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.passwordHint = passwordHint;
@@ -65,12 +66,13 @@ public class Member {
         this.birthDay = birthDay;
         this.sex = sex;
         this.phone = phone;
+        this.branchId = branchId;
         this.role = role;
         this.email = email;
         this.address = address;
         this.profileImage = profileImage;
-        this.lastLoginDate = new Date();
-        this.createdDate = new Date();
+        this.lastLoginDate = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
     }
 
     public void setPhone(String phone) {
@@ -93,11 +95,35 @@ public class Member {
         this.profileImage = profileImage;
     }
 
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
+    public void updateLastLoginDate() {
+        this.lastLoginDate = LocalDateTime.now();
     }
 
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
+    public void updateUpdatedDate() {
+        this.updatedDate = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", passwordHint=" + passwordHint +
+                ", sns='" + sns + '\'' +
+                ", name='" + name + '\'' +
+                ", birthDay=" + birthDay +
+                ", sex=" + sex +
+                ", phone='" + phone + '\'' +
+                ", branchId=" + branchId +
+                ", role=" + role +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", lastLoginDate=" + lastLoginDate +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                ", deletedDate=" + deletedDate +
+                '}';
     }
 }

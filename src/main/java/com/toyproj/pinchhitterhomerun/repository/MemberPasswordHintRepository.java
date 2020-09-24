@@ -22,7 +22,7 @@ public class MemberPasswordHintRepository implements IMemberPassWordHintReposito
 
     @Override
     public MemberPasswordHint findByMemberId(Long memberId) {
-        return em.createQuery("select ph from MemberPasswordHint ph where ph.memberId = :memberId", MemberPasswordHint.class)
+        return em.createQuery("select ph from MemberPasswordHint ph where ph.memberId.id = :memberId", MemberPasswordHint.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();
     }
