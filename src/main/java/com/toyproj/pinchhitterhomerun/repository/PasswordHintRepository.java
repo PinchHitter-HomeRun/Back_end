@@ -18,6 +18,7 @@ public class PasswordHintRepository implements IPasswordHintRepository {
 
     @Override
     public PasswordHint findById(Long id) {
+        System.out.println(id);
         return em.find(PasswordHint.class, id);
     }
 

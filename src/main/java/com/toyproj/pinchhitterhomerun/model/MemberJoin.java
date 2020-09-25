@@ -4,11 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class MemberJoin {
-    private Member member;
-    private String answer;
+    private final Member member;
+    private final Long hintId;
+    private final String answer;
 
-    public MemberJoin(Member member, String answer) {
+    public MemberJoin(Member member, Long hintId, String answer) {
         this.member = member;
+        this.hintId = hintId;
         this.answer = answer;
     }
 }

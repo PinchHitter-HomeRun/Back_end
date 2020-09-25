@@ -40,7 +40,6 @@ class MemberServiceTest {
         Member member = new Member(
                 "ojang",
                 "ojang1234!!",
-                passwordHintRepository.findById(1L),
                 SnsType.None,
                 "오장원",
                 930903,
@@ -52,9 +51,9 @@ class MemberServiceTest {
                 "서울시 우리구 우리동 우리아파트 우리동 우리호",
                 null
         );
-        MemberJoin newMember = new MemberJoin(member, "답변");
+        MemberJoin newMember = new MemberJoin(member, 1L,"답변");
 
-        Member joinedMember = memberService.join(newMember.getMember(), newMember.getAnswer());
+        Member joinedMember = memberService.join(newMember.getMember(), newMember.getHintId(), newMember.getAnswer());
 
         Member findMember = memberRepository.findById(joinedMember.getId());
         Assertions.assertThat(findMember).isEqualTo(member);

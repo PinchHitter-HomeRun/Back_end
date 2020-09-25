@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
 import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
+import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,15 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordHintRepository passwordHintRepository;
     private final MemberPasswordHintRepository memberPasswordHintRepository;
 
-    public MemberService(MemberRepository memberRepository, MemberPasswordHintRepository memberPasswordHintRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordHintRepository passwordHintRepository,MemberPasswordHintRepository memberPasswordHintRepository) {
         this.memberRepository = memberRepository;
+        this.passwordHintRepository = passwordHintRepository;
         this.memberPasswordHintRepository = memberPasswordHintRepository;
     }
 
-    public Member join(Member member, String hintAnswer) {
-        MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, member.getPasswordHint(),hintAnswer);
+    public Member join(Member member, Long hintId, String hintAnswer) {
+        MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, passwordHintRepository.findById(hintId), hintAnswer);
         memberRepository.save(member);
         memberPasswordHintRepository.save(memberPasswordHint);
         return member;

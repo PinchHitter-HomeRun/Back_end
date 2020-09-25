@@ -25,7 +25,7 @@ public class MemberController {
             throw new IllegalStateException("이미 가입한 회원입니다.");
         }
 
-        memberService.join(member, newMember.getAnswer());
+        memberService.join(member, newMember.getHintId(),newMember.getAnswer());
         return member;
     }
 

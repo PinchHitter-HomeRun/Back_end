@@ -15,16 +15,13 @@ public class Member {
 
     private String loginId;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 255)
     private String passWord;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "password_hint", insertable = false, updatable = false)
-    private PasswordHint passwordHint;
 
     @Enumerated(EnumType.STRING)
     private SnsType sns;
 
+    @Column(length = 10)
     private String name;
 
     private Integer birthDay;
@@ -32,6 +29,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private SexType sex;
 
+    @Column(length = 15)
     private String phone;
 
     private Integer branchId;
@@ -57,10 +55,9 @@ public class Member {
     public Member() {
     }
 
-    public Member(String loginId, String passWord, PasswordHint passwordHint, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String email, String address, String profileImage) {
+    public Member(String loginId, String passWord, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String email, String address, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
-        this.passwordHint = passwordHint;
         this.sns = sns;
         this.name = name;
         this.birthDay = birthDay;
@@ -109,7 +106,6 @@ public class Member {
                 "id=" + id +
                 ", loginId='" + loginId + '\'' +
                 ", passWord='" + passWord + '\'' +
-                ", passwordHint=" + passwordHint +
                 ", sns='" + sns + '\'' +
                 ", name='" + name + '\'' +
                 ", birthDay=" + birthDay +
