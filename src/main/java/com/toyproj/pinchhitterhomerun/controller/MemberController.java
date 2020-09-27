@@ -49,7 +49,7 @@ public class MemberController {
         return memberService.getPasswordHint(memberId).getText();
     }
 
-    @PostMapping("{memberId}/")
+    @PostMapping("{memberId}/answer")
     public Boolean isCorrectAnswer(@PathVariable Long memberId, @RequestParam(value = "answer") String answer) {
         return answer.equals(memberService.getHintAnswer(memberId));
     }
