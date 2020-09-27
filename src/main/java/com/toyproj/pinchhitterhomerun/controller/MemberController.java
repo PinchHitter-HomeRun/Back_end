@@ -39,6 +39,26 @@ public class MemberController {
         return memberService.getMemberInfo(memberId);
     }
 
+    @DeleteMapping("{memberId}")
+    public Member leaveMember(@PathVariable Long memberId) {
+        return memberService.leave(memberId);
+    }
+
+    @GetMapping("{memberId}/hint")
+    public String getMemberPasswordHint(@PathVariable Long memberId) {
+        return memberService.getPasswordHint(memberId).getText();
+    }
+
+    @PostMapping("{memberId}/")
+    public Boolean isCorrectAnswer(@PathVariable Long memberId, @RequestParam(value = "answer") String answer) {
+        return answer.equals(memberService.getHintAnswer(memberId));
+    }
+
+    @PutMapping("{loginId}/password")
+    public Boolean updateMemberPassword(@PathVariable String loginId, String passWord) {
+        return memberService.updatePassword(loginId,passWord) != null;
+    }
+
     @GetMapping("/")
     public String test1(@RequestParam(value="msg") String msg) {
         return msg;

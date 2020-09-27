@@ -1,11 +1,13 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
 import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -15,7 +17,7 @@ public class Member {
 
     private String loginId;
 
-    @Column(name = "password", length = 255)
+    @Column(name = "password")
     private String passWord;
 
     @Enumerated(EnumType.STRING)
@@ -38,10 +40,6 @@ public class Member {
     @JoinColumn(name = "role_code")
     private Role role;
 
-    private String email;
-
-    private String address;
-
     private String profileImage;
 
     private LocalDateTime lastLoginDate;
@@ -55,7 +53,7 @@ public class Member {
     public Member() {
     }
 
-    public Member(String loginId, String passWord, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String email, String address, String profileImage) {
+    public Member(String loginId, String passWord, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.sns = sns;
@@ -65,11 +63,12 @@ public class Member {
         this.phone = phone;
         this.branchId = branchId;
         this.role = role;
-        this.email = email;
-        this.address = address;
         this.profileImage = profileImage;
-        this.lastLoginDate = LocalDateTime.now();
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
     }
 
     public void setPhone(String phone) {
@@ -80,46 +79,19 @@ public class Member {
         this.role = role;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
     public void updateLastLoginDate() {
-        this.lastLoginDate = LocalDateTime.now();
+        this.lastLoginDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     public void updateUpdatedDate() {
-        this.updatedDate = LocalDateTime.now();
+        this.updatedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", loginId='" + loginId + '\'' +
-                ", passWord='" + passWord + '\'' +
-                ", sns='" + sns + '\'' +
-                ", name='" + name + '\'' +
-                ", birthDay=" + birthDay +
-                ", sex=" + sex +
-                ", phone='" + phone + '\'' +
-                ", branchId=" + branchId +
-                ", role=" + role +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", profileImage='" + profileImage + '\'' +
-                ", lastLoginDate=" + lastLoginDate +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", deletedDate=" + deletedDate +
-                '}';
+    public void updateDeletedDate() {
+        this.deletedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 }

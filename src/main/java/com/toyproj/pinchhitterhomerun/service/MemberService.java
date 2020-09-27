@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
+import com.toyproj.pinchhitterhomerun.model.PasswordHint;
 import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
@@ -21,7 +22,8 @@ public class MemberService {
         this.passwordHintRepository = passwordHintRepository;
         this.memberPasswordHintRepository = memberPasswordHintRepository;
     }
-
+    
+    // 회원가입
     public Member join(Member member, Long hintId, String hintAnswer) {
         MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, passwordHintRepository.findById(hintId), hintAnswer);
         memberRepository.save(member);
@@ -29,6 +31,7 @@ public class MemberService {
         return member;
     }
 
+    // 중복체크
     public boolean isAvailable(String loginId) {
         try {
             memberRepository.findByLoginId(loginId);
@@ -38,21 +41,49 @@ public class MemberService {
         throw new IllegalStateException("이미 사용중인 아이디입니다.");
     }
 
+    // 로그인
     public Member signIn(String loginId, String passWord){
+        Member signMember;
         try {
-            Member signMember = memberRepository.findByLoginId(loginId, passWord);
+            if (passWord != null) {
+                signMember = memberRepository.findByLoginId(loginId, passWord);
+            } else {
+                signMember = memberRepository.findByLoginId(loginId); // sns 로그인
+            }
             signMember.updateLastLoginDate();
-            return signMember;
         } catch (Exception e) {
             throw new IllegalStateException("아이디 혹은 비밀번호가 잘못 되었습니다.");
         }
+
+        return signMember;
     }
 
+    // 멤버 정보
     public Member getMemberInfo(Long memberId) {
         return memberRepository.findById(memberId);
     }
 
+    // 힌트 텍스트
+    public PasswordHint getPasswordHint(Long memberId) {
+        return memberPasswordHintRepository.findByMemberId(memberId).getHintId();
+    }
+
+    // 힌트 답변
     public String getHintAnswer(Long memberId) {
         return memberPasswordHintRepository.findByMemberId(memberId).getAnswer();
+    }
+
+    // 비밀번호 수정
+    public Member updatePassword(String loginId, String passWord) {
+        Member updateMember = memberRepository.findByLoginId(loginId);
+        updateMember.setPassWord(passWord);
+        return updateMember;
+    }
+
+    // 탈퇴
+    public Member leave(Long memberId) {
+        Member leaveMember = memberRepository.findById(memberId);
+        leaveMember.updateDeletedDate();
+        return leaveMember;
     }
 }
