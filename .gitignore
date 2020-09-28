@@ -9,6 +9,7 @@ build/reports/
 build/resources/
 build/test-results/
 build/tmp/
+logs/
 
 ### STS ###
 .apt_generated
