@@ -1,10 +1,7 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.service.MemberService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/customers")
@@ -16,8 +13,14 @@ public class CustomerController {
         this.memberService = memberService;
     }
 
+    @PostMapping("/")
+    public String findLoginId(@RequestParam(value = "birth_day") String birthDay, @RequestParam(value = "name") String name) {
+        return memberService.findLoginId(name,birthDay);
+    }
+
     @PostMapping("/{requestId}")
     public boolean checkAvailableId(@PathVariable String requestId) {
         return memberService.isAvailable(requestId);
     }
+
 }

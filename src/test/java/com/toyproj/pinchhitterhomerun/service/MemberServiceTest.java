@@ -39,10 +39,10 @@ class MemberServiceTest {
 
         Member member = new Member(
                 "ojang@naver.com",
-                "ojang1234!!",
+                "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9",
                 SnsType.None,
-                "오장원",
-                930903,
+                "홍길동",
+                "930903",
                 SexType.Male,
                 "01012345678",
                 1,
@@ -72,41 +72,41 @@ class MemberServiceTest {
 
     @Test
     public void 로그인_성공() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
-        Assertions.assertThat(signedMember.getName()).isEqualTo("오장원");
+        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Assertions.assertThat(signedMember.getName()).isEqualTo("홍길동");
     }
 
     @Test
     public void 로그인_실패() {
         IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> memberService.signIn("ohjang@daeta.com", "ojang!!"));
+                () -> memberService.signIn("ojang@naver.com", "ojang!!"));
         Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
     }
 
     @Test
     public void 힌트_매핑() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getId()).isEqualTo(1L);
     }
 
     @Test
     public void 힌트_가져오기() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getText()).isEqualTo("none");
     }
 
     @Test
     public void 힌트_답변_매핑() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         String answer = memberService.getHintAnswer(signedMember.getId());
-        Assertions.assertThat(answer).isEqualTo("안녕");
+        Assertions.assertThat(answer).isEqualTo("답변");
     }
 
     @Test
     public void 탈퇴() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Member leaveMember = memberRepository.findById(signedMember.getId());
         leaveMember.updateDeletedDate();
         Assertions.assertThat(memberRepository.findById(signedMember.getId()).getDeletedDate()).isNotNull();
@@ -114,18 +114,30 @@ class MemberServiceTest {
 
     @Test
     public void 탈퇴_사용자_로그인() {
-        Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Member leaveMember = memberRepository.findById(signedMember.getId());
         leaveMember.updateDeletedDate();
         IllegalStateException e = assertThrows(IllegalStateException.class,
-                () -> memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9"));
+                () -> memberService.signIn("ojang@naver.com.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9"));
         Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
     }
 
     @Test
     public void 비밀번호_변경() {
-        memberService.updatePassword("ohjang@daeta.com", "qwer1234!!");
-        Member signedMember = memberService.signIn("ohjang@daeta.com", "qwer1234!!");
+        memberService.updatePassword("ojang@naver.com", "qwer1234!!");
+        Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Assertions.assertThat(signedMember).isNotNull();
+    }
+
+    @Test
+    public void 아이디_찾기_성공() {
+        String foundId = memberService.findLoginId("홍길동", "930903");
+        Assertions.assertThat(foundId).isEqualTo("ojang@naver.com");
+    }
+
+    @Test
+    public void 아이디_찾기_실패() {
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.findLoginId("오장원", "930911"));
+        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 사용자 입니다.");
     }
 }

@@ -30,7 +30,6 @@ public class MemberRepository implements IMemberRepository {
 
     @Override
     public Member findByLoginId(String loginId, String passWord) {
-
         return em.createQuery("select m from Member m where m.loginId = :loginId and m.passWord = :passWord and m.deletedDate is null", Member.class)
                 .setParameter("loginId", loginId)
                 .setParameter("passWord", passWord)
@@ -40,5 +39,13 @@ public class MemberRepository implements IMemberRepository {
     @Override
     public Member findById(Long id) {
         return em.find(Member.class, id);
+    }
+
+    @Override
+    public Member findLoginIdByInfo(String name, String birthDay) {
+        return em.createQuery("select m from Member m where m.name = :name and m.birthDay = :birthDay and m.deletedDate is null", Member.class)
+                .setParameter("name", name)
+                .setParameter("birthDay", birthDay)
+                .getSingleResult();
     }
 }
