@@ -86,4 +86,18 @@ public class MemberService {
         leaveMember.updateDeletedDate();
         return leaveMember;
     }
+
+    // 이름과 생년월일로 아이디 찾기
+    public String findLoginId(String name, String birthDay) {
+        Member foundMember;
+
+        try {
+            foundMember = memberRepository.findLoginIdByInfo(name, birthDay);
+        } catch (Exception e) {
+            System.out.println("helllo" + e.toString());
+            throw new IllegalStateException("존재하지 않는 사용자 입니다.");
+        }
+
+        return foundMember.getLoginId();
+    }
 }

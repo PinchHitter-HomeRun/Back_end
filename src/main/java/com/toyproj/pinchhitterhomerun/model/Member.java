@@ -26,7 +26,7 @@ public class Member {
     @Column(length = 10)
     private String name;
 
-    private Integer birthDay;
+    private String birthDay;
 
     @Enumerated(EnumType.STRING)
     private SexType sex;
@@ -53,7 +53,7 @@ public class Member {
     public Member() {
     }
 
-    public Member(String loginId, String passWord, SnsType sns, String name, int birthDay, SexType sex, String phone, int branchId, Role role, String profileImage) {
+    public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, int branchId, Role role, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.sns = sns;

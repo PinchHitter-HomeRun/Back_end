@@ -7,4 +7,5 @@ public interface IMemberRepository {
     Member findByLoginId(String loginId);
     Member findByLoginId(String loginId, String passWord);
     Member findById(Long id);
+    Member findLoginIdByInfo(String name, String birth);
 }
