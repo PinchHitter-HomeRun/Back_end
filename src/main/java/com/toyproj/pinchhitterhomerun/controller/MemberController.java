@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -63,4 +64,6 @@ public class MemberController {
     public String test1(@RequestParam(value="msg") String msg) {
         return msg;
     }
+
+
 }
