@@ -27,6 +27,7 @@ public class MemberController {
         }
 
         memberService.join(member, newMember.getHintId(),newMember.getAnswer());
+
         return member;
     }
 
