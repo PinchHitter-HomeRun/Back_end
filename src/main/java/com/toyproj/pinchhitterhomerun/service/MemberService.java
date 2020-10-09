@@ -100,4 +100,9 @@ public class MemberService {
 
         return foundMember.getLoginId();
     }
+
+    //지점에 알바생 등록 신청
+    public void requestToBranchMaster(Long memberId, Long branchId) {
+        
+    }
 }
