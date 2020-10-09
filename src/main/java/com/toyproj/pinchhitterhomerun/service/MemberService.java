@@ -105,4 +105,5 @@ public class MemberService {
     public void requestToBranchMaster(Long memberId, Long branchId) {
         
     }
+
 }
