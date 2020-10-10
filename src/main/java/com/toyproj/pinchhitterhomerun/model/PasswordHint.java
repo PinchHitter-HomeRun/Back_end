@@ -25,4 +25,12 @@ public class PasswordHint {
 
     public PasswordHint() {
     }
+
+    @Override
+    public String toString() {
+        return "PasswordHint{" +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

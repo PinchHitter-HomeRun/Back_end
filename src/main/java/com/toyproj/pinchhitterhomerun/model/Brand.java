@@ -13,4 +13,13 @@ public class Brand {
     private Category category;
 
     private String name;
+
+    @Override
+    public String toString() {
+        return "Brand{" +
+                "id=" + id +
+                ", category=" + category +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

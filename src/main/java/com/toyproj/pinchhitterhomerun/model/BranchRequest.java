@@ -24,4 +24,17 @@ public class BranchRequest {
     private LocalDateTime updatedDate;
 
     private LocalDateTime deletedDate;
+
+    @Override
+    public String toString() {
+        return "BranchRequest{" +
+                "id=" + id +
+                ", memberId=" + memberId +
+                ", branchId=" + branchId +
+                ", isAccept=" + isAccept +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                ", deletedDate=" + deletedDate +
+                '}';
+    }
 }

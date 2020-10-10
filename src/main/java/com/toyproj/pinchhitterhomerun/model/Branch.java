@@ -20,4 +20,16 @@ public class Branch {
     private LocalDateTime createdDate;
 
     private LocalDateTime deletedDate;
+
+    @Override
+    public String toString() {
+        return "Branch{" +
+                "id=" + id +
+                ", brand=" + brand +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", createdDate=" + createdDate +
+                ", deletedDate=" + deletedDate +
+                '}';
+    }
 }

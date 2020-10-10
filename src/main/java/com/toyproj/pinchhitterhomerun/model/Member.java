@@ -94,4 +94,25 @@ public class Member {
     public void updateDeletedDate() {
         this.deletedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", loginId='" + loginId + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", sns=" + sns +
+                ", name='" + name + '\'' +
+                ", birthDay='" + birthDay + '\'' +
+                ", sex=" + sex +
+                ", phone='" + phone + '\'' +
+                ", branchId=" + branchId +
+                ", role=" + role +
+                ", profileImage='" + profileImage + '\'' +
+                ", lastLoginDate=" + lastLoginDate +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                ", deletedDate=" + deletedDate +
+                '}';
+    }
 }

@@ -32,4 +32,14 @@ public class MemberPasswordHint {
         this.hintId = hintId;
         this.answer = answer;
     }
+
+    @Override
+    public String toString() {
+        return "MemberPasswordHint{" +
+                "id=" + id +
+                ", memberId=" + memberId +
+                ", hintId=" + hintId +
+                ", answer='" + answer + '\'' +
+                '}';
+    }
 }

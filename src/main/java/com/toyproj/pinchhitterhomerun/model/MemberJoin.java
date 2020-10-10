@@ -13,4 +13,13 @@ public class MemberJoin {
         this.hintId = hintId;
         this.answer = answer;
     }
+
+    @Override
+    public String toString() {
+        return "MemberJoin{" +
+                "member=" + member +
+                ", hintId=" + hintId +
+                ", answer='" + answer + '\'' +
+                '}';
+    }
 }
