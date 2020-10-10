@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
+import com.toyproj.pinchhitterhomerun.model.TestResult;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +19,21 @@ public class MemberController {
     }
 
     @PostMapping("/")
-        public Member signUp(@RequestBody MemberJoin newMember) {
+    /*public Member signUp(@RequestBody MemberJoin newMember) {
 
         Member member = newMember.getMember();
 
-        if(!memberService.isAvailable(member.getLoginId())) {
+        if (!memberService.isAvailable(member.getLoginId())) {
             throw new IllegalStateException("이미 가입한 회원입니다.");
         }
 
-        memberService.join(member, newMember.getHintId(),newMember.getAnswer());
+        memberService.join(member, newMember.getHintId(), newMember.getAnswer());
 
         return member;
+    }*/
+    public TestResult signUp() {
+        TestResult test = new TestResult("success");
+        return test;
     }
 
     @PostMapping("/{loginId}")
@@ -58,11 +63,11 @@ public class MemberController {
 
     @PutMapping("{loginId}/password")
     public Boolean updateMemberPassword(@PathVariable String loginId, String passWord) {
-        return memberService.updatePassword(loginId,passWord) != null;
+        return memberService.updatePassword(loginId, passWord) != null;
     }
 
     @GetMapping("/")
-    public String test1(@RequestParam(value="msg") String msg) {
+    public String test1(@RequestParam(value = "msg") String msg) {
         return msg;
     }
 
