@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
 import com.toyproj.pinchhitterhomerun.model.PasswordHint;
@@ -8,6 +9,8 @@ import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -32,17 +35,18 @@ public class MemberService {
     }
 
     // 중복체크
-    public boolean isAvailable(String loginId) {
+    public boolean isAvailable(String loginId) throws MemberException{
         try {
             memberRepository.findByLoginId(loginId);
         } catch (Exception e) {
             return true;
         }
-        throw new IllegalStateException("이미 사용중인 아이디입니다.");
+
+        throw new MemberException("이미 사용중인 아이디입니다.");
     }
 
     // 로그인
-    public Member signIn(String loginId, String passWord){
+    public Member signIn(String loginId, String passWord) throws MemberException {
         Member signMember;
         try {
             if (passWord != null) {
@@ -52,7 +56,7 @@ public class MemberService {
             }
             signMember.updateLastLoginDate();
         } catch (Exception e) {
-            throw new IllegalStateException("아이디 혹은 비밀번호가 잘못 되었습니다.");
+            throw new MemberException("아이디 혹은 비밀번호가 잘못 되었습니다.");
         }
 
         return signMember;
@@ -61,6 +65,11 @@ public class MemberService {
     // 멤버 정보
     public Member getMemberInfo(Long memberId) {
         return memberRepository.findById(memberId);
+    }
+
+    //힌트 리스트
+    public List<PasswordHint> getAllHint() {
+        return passwordHintRepository.findAll();
     }
 
     // 힌트 텍스트

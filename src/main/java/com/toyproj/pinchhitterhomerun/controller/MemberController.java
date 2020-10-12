@@ -1,12 +1,20 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
+import com.toyproj.pinchhitterhomerun.model.PasswordHint;
 import com.toyproj.pinchhitterhomerun.model.TestResult;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -19,25 +27,25 @@ public class MemberController {
     }
 
     @PostMapping("/")
-    /*public Member signUp(@RequestBody MemberJoin newMember) {
+    public Member signUp(@RequestBody MemberJoin newMember) throws MemberException {
 
         Member member = newMember.getMember();
 
         if (!memberService.isAvailable(member.getLoginId())) {
-            throw new IllegalStateException("이미 가입한 회원입니다.");
+            return null;
         }
 
         memberService.join(member, newMember.getHintId(), newMember.getAnswer());
 
         return member;
-    }*/
-    public TestResult signUp() {
+    }
+    /*public TestResult signUp() {
         TestResult test = new TestResult("success");
         return test;
-    }
+    }*/
 
     @PostMapping("/{loginId}")
-    public Member signIn(@PathVariable String loginId, String passWord) {
+    public Member signIn(@PathVariable String loginId, String passWord) throws MemberException {
         return memberService.signIn(loginId, passWord);
     }
 
@@ -64,6 +72,17 @@ public class MemberController {
     @PutMapping("{loginId}/password")
     public Boolean updateMemberPassword(@PathVariable String loginId, String passWord) {
         return memberService.updatePassword(loginId, passWord) != null;
+    }
+
+    @GetMapping("hint")
+    public List<String> getHintList() {
+        List<String> result = new ArrayList<>();
+        List<PasswordHint> passwordHintList = memberService.getAllHint();
+        for (PasswordHint passwordHint : passwordHintList) {
+            result.add(passwordHint.getText());
+        }
+
+        return result;
     }
 
     @GetMapping("/")

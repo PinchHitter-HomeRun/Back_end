@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class CustomerController {
     }
 
     @PostMapping("/{requestId}")
-    public boolean checkAvailableId(@PathVariable String requestId) {
+    public boolean checkAvailableId(@PathVariable String requestId) throws MemberException {
         return memberService.isAvailable(requestId);
     }
 

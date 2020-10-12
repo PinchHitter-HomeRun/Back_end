@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
@@ -58,54 +59,54 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 중복_체크_중복() throws Exception{
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+    public void 중복_체크_중복() {
+        MemberException e = assertThrows(MemberException.class,
                 () -> memberService.isAvailable("ojang@naver.com"));
         Assertions.assertThat(e.getMessage()).isEqualTo("이미 사용중인 아이디입니다.");
     }
 
     @Test
-    public void 중복_체크_사용가능() {
+    public void 중복_체크_사용가능() throws MemberException {
         boolean result = memberService.isAvailable("ojang1@naver.com");
         Assertions.assertThat(result).isEqualTo(true);
     }
 
     @Test
-    public void 로그인_성공() {
+    public void 로그인_성공() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Assertions.assertThat(signedMember.getName()).isEqualTo("홍길동");
     }
 
     @Test
     public void 로그인_실패() {
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        MemberException e = assertThrows(MemberException.class,
                 () -> memberService.signIn("ojang@naver.com", "ojang!!"));
         Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
     }
 
     @Test
-    public void 힌트_매핑() {
+    public void 힌트_매핑() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getId()).isEqualTo(1L);
     }
 
     @Test
-    public void 힌트_가져오기() {
+    public void 힌트_가져오기() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getText()).isEqualTo("none");
     }
 
     @Test
-    public void 힌트_답변_매핑() {
+    public void 힌트_답변_매핑() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         String answer = memberService.getHintAnswer(signedMember.getId());
         Assertions.assertThat(answer).isEqualTo("답변");
     }
 
     @Test
-    public void 탈퇴() {
+    public void 탈퇴() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Member leaveMember = memberRepository.findById(signedMember.getId());
         leaveMember.updateDeletedDate();
@@ -113,17 +114,17 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 탈퇴_사용자_로그인() {
+    public void 탈퇴_사용자_로그인() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Member leaveMember = memberRepository.findById(signedMember.getId());
         leaveMember.updateDeletedDate();
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        MemberException e = assertThrows(MemberException.class,
                 () -> memberService.signIn("ojang@naver.com.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9"));
         Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
     }
 
     @Test
-    public void 비밀번호_변경() {
+    public void 비밀번호_변경() throws MemberException {
         memberService.updatePassword("ojang@naver.com", "qwer1234!!");
         Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Assertions.assertThat(signedMember).isNotNull();
