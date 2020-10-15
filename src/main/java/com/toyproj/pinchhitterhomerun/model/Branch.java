@@ -1,9 +1,12 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,9 @@ public class Branch {
     private LocalDateTime createdDate;
 
     private LocalDateTime deletedDate;
+
+    public Branch() {
+    }
 
     @Override
     public String toString() {

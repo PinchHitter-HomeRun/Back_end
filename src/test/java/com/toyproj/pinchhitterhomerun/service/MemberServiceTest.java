@@ -36,7 +36,7 @@ class MemberServiceTest {
 
     @BeforeEach
     @Test
-    public void 회원_가입() {
+    public void 회원_가입_지점_없음() {
 
         Member member = new Member(
                 "ojang@naver.com",
@@ -46,7 +46,7 @@ class MemberServiceTest {
                 "930903",
                 SexType.Male,
                 "01012345678",
-                1,
+                null,
                 roleRepository.findByRoleName("employee"),
                 null
         );
@@ -56,6 +56,11 @@ class MemberServiceTest {
 
         Member findMember = memberRepository.findById(joinedMember.getId());
         Assertions.assertThat(findMember).isEqualTo(member);
+    }
+
+    @Test
+    public void 회원_가입_지점_있음() {
+
     }
 
     @Test

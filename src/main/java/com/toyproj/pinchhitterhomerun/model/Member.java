@@ -34,7 +34,9 @@ public class Member {
     @Column(length = 15)
     private String phone;
 
-    private Integer branchId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_code")
@@ -53,7 +55,7 @@ public class Member {
     public Member() {
     }
 
-    public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, int branchId, Role role, String profileImage) {
+    public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, Branch branch, Role role, String profileImage) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.sns = sns;
@@ -61,7 +63,7 @@ public class Member {
         this.birthDay = birthDay;
         this.sex = sex;
         this.phone = phone;
-        this.branchId = branchId;
+        this.branch = branch;
         this.role = role;
         this.profileImage = profileImage;
         this.createdDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -106,7 +108,7 @@ public class Member {
                 ", birthDay='" + birthDay + '\'' +
                 ", sex=" + sex +
                 ", phone='" + phone + '\'' +
-                ", branchId=" + branchId +
+                ", branch=" + branch +
                 ", role=" + role +
                 ", profileImage='" + profileImage + '\'' +
                 ", lastLoginDate=" + lastLoginDate +
