@@ -1,18 +1,20 @@
 package com.toyproj.pinchhitterhomerun.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
@@ -23,9 +25,6 @@ public class Branch {
     private LocalDateTime createdDate;
 
     private LocalDateTime deletedDate;
-
-    public Branch() {
-    }
 
     @Override
     public String toString() {

@@ -24,21 +24,21 @@ public class BrandRepository implements IBrandRepository {
 
     @Override
     public List<Brand> findByCategoryId(Long categoryId) {
-        return em.createQuery("select b from Brand b where Brand .category.id = :categoryId", Brand.class)
+        return em.createQuery("select b from Brand b where b.category.id = :categoryId", Brand.class)
                 .setParameter("categoryId", categoryId)
                 .getResultList();
     }
 
     @Override
     public Brand findByName(String name) {
-        return em.createQuery("select b from Brand b where Brand .name = :name",Brand.class)
+        return em.createQuery("select b from Brand b where b.name = :name",Brand.class)
                 .setParameter("name", name)
                 .getSingleResult();
     }
 
     @Override
     public Brand findById(Long id) {
-        return em.createQuery("select b from Brand b where Brand .id = :id", Brand.class)
+        return em.createQuery("select b from Brand b where b.id = :id", Brand.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }

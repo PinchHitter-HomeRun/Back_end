@@ -30,7 +30,7 @@ public class CategoryController {
         return result;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public Map<String, Category> getCategory(@PathVariable Long id) {
         Map<String, Category> result = new HashMap<>();
 
@@ -39,7 +39,7 @@ public class CategoryController {
         return result;
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public Map<String, Category> getCategory(@PathVariable String name) {
         Map<String, Category> result = new HashMap<>();
 

@@ -103,7 +103,6 @@ public class MemberService {
         try {
             foundMember = memberRepository.findLoginIdByInfo(name, birthDay);
         } catch (Exception e) {
-            System.out.println("helllo" + e.toString());
             throw new IllegalStateException("존재하지 않는 사용자 입니다.");
         }
 

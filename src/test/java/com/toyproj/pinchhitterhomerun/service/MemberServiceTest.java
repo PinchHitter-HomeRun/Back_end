@@ -6,7 +6,6 @@ import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
 import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
-import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.RoleRepository;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
@@ -27,8 +26,6 @@ class MemberServiceTest {
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
-    @Autowired
-    PasswordHintRepository passwordHintRepository;
     @Autowired
     MemberPasswordHintRepository memberPasswordHintRepository;
     @Autowired

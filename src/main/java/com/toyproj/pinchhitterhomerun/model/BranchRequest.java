@@ -1,11 +1,15 @@
 package com.toyproj.pinchhitterhomerun.model;
 
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class BranchRequest {
 
     @Id

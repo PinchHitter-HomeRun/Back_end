@@ -1,5 +1,7 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,6 +9,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 public class Logger {
 
     @Id
@@ -18,9 +21,6 @@ public class Logger {
     private String url;
 
     private LocalDateTime createdDate;
-
-    public Logger() {
-    }
 
     public Logger(String request, String url) {
         this.request = request;

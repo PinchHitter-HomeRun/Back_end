@@ -25,11 +25,11 @@ public class BrandService {
     }
 
     public List<Brand> getBrandByCategoryId(Long categoryId) {
-        List<Brand> categories = new ArrayList<>();
+        List<Brand> categories;
 
-        try{
-            categories = brandRepository.findByCategoryId(categoryId);
-        } catch (Exception e) {
+        categories = brandRepository.findByCategoryId(categoryId);
+
+        if (categories.size() < 1) {
             throw new BrandException("유효하지 않는 Category id 입니다.");
         }
 

@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @Table (name = "hint_code")
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
+@NoArgsConstructor
 public class PasswordHint {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,9 +23,6 @@ public class PasswordHint {
 
     public String getText() {
         return text;
-    }
-
-    public PasswordHint() {
     }
 
     @Override

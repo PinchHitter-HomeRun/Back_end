@@ -65,7 +65,7 @@ public class MemberController {
         return result;
     }
 
-    @DeleteMapping("{memberId}")
+    @DeleteMapping("/{memberId}")
     public Map<String, Member> leaveMember(@PathVariable Long memberId) {
         Map<String, Member> result = new HashMap<>();
 
@@ -74,7 +74,7 @@ public class MemberController {
         return result;
     }
 
-    @GetMapping("{memberId}/hint")
+    @GetMapping("/{memberId}/hint")
     public Map<String, String> getMemberPasswordHint(@PathVariable Long memberId) {
         Map<String, String> result = new HashMap<>();
 
@@ -101,7 +101,7 @@ public class MemberController {
         return result;
     }
 
-    @GetMapping("hint")
+    @GetMapping("/hint")
     public Map<String, List<String>> getHintList() {
         List<String> hintList = new ArrayList<>();
         List<PasswordHint> passwordHintList = memberService.getAllHint();
