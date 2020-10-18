@@ -3,8 +3,10 @@ package com.toyproj.pinchhitterhomerun.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,9 +14,11 @@ import java.time.ZoneId;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
-public class Member {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Member extends Base {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String loginId;
@@ -36,11 +40,11 @@ public class Member {
     @Column(length = 15)
     private String phone;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id")
     private Branch branch;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_code")
     private Role role;
 
@@ -48,13 +52,13 @@ public class Member {
 
     private LocalDateTime lastLoginDate;
 
-    private LocalDateTime createdDate;
+//    private LocalDateTime createdDate;
+//
+//    private LocalDateTime updatedDate;
+//
+//    private LocalDateTime deletedDate;
 
-    private LocalDateTime updatedDate;
-
-    private LocalDateTime deletedDate;
-
-    public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, Branch branch, Role role, String profileImage) {
+    public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, Branch branch, Role role) {
         this.loginId = loginId;
         this.passWord = passWord;
         this.sns = sns;
@@ -64,24 +68,7 @@ public class Member {
         this.phone = phone;
         this.branch = branch;
         this.role = role;
-        this.profileImage = profileImage;
-        this.createdDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+        this.setCreatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     public void updateLastLoginDate() {
@@ -89,11 +76,11 @@ public class Member {
     }
 
     public void updateUpdatedDate() {
-        this.updatedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        this.setUpdatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     public void updateDeletedDate() {
-        this.deletedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        this.setDeletedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
 
     @Override
@@ -111,9 +98,11 @@ public class Member {
                 ", role=" + role +
                 ", profileImage='" + profileImage + '\'' +
                 ", lastLoginDate=" + lastLoginDate +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", deletedDate=" + deletedDate +
+                ", createdDate=" + this.getCreatedDate() +
+                ", updatedDate=" + this.getUpdatedDate() +
+                ", deletedDate=" + this.getDeletedDate() +
                 '}';
     }
+
+
 }

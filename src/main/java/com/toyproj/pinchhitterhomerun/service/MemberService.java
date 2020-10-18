@@ -2,11 +2,10 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
 import com.toyproj.pinchhitterhomerun.model.PasswordHint;
-import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
-import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
-import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
+import com.toyproj.pinchhitterhomerun.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +18,32 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordHintRepository passwordHintRepository;
     private final MemberPasswordHintRepository memberPasswordHintRepository;
+    private final BranchRepository branchRepository;
+    private final RoleRepository roleRepository;
 
-    public MemberService(MemberRepository memberRepository, PasswordHintRepository passwordHintRepository,MemberPasswordHintRepository memberPasswordHintRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordHintRepository passwordHintRepository, MemberPasswordHintRepository memberPasswordHintRepository, BranchRepository branchRepository, RoleRepository roleRepository) {
         this.memberRepository = memberRepository;
         this.passwordHintRepository = passwordHintRepository;
         this.memberPasswordHintRepository = memberPasswordHintRepository;
+        this.branchRepository = branchRepository;
+        this.roleRepository = roleRepository;
     }
-    
+
     // 회원가입
-    public Member join(Member member, Long hintId, String hintAnswer) {
-        MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, passwordHintRepository.findById(hintId), hintAnswer);
+    public Member join(MemberJoin newMember) {
+        Member member = new Member(
+                newMember.getLoginId(),
+                newMember.getPassWord(),
+                newMember.getSns(),
+                newMember.getName(),
+                newMember.getBirthDay(),
+                newMember.getSex(),
+                newMember.getPhone(),
+                branchRepository.findById(newMember.getBranchId()),
+                roleRepository.findByRoleName(newMember.getRoleName())
+        );
+
+        MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, passwordHintRepository.findById(newMember.getHintId()), newMember.getAnswer());
         memberRepository.save(member);
         memberPasswordHintRepository.save(memberPasswordHint);
         return member;

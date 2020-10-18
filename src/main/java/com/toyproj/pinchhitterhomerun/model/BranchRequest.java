@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-public class BranchRequest {
+public class BranchRequest extends Base {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,11 @@ public class BranchRequest {
     @Enumerated(EnumType.STRING)
     private AcceptType isAccept;
 
-    private LocalDateTime createdDate;
-
-    private LocalDateTime updatedDate;
-
-    private LocalDateTime deletedDate;
+//    private LocalDateTime createdDate;
+//
+//    private LocalDateTime updatedDate;
+//
+//    private LocalDateTime deletedDate;
 
     @Override
     public String toString() {
@@ -36,9 +36,9 @@ public class BranchRequest {
                 ", memberId=" + memberId +
                 ", branchId=" + branchId +
                 ", isAccept=" + isAccept +
-                ", createdDate=" + createdDate +
-                ", updatedDate=" + updatedDate +
-                ", deletedDate=" + deletedDate +
+                ", createdDate=" + this.getCreatedDate() +
+                ", updatedDate=" + this.getUpdatedDate() +
+                ", deletedDate=" + this.getDeletedDate() +
                 '}';
     }
 }

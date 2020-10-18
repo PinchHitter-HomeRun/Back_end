@@ -4,6 +4,8 @@ import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
+import com.toyproj.pinchhitterhomerun.model.Role;
+import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.repository.RoleRepository;
@@ -30,29 +32,44 @@ class MemberServiceTest {
     MemberPasswordHintRepository memberPasswordHintRepository;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    BranchRepository branchRepository;
 
     @BeforeEach
     @Test
     public void 회원_가입_지점_없음() {
 
-        Member member = new Member(
-                "ojang@naver.com",
-                "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9",
-                SnsType.None,
-                "홍길동",
-                "930903",
-                SexType.Male,
-                "01012345678",
-                null,
-                roleRepository.findByRoleName("employee"),
-                null
-        );
-        MemberJoin newMember = new MemberJoin(member, 1L,"답변");
+//        Member member = new Member(
+//                "ojang@naver.com",
+//                "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9",
+//                SnsType.None,
+//                "홍길동",
+//                "930903",
+//                SexType.Male,
+//                "01012345678",
+//                null,
+//                roleRepository.findByRoleName("employee"),
+//                null
+//        );
 
-        Member joinedMember = memberService.join(newMember.getMember(), newMember.getHintId(), newMember.getAnswer());
+        MemberJoin givenMember = MemberJoin.builder()
+                .loginId("ojang@naver.com")
+                .passWord("7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9")
+                .sns(SnsType.None)
+                .name("홍길동")
+                .birthDay("930903")
+                .sex(SexType.Male)
+                .phone("01012345678")
+                .branchId(null)
+                .roleName("employee")
+                .hintId(1L)
+                .answer("안녕")
+                .build();
+
+        Member joinedMember = memberService.join(givenMember);
 
         Member findMember = memberRepository.findById(joinedMember.getId());
-        Assertions.assertThat(findMember).isEqualTo(member);
+        Assertions.assertThat(findMember).isEqualTo(joinedMember);
     }
 
     @Test
@@ -68,14 +85,14 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 중복_체크_사용가능() throws MemberException {
+    public void 중복_체크_사용가능() {
         boolean result = memberService.isAvailable("ojang1@naver.com");
         Assertions.assertThat(result).isEqualTo(true);
     }
 
     @Test
-    public void 로그인_성공() throws MemberException {
-        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+    public void 로그인_성공() {
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Assertions.assertThat(signedMember.getName()).isEqualTo("홍길동");
     }
 
@@ -87,24 +104,29 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 힌트_매핑() throws MemberException {
-        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+    public void 힌트_매핑() {
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getId()).isEqualTo(1L);
     }
 
     @Test
-    public void 힌트_가져오기() throws MemberException {
-        Member signedMember = memberService.signIn("ojang@naver.com","7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+    public void 힌트_가져오기() {
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         MemberPasswordHint memberPasswordHint = memberPasswordHintRepository.findByMemberId(signedMember.getId());
         Assertions.assertThat(memberPasswordHint.getHintId().getText()).isEqualTo("none");
     }
 
     @Test
-    public void 힌트_답변_매핑() throws MemberException {
+    public void 힌트_답변_매핑_성공() {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         String answer = memberService.getHintAnswer(signedMember.getId());
-        Assertions.assertThat(answer).isEqualTo("답변");
+        Assertions.assertThat(answer).isEqualTo("안녕");
+    }
+
+    @Test
+    public void 힌트_답변_매핑_실패() {
+
     }
 
     @Test
@@ -116,7 +138,7 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 탈퇴_사용자_로그인() throws MemberException {
+    public void 탈퇴_사용자_로그인() {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Member leaveMember = memberRepository.findById(signedMember.getId());
         leaveMember.updateDeletedDate();
@@ -126,7 +148,7 @@ class MemberServiceTest {
     }
 
     @Test
-    public void 비밀번호_변경() throws MemberException {
+    public void 비밀번호_변경() {
         memberService.updatePassword("ojang@naver.com", "qwer1234!!");
         Member signedMember = memberService.signIn("ohjang@daeta.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
         Assertions.assertThat(signedMember).isNotNull();

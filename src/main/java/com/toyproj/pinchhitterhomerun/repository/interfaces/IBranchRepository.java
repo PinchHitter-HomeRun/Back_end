@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IBranchRepository {
 
+    Branch findById(Long id);
     // 시, 구, 검색어
     List<Branch> searchByName(String city, String sub, String text);
     List<Branch> findByBrandId(Long brandId);

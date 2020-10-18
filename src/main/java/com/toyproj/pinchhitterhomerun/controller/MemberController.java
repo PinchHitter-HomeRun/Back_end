@@ -1,6 +1,7 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
+import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
 import com.toyproj.pinchhitterhomerun.model.PasswordHint;
@@ -25,20 +26,18 @@ public class MemberController {
     @PostMapping("/")
     public Map<String, Member> signUp(@RequestBody MemberJoin newMember) throws MemberException {
 
-        Member member = newMember.getMember();
-
-        if (!memberService.isAvailable(member.getLoginId())) {
+        if (!memberService.isAvailable(newMember.getLoginId())) {
             return null;
         }
 
-        if (null != member.getBranch()) {
-            memberService.requestToBranchMaster(member.getId(), member.getBranch().getId());
+        Member joinedMember = memberService.join(newMember);
+
+        if (null != newMember.getBranchId()) {
+            memberService.requestToBranchMaster(joinedMember.getId(), joinedMember.getBranch().getId());
         }
 
-        memberService.join(member, newMember.getHintId(), newMember.getAnswer());
-
         Map<String, Member> result = new HashMap<>();
-        result.put("result", member);
+        result.put("result", joinedMember);
 
         return result;
     }

@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Branch {
+public class Branch extends Base{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
@@ -22,9 +22,10 @@ public class Branch {
 
     private String address;
 
-    private LocalDateTime createdDate;
+//    private LocalDateTime createdDate;
+//
+//    private LocalDateTime deletedDate;
 
-    private LocalDateTime deletedDate;
 
     @Override
     public String toString() {
@@ -33,8 +34,8 @@ public class Branch {
                 ", brand=" + brand +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", createdDate=" + createdDate +
-                ", deletedDate=" + deletedDate +
+                ", createdDate=" + this.getCreatedDate() +
+                ", deletedDate=" + this.getDeletedDate() +
                 '}';
     }
 }
