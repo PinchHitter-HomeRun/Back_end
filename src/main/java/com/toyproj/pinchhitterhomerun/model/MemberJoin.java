@@ -32,4 +32,21 @@ public class MemberJoin {
     private Long hintId;
 
     private String answer;
+
+    @Override
+    public String toString() {
+        return "MemberJoin{" +
+                "loginId='" + loginId + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", sns=" + sns +
+                ", name='" + name + '\'' +
+                ", birthDay='" + birthDay + '\'' +
+                ", sex=" + sex +
+                ", phone='" + phone + '\'' +
+                ", branchId=" + branchId +
+                ", roleName='" + roleName + '\'' +
+                ", hintId=" + hintId +
+                ", answer='" + answer + '\'' +
+                '}';
+    }
 }

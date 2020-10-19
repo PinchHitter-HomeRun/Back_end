@@ -10,5 +10,5 @@ public interface IBranchRepository {
     // 시, 구, 검색어
     List<Branch> searchByName(String city, String sub, String text);
     List<Branch> findByBrandId(Long brandId);
-
+    
 }
