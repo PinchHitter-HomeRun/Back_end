@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

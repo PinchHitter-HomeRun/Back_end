@@ -31,8 +31,6 @@ public class CategoryRepository implements ICategoryRepository {
 
     @Override
     public Category findById(Long id) {
-        return em.createQuery("select c from Category c where c.id = :id", Category.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        return em.find(Category.class, id);
     }
 }

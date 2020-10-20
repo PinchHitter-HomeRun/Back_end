@@ -1,14 +1,17 @@
 package com.toyproj.pinchhitterhomerun.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Branch extends Base{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,6 +24,7 @@ public class BrandService {
         return brandRepository.findAll();
     }
 
+    // 카테고리 아이디로 브랜드 가져오기
     public List<Brand> getBrandByCategoryId(Long categoryId) {
         List<Brand> categories;
 
@@ -36,6 +37,7 @@ public class BrandService {
         return categories;
     }
 
+    // 브랜드 이름으로 브랜드 가져오기
     public Brand getBrandByName(String name) {
         Brand brand;
 
@@ -48,6 +50,7 @@ public class BrandService {
         return brand;
     }
 
+    // 아이디로 브랜드 가져오기
     public Brand getBrandById(Long id) {
         Brand brand;
 

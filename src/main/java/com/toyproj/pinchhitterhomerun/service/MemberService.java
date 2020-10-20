@@ -118,10 +118,23 @@ public class MemberService {
         try {
             foundMember = memberRepository.findLoginIdByInfo(name, birthDay);
         } catch (Exception e) {
-            throw new IllegalStateException("존재하지 않는 사용자 입니다.");
+            throw new MemberException("존재하지 않는 사용자 입니다.");
         }
 
         return foundMember.getLoginId();
+    }
+
+    // 지점에 속한 모든 인원 찾기
+    public List<Member> getBranchMembers(Long branchId) {
+        List<Member> members;
+
+        members = memberRepository.findByBranchId(branchId);
+
+        if (members.size() == 0) {
+            throw new MemberException("존재하지 않는 지점 입니다.");
+        }
+
+        return members;
     }
 
     //지점에 알바생 등록 신청

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -28,6 +29,11 @@ public class BranchRequest extends Base {
 //    private LocalDateTime updatedDate;
 //
 //    private LocalDateTime deletedDate;
+
+    public void setIsAccept(AcceptType acceptType) {
+        this.isAccept = acceptType;
+        this.setUpdatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    }
 
     @Override
     public String toString() {

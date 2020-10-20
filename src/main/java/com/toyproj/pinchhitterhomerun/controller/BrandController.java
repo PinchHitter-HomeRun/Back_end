@@ -22,6 +22,7 @@ public class BrandController {
         this.brandService = brandService;
     }
 
+    // 모든 브랜드 가져오기
     @GetMapping("/")
     public Map<String, List<Brand>> getAllBrand() {
         Map<String, List<Brand>> result = new HashMap<>();
@@ -31,6 +32,7 @@ public class BrandController {
         return result;
     }
 
+    // 카테고리에 속한 브랜드들 가져오기
     @GetMapping("/category/{categoryId}")
     public Map<String, List<Brand>> getCategoryBrand(@PathVariable Long categoryId) {
         Map<String, List<Brand>> result = new HashMap<>();
@@ -40,6 +42,7 @@ public class BrandController {
         return result;
     }
 
+    // 아이디로 브랜드 가져오기
     @GetMapping("/id/{id}")
     public Map<String, Brand> getBrand(@PathVariable Long id) {
         Map<String, Brand> result = new HashMap<>();
@@ -49,6 +52,7 @@ public class BrandController {
         return result;
     }
 
+    // 이름으로 브랜드 가져오기
     @GetMapping("/name/{name}")
     public Map<String, Brand> getBrand(@PathVariable String name) {
         Map<String, Brand> result = new HashMap<>();

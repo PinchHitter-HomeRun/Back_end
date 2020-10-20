@@ -17,6 +17,7 @@ public class CustomerController {
         this.memberService = memberService;
     }
 
+    // 생년월일로 아이디 찾기
     @PostMapping("/")
     public Map<String, String> findLoginId(@RequestParam(value = "birth_day") String birthDay, @RequestParam(value = "name") String name) {
         Map<String, String> result = new HashMap<>();
@@ -26,6 +27,7 @@ public class CustomerController {
         return result;
     }
 
+    // 아이디 사용가능 여부 체크
     @PostMapping("/{requestId}")
     public Map<String, Boolean> checkAvailableId(@PathVariable String requestId) throws MemberException {
         Map<String, Boolean> result = new HashMap<>();

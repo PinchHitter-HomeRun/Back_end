@@ -21,6 +21,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    // 모든 카테고리 가져오기
     @GetMapping("/")
     public Map<String, List<Category>> getAllCategory() {
         Map<String, List<Category>> result = new HashMap<>();
@@ -30,6 +31,7 @@ public class CategoryController {
         return result;
     }
 
+    // 아이디로 카테고리 가져오기
     @GetMapping("/id/{id}")
     public Map<String, Category> getCategory(@PathVariable Long id) {
         Map<String, Category> result = new HashMap<>();
@@ -39,6 +41,7 @@ public class CategoryController {
         return result;
     }
 
+    // 이름으로 카테고리 가져오기
     @GetMapping("/name/{name}")
     public Map<String, Category> getCategory(@PathVariable String name) {
         Map<String, Category> result = new HashMap<>();

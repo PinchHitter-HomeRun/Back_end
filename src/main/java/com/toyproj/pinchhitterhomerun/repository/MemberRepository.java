@@ -6,6 +6,7 @@ import com.toyproj.pinchhitterhomerun.repository.interfaces.IMemberRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 public class MemberRepository implements IMemberRepository {
@@ -47,5 +48,12 @@ public class MemberRepository implements IMemberRepository {
                 .setParameter("name", name)
                 .setParameter("birthDay", birthDay)
                 .getSingleResult();
+    }
+
+    @Override
+    public List<Member> findByBranchId(Long branchId) {
+        return em.createQuery("select m from Member m where m.branch.id = :branchId and m.deletedDate is null", Member.class)
+                .setParameter("branchId", branchId)
+                .getResultList();
     }
 }

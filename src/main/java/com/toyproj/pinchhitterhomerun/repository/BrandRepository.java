@@ -38,8 +38,6 @@ public class BrandRepository implements IBrandRepository {
 
     @Override
     public Brand findById(Long id) {
-        return em.createQuery("select b from Brand b where b.id = :id", Brand.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        return em.find(Brand.class, id);
     }
 }

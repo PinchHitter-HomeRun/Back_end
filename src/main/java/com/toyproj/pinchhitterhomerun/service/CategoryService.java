@@ -22,6 +22,7 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    // 아이디로 카테고리 가져오기
     public Category getCategoryById(Long id) {
         Category category;
 
@@ -34,6 +35,7 @@ public class CategoryService {
         return category;
     }
 
+    // 카테고리 이름으로 카테고리 가져오기
     public Category getCategoryByName(String name) {
         Category category;
 
