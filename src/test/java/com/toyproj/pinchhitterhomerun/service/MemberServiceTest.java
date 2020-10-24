@@ -1,14 +1,8 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.model.MemberJoin;
-import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
-import com.toyproj.pinchhitterhomerun.model.Role;
-import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
-import com.toyproj.pinchhitterhomerun.repository.MemberPasswordHintRepository;
-import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
-import com.toyproj.pinchhitterhomerun.repository.RoleRepository;
+import com.toyproj.pinchhitterhomerun.model.*;
+import com.toyproj.pinchhitterhomerun.repository.*;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
 import org.assertj.core.api.Assertions;
@@ -34,6 +28,8 @@ class MemberServiceTest {
     RoleRepository roleRepository;
     @Autowired
     BranchRepository branchRepository;
+    @Autowired
+    BranchRequestRepository branchRequestRepository;
 
     @BeforeEach
     @Test
@@ -120,13 +116,15 @@ class MemberServiceTest {
     @Test
     public void 힌트_답변_매핑_성공() {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
-        String answer = memberService.getHintAnswer(signedMember.getId());
-        Assertions.assertThat(answer).isEqualTo("안녕");
+        boolean answer = memberService.matchHintAnswer(signedMember.getId(), "안녕");
+        Assertions.assertThat(answer).isTrue();
     }
 
     @Test
     public void 힌트_답변_매핑_실패() {
-
+        Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
+        boolean answer = memberService.matchHintAnswer(signedMember.getId(), "실패");
+        Assertions.assertThat(answer).isFalse();
     }
 
     @Test
@@ -162,7 +160,7 @@ class MemberServiceTest {
 
     @Test
     public void 아이디_찾기_실패() {
-        IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.findLoginId("오장원", "930911"));
+        MemberException e = assertThrows(MemberException.class, () -> memberService.findLoginId("오장원", "930911"));
         Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 사용자 입니다.");
     }
 }

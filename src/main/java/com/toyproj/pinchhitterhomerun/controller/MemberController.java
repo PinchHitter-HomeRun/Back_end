@@ -92,7 +92,7 @@ public class MemberController {
     public Map<String, Boolean> isCorrectAnswer(@PathVariable Long memberId, @RequestParam(value = "answer") String answer) {
         Map<String, Boolean> result = new HashMap<>();
 
-        result.put("result", answer.equals(memberService.getHintAnswer(memberId)));
+        result.put("result", memberService.matchHintAnswer(memberId, answer));
 
         return result;
     }

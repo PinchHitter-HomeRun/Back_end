@@ -24,11 +24,9 @@ public class CategoryService {
 
     // 아이디로 카테고리 가져오기
     public Category getCategoryById(Long id) {
-        Category category;
+        Category category = categoryRepository.findById(id);
 
-        try {
-            category = categoryRepository.findById(id);
-        } catch (Exception e) {
+        if (category == null) {
             throw new CategoryException("유효하지 않는 id 값 입니다.");
         }
 

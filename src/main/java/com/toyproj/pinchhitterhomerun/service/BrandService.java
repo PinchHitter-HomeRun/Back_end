@@ -52,11 +52,9 @@ public class BrandService {
 
     // 아이디로 브랜드 가져오기
     public Brand getBrandById(Long id) {
-        Brand brand;
+        Brand brand = brandRepository.findById(id);
 
-        try {
-            brand = brandRepository.findById(id);
-        } catch (Exception e) {
+        if (brand == null) {
             throw new BrandException("유효하지 않는 id 값 입니다.");
         }
 

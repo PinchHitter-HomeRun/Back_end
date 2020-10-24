@@ -17,9 +17,9 @@ public class BranchController {
     }
 
     // 지점 검색
-    @PostMapping("/")
-    public List<Branch> searchBranch(String city, String sub, String text) {
-        return branchService.searchBranch(city, sub, text);
+    @PostMapping("/{brandId}")
+    public List<Branch> searchBranch(@PathVariable Long brandId, String city, String sub, String text) {
+        return branchService.searchBranch(brandId, city, sub, text);
     }
 
     // 멤버가 속한 지점 가져오기
@@ -29,8 +29,13 @@ public class BranchController {
     }
 
     // 아이디로 지점 가져오기
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public Branch getBranchById(@PathVariable Long id) {
         return branchService.getBranchById(id);
+    }
+
+    @GetMapping("/{brandId}/{name}")
+    public Branch getBranchByName(@PathVariable Long brandId, @PathVariable String name) {
+        return branchService.getBranchByBranchIdAndName(brandId, name);
     }
 }

@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.model.MemberJoin;
@@ -79,7 +80,14 @@ public class MemberService {
 
     // 멤버 정보
     public Member getMemberInfo(Long memberId) {
-        return memberRepository.findById(memberId);
+
+        Member findMember = memberRepository.findById(memberId);
+
+        if (findMember == null) {
+            throw new MemberException("존재하지 않는 회원입니다.");
+        }
+
+        return findMember;
     }
 
     //힌트 리스트
@@ -92,9 +100,9 @@ public class MemberService {
         return memberPasswordHintRepository.findByMemberId(memberId).getHintId();
     }
 
-    // 힌트 답변
-    public String getHintAnswer(Long memberId) {
-        return memberPasswordHintRepository.findByMemberId(memberId).getAnswer();
+    // 힌트 답변 매핑
+    public Boolean matchHintAnswer(Long memberId, String answer) {
+        return memberPasswordHintRepository.findByMemberId(memberId).getAnswer().equals(answer);
     }
 
     // 비밀번호 수정
