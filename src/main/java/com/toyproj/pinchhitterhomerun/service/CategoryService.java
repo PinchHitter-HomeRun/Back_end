@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.service;
 import com.toyproj.pinchhitterhomerun.exception.CategoryException;
 import com.toyproj.pinchhitterhomerun.model.Category;
 import com.toyproj.pinchhitterhomerun.repository.CategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,13 +11,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();

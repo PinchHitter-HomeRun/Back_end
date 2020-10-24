@@ -68,7 +68,7 @@ public class Member extends Base {
         this.phone = phone;
         this.branch = branch;
         this.role = role;
-        this.setCreatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        this.setCreatedDate();
     }
 
     public void updateLastLoginDate() {
@@ -76,11 +76,11 @@ public class Member extends Base {
     }
 
     public void updateUpdatedDate() {
-        this.setUpdatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        this.setUpdatedDate();
     }
 
     public void updateDeletedDate() {
-        this.setDeletedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        this.setDeletedDate();
     }
 
     @Override

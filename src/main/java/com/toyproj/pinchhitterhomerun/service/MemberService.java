@@ -1,12 +1,9 @@
 package com.toyproj.pinchhitterhomerun.service;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.model.MemberJoin;
-import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
-import com.toyproj.pinchhitterhomerun.model.PasswordHint;
+import com.toyproj.pinchhitterhomerun.model.*;
 import com.toyproj.pinchhitterhomerun.repository.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -21,14 +19,6 @@ public class MemberService {
     private final MemberPasswordHintRepository memberPasswordHintRepository;
     private final BranchRepository branchRepository;
     private final RoleRepository roleRepository;
-
-    public MemberService(MemberRepository memberRepository, PasswordHintRepository passwordHintRepository, MemberPasswordHintRepository memberPasswordHintRepository, BranchRepository branchRepository, RoleRepository roleRepository) {
-        this.memberRepository = memberRepository;
-        this.passwordHintRepository = passwordHintRepository;
-        this.memberPasswordHintRepository = memberPasswordHintRepository;
-        this.branchRepository = branchRepository;
-        this.roleRepository = roleRepository;
-    }
 
     // 회원가입
     public Member join(MemberJoin newMember) {
@@ -144,10 +134,4 @@ public class MemberService {
 
         return members;
     }
-
-    //지점에 알바생 등록 신청
-    public void requestToBranchMaster(Long memberId, Long branchId) {
-        
-    }
-
 }

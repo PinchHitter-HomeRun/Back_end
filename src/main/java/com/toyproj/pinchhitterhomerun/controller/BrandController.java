@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.model.Brand;
 import com.toyproj.pinchhitterhomerun.service.BrandService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,14 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/brands")
 public class BrandController {
 
     private final BrandService brandService;
-
-    public BrandController(BrandService brandService) {
-        this.brandService = brandService;
-    }
 
     // 모든 브랜드 가져오기
     @GetMapping("/")

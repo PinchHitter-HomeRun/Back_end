@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.model.Category;
 import com.toyproj.pinchhitterhomerun.service.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,14 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
-
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     // 모든 카테고리 가져오기
     @GetMapping("/")

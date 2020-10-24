@@ -1,11 +1,10 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
-import com.toyproj.pinchhitterhomerun.model.Branch;
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.model.MemberJoin;
-import com.toyproj.pinchhitterhomerun.model.PasswordHint;
+import com.toyproj.pinchhitterhomerun.model.*;
+import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,14 +13,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
-
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final BranchRequestService branchRequestService;
 
     // 회원가입
     @PostMapping("/")
@@ -34,7 +31,7 @@ public class MemberController {
         Member joinedMember = memberService.join(newMember);
 
         if (null != newMember.getBranchId()) {
-            memberService.requestToBranchMaster(joinedMember.getId(), joinedMember.getBranch().getId());
+            branchRequestService.requestToBranchMaster(joinedMember.getId(), joinedMember.getBranch().getId());
         }
 
         Map<String, Member> result = new HashMap<>();
@@ -132,6 +129,8 @@ public class MemberController {
 
         return result;
     }
+
+
 
     @ResponseBody
     @GetMapping("/")

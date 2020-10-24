@@ -1,6 +1,7 @@
 package com.toyproj.pinchhitterhomerun.model;
 
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,9 +18,9 @@ public class BranchRequest extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer memberId;
+    private Long memberId;
 
-    private Integer branchId;
+    private Long branchId;
 
     @Enumerated(EnumType.STRING)
     private AcceptType isAccept;
@@ -30,9 +31,18 @@ public class BranchRequest extends Base {
 //
 //    private LocalDateTime deletedDate;
 
+    public BranchRequest(Long memberId, Long branchId) {
+        this.memberId = memberId;
+        this.branchId = branchId;
+    }
+
     public void setIsAccept(AcceptType acceptType) {
         this.isAccept = acceptType;
-        this.setUpdatedDate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        this.setUpdatedDate();
+    }
+
+    public void softDelete() {
+        this.setDeletedDate();
     }
 
     @Override

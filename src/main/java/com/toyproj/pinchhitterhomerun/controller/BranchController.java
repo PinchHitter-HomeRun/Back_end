@@ -2,19 +2,17 @@ package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.service.BranchService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/branches")
 public class BranchController {
 
     private final BranchService branchService;
-
-    public BranchController(BranchService branchService) {
-        this.branchService = branchService;
-    }
 
     // 지점 검색
     @PostMapping("/{brandId}")

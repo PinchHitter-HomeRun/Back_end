@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Brand;
 import com.toyproj.pinchhitterhomerun.model.Category;
 import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,13 +13,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class BrandService {
 
     private final BrandRepository brandRepository;
-
-    public BrandService(BrandRepository brandRepository) {
-        this.brandRepository = brandRepository;
-    }
 
     public List<Brand> getAllBrand() {
         return brandRepository.findAll();

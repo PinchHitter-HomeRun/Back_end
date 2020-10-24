@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,13 +12,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class BranchService {
 
     private final BranchRepository branchRepository;
-
-    public BranchService(BranchRepository branchRepository) {
-        this.branchRepository = branchRepository;
-    }
 
     // 아이디로 지점 가져오기
     public Branch getBranchById(Long id) {
