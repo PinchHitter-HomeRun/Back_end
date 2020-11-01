@@ -1,9 +1,7 @@
 package com.toyproj.pinchhitterhomerun.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

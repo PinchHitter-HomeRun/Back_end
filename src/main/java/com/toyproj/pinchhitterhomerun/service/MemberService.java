@@ -22,6 +22,12 @@ public class MemberService {
 
     // 회원가입
     public Member join(MemberJoin newMember) {
+        Branch branch = null;
+
+        if (newMember.getBranchId() != null) {
+            branch = branchRepository.findById(newMember.getBranchId());
+        }
+
         Member member = new Member(
                 newMember.getLoginId(),
                 newMember.getPassWord(),
@@ -30,7 +36,7 @@ public class MemberService {
                 newMember.getBirthDay(),
                 newMember.getSex(),
                 newMember.getPhone(),
-                branchRepository.findById(newMember.getBranchId()),
+                branch,
                 roleRepository.findByRoleName(newMember.getRoleName())
         );
 

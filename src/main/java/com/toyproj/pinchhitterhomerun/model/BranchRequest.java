@@ -1,13 +1,10 @@
 package com.toyproj.pinchhitterhomerun.model;
 
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Getter

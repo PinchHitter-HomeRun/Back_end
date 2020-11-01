@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class Branch extends Base{
+public class Branch extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
