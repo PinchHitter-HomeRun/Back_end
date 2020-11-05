@@ -30,6 +30,9 @@ class MemberServiceTest {
     BranchRepository branchRepository;
     @Autowired
     BranchRequestRepository branchRequestRepository;
+    @Autowired
+    BranchRequestService branchRequestService;
+
 
     @BeforeEach
     @Test
@@ -86,8 +89,11 @@ class MemberServiceTest {
 
         Member joinedMember = memberService.join(givenMember);
 
-        Member findMember = memberRepository.findById(joinedMember.getId());
-        Assertions.assertThat(findMember).isEqualTo(joinedMember);
+        BranchRequest request = new BranchRequest(joinedMember.getId(), givenMember.getBranchId());
+
+        BranchRequest findRequest = branchRequestRepository.findByMemberId(joinedMember.getId());
+
+        Assertions.assertThat(findRequest.getMemberId()).isEqualTo(joinedMember.getId());
     }
 
     @Test

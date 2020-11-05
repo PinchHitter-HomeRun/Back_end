@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "branch_request")
 public class BranchRequest extends Base {
 
     @Id
@@ -21,7 +20,7 @@ public class BranchRequest extends Base {
     private Long branchId;
 
     @Enumerated(EnumType.STRING)
-    private AcceptType isAccept;
+    private AcceptType isAccept = null;
 
 //    private LocalDateTime createdDate;
 //

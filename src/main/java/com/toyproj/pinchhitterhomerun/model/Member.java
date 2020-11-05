@@ -66,7 +66,6 @@ public class Member extends Base {
         this.phone = phone;
         this.branch = branch;
         this.role = role;
-        this.setCreatedDate();
     }
 
     public void updateLastLoginDate() {

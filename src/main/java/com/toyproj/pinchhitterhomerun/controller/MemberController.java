@@ -31,7 +31,8 @@ public class MemberController {
         Member joinedMember = memberService.join(newMember);
 
         if (null != newMember.getBranchId()) {
-            branchRequestService.requestToBranchMaster(joinedMember.getId(), joinedMember.getBranch().getId());
+            BranchRequest request = new BranchRequest(joinedMember.getId(), joinedMember.getBranch().getId());
+            branchRequestService.requestToBranchMaster(request);
         }
 
         Map<String, Member> result = new HashMap<>();

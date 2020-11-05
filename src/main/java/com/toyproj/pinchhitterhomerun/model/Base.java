@@ -15,9 +15,9 @@ public class Base {
 
     private LocalDateTime deletedDate;
 
-    protected void setCreatedDate() {
-        this.createdDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
+//    protected void setCreatedDate() {
+//        this.createdDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//    }
 
     protected void setUpdatedDate() {
         this.updatedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();

@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class Branch extends Base {
     @Id

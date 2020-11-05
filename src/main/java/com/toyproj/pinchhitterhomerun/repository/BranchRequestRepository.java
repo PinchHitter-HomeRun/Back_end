@@ -23,9 +23,7 @@ public class BranchRequestRepository implements IBranchRequestRepository {
 
     @Override
     public BranchRequest findById(Long id) {
-        return em.createQuery("select br from BranchRequest br where br.id = :id and br.deletedDate is null", BranchRequest.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        return em.find(BranchRequest.class, id);
     }
 
     @Override

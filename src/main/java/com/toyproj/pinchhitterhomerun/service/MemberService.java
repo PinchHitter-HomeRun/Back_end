@@ -19,14 +19,10 @@ public class MemberService {
     private final MemberPasswordHintRepository memberPasswordHintRepository;
     private final BranchRepository branchRepository;
     private final RoleRepository roleRepository;
+    private final BranchRequestService branchRequestService;
 
     // 회원가입
     public Member join(MemberJoin newMember) {
-        Branch branch = null;
-
-        if (newMember.getBranchId() != null) {
-            branch = branchRepository.findById(newMember.getBranchId());
-        }
 
         Member member = new Member(
                 newMember.getLoginId(),
@@ -36,13 +32,19 @@ public class MemberService {
                 newMember.getBirthDay(),
                 newMember.getSex(),
                 newMember.getPhone(),
-                branch,
+                null,
                 roleRepository.findByRoleName(newMember.getRoleName())
         );
 
         MemberPasswordHint memberPasswordHint = new MemberPasswordHint(member, passwordHintRepository.findById(newMember.getHintId()), newMember.getAnswer());
         memberRepository.save(member);
         memberPasswordHintRepository.save(memberPasswordHint);
+
+        if (newMember.getBranchId() != null) {
+            BranchRequest request = new BranchRequest(member.getId(), newMember.getBranchId());
+            branchRequestService.requestToBranchMaster(request);
+        }
+
         return member;
     }
 

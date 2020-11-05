@@ -1,25 +1,43 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
+import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
 import com.toyproj.pinchhitterhomerun.model.BranchRequest;
+import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.repository.BranchRequestRepository;
+import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class BranchRequestService {
 
     private final BranchRequestRepository branchRequestRepository;
+    private final MemberRepository memberRepository;
 
     // 지점에 알바생 등록 신청
-    public void requestToBranchMaster(Long memberId, Long branchId) {
-        BranchRequest request = new BranchRequest(memberId, branchId);
+    public void requestToBranchMaster(BranchRequest request) {
 
-        branchRequestRepository.save(request);
+        Member findMember = memberRepository.findById(request.getMemberId());
+
+        if (findMember.getBranch() != null) {
+            throw new BranchRequestException("이미 " + findMember.getBranch().getName() + "에 속해있습니다.");
+        }
+
+        try {
+            BranchRequest findRequest = branchRequestRepository.findByMemberId(request.getMemberId());
+        } catch (Exception e) {
+            branchRequestRepository.save(request);
+            return;
+        }
+
+        throw new BranchRequestException("이미 신청하였습니다.");
     }
 
     // 지점 신청 취소

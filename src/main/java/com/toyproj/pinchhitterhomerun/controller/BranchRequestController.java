@@ -21,7 +21,9 @@ public class BranchRequestController {
     public Map<String, Boolean> requestToBranchMaster(@RequestParam Long memberId, @PathVariable Long branchId) {
         Map<String, Boolean> result = new HashMap<>();
 
-        branchRequestService.requestToBranchMaster(memberId, branchId);
+        BranchRequest request = new BranchRequest(memberId, branchId);
+
+        branchRequestService.requestToBranchMaster(request);
 
         result.put("result", true);
 
