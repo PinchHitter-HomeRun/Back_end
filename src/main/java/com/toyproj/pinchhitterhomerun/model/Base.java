@@ -1,9 +1,6 @@
 package com.toyproj.pinchhitterhomerun.model;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

@@ -23,7 +23,9 @@ public class Branch extends Base {
 
     private String name;
 
-    private String address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
 //    private LocalDateTime createdDate;
 //

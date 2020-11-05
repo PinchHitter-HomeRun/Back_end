@@ -1,6 +1,7 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
 import com.toyproj.pinchhitterhomerun.model.Branch;
+import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBranchRepository;
 import org.springframework.stereotype.Repository;
 
@@ -30,19 +31,20 @@ public class BranchRepository implements IBranchRepository {
     }
 
     @Override
-    public Branch findByAddress(String address) {
-        return em.createQuery("select b from Branch b where b.address = :address", Branch.class)
-                .setParameter("address", address)
-                .getSingleResult();
-    }
+    public List<Branch> searchByKeywordWithBrandId(Long brandId, String city, String gu, String branchNameOrNull) {
+        if (branchNameOrNull == null) {
+            return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.address.city = :city and b.address.gu = :gu", Branch.class)
+                    .setParameter("brandId", brandId)
+                    .setParameter("city", city)
+                    .setParameter("gu", gu)
+                    .getResultList();
+        }
 
-    @Override
-    public List<Branch> searchByKeywordWithBrandId(Long brandId, String city, String sub, String text) {
-        return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.address like :city and b.address like :sub and b.address like :text", Branch.class)
+        return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.address.city = :city and b.address.gu = :gu and b.name = :branchName", Branch.class)
                 .setParameter("brandId", brandId)
-                .setParameter("city", "%" + city + "%")
-                .setParameter("sub", "%" + sub + "%")
-                .setParameter("text", "%" + text + "%")
+                .setParameter("city", city)
+                .setParameter("gu", gu)
+                .setParameter("branchName", branchNameOrNull)
                 .getResultList();
     }
 
@@ -55,7 +57,7 @@ public class BranchRepository implements IBranchRepository {
 
     @Override
     public Branch findByMemberId(Long memberId) {
-        return em.createQuery("select b from Branch b where b.id = (select m.branch.id from Member m where m.id = :memberId)", Branch.class)
+        return em.createQuery("select m.branch from Member m where m.id = :memberId", Branch.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();
     }

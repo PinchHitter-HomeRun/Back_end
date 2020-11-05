@@ -40,11 +40,11 @@ class BranchServiceTest {
 
     @Test
     public void 지점명으로_검색_성공() {
-        String address = "서울특별시 강남구 테헤란로4길46, B110호(역삼1동 826-37, 쌍용플래티넘밸류)";
+        String address = "서울시 강남구 테헤란로4길46, B110호(역삼1동 826-37, 쌍용플래티넘밸류)";
 
         Branch branch = branchRepository.findByBrandAndName(10L, "역삼태극점");
 
-        Assertions.assertThat(branch.getAddress()).isEqualTo(address);
+        Assertions.assertThat(branch.getAddress().getFullAddress()).isEqualTo(address);
     }
 
     @Test
@@ -54,40 +54,55 @@ class BranchServiceTest {
     }
 
     @Test
-    public void 주소로_지점_가져오기_성공() {
-        String branchName = "역삼성홍타워점";
-
-        Branch branch = branchRepository.findByAddress("서울특별시 강남구 테헤란로 138 1층");
-
-        Assertions.assertThat(branch.getName()).isEqualTo(branchName);
-    }
-
-    @Test
-    public void 주소로_지점_가져오기_실패() {
-        BranchException e = assertThrows(BranchException.class, () -> branchService.getBranchByAddress("서울특별시 강남구 테헤란로 138 2층"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 지점입니다.");
-    }
-
-    @Test
-    public void 시_서브_주소와_검색어로_지점_검색() {
+    public void 시_구로_지점_검색() {
         List<String> branchNames = new ArrayList<String>() {
             {
+                add("강남역1호점");
+                add("강남역2호점");
+                add("강남역3호점");
                 add("강남N타워점");
+                add("강남YBM점");
+                add("강남갤러리점");
+                add("강남리츠칼튼점");
                 add("강남메트로점");
                 add("강남본점");
+                add("강남사랑점");
+                add("강남쉐르빌점");
+                add("강남시티힐점");
                 add("강남쌍용점");
+                add("강남아트점");
                 add("강남타운점");
                 add("강남태강점");
+                add("강남태양점");
+                add("역삼2점");
                 add("역삼덕원점");
+                add("역삼명진점");
+                add("역삼성우점");
+                add("역삼쌍마점");
+                add("역삼아워홈점");
                 add("역삼이담점");
                 add("역삼태극점");
+                add("역삼하나점");
+                add("역삼행운점");
+                add("역삼효성점");
+                add("역삼흑룡점");
             }
         };
-        List<Branch> branches = branchRepository.searchByKeywordWithBrandId(10L, "서울특별시", "강남구", "테헤란로");
 
-        for (int i = 0; i < branchNames.size(); i++) {
+        List<Branch> branches = branchRepository.searchByKeywordWithBrandId(10L, "서울시", "강남구", null);
+
+        for (int i = 0; i < branches.size(); i++) {
             Assertions.assertThat(branches.get(i).getName()).isEqualTo(branchNames.get(i));
         }
+    }
+
+    @Test
+    public void 시_구_지점이름으로_지점_검색() {
+        String branchName = "강남본점";
+
+        List<Branch> branches = branchRepository.searchByKeywordWithBrandId(10L, "서울시", "강남구", "강남본점");
+
+        Assertions.assertThat(branches.get(0).getName()).isEqualTo(branchName);
     }
 
     @Test

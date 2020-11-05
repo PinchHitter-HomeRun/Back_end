@@ -70,7 +70,24 @@ class MemberServiceTest {
 
     @Test
     public void 회원_가입_지점_있음() {
+        MemberJoin givenMember = MemberJoin.builder()
+                .loginId("ojang@ddddd.com")
+                .passWord("7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9")
+                .sns(SnsType.None)
+                .name("홍길동")
+                .birthDay("930903")
+                .sex(SexType.Male)
+                .phone("01012345678")
+                .branchId(1L)
+                .roleName("employee")
+                .hintId(1L)
+                .answer("안녕")
+                .build();
 
+        Member joinedMember = memberService.join(givenMember);
+
+        Member findMember = memberRepository.findById(joinedMember.getId());
+        Assertions.assertThat(findMember).isEqualTo(joinedMember);
     }
 
     @Test

@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "branch_request")
 public class BranchRequest extends Base {
 
     @Id
