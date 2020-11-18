@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,7 +30,6 @@ public class Branch extends Base {
 //    private LocalDateTime createdDate;
 //
 //    private LocalDateTime deletedDate;
-
 
     @Override
     public String toString() {

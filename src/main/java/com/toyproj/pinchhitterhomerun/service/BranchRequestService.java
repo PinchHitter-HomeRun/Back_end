@@ -25,9 +25,11 @@ public class BranchRequestService {
     public void requestToBranchMaster(BranchRequest request) {
 
         Member findMember = memberRepository.findById(request.getMemberId());
-
+//        System.out.println(findMember.toString());
         if (findMember.getBranch() != null) {
-            throw new BranchRequestException("이미 " + findMember.getBranch().getName() + "에 속해있습니다.");
+            System.out.println("이미 " + findMember.getBranch().getName() + "에 속해있습니다.");
+            String branchName = findMember.getBranch().getName();
+            throw new BranchRequestException("이미 " + branchName + "에 속해있습니다.");
         }
 
         try {

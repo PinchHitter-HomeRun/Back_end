@@ -68,6 +68,10 @@ public class Member extends Base {
         this.role = role;
     }
 
+    public Member(Long id) {
+        this.id = id;
+    }
+
     public void updateLastLoginDate() {
         this.lastLoginDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
