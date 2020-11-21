@@ -1,6 +1,7 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
+import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import org.assertj.core.api.Assertions;
@@ -19,17 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class BranchServiceTest {
 
     @Autowired
-    BranchRepository branchRepository;
-    @Autowired
     BranchService branchService;
 
     @Test
     public void 아이디로_지점_가져오기_성공() {
-        String branchName = "강남바로세움점";
+        Long id = 1L;
 
-        Branch branch = branchRepository.findById(1L);
+        Branch branch = branchService.getBranchById(id);
 
-        Assertions.assertThat(branch.getName()).isEqualTo(branchName);
+        Assertions.assertThat(branch.getName()).isEqualTo("강남바로세움점");
     }
 
     @Test
@@ -39,10 +38,10 @@ class BranchServiceTest {
     }
 
     @Test
-    public void 지점명으로_검색_성공() {
+    public void 주소로_검색_성공() {
         String address = "서울시 강남구 테헤란로4길46, B110호(역삼1동 826-37, 쌍용플래티넘밸류)";
 
-        Branch branch = branchRepository.findByBrandAndName(10L, "역삼태극점");
+        Branch branch = branchService.getBranchByAddress(address);
 
         Assertions.assertThat(branch.getAddress().getFullAddress()).isEqualTo(address);
     }
@@ -89,7 +88,7 @@ class BranchServiceTest {
             }
         };
 
-        List<Branch> branches = branchRepository.searchByKeywordWithBrandId(10L, "서울시", "강남구", null);
+        List<Branch> branches = branchService.searchBranch(10L, "서울시", "강남구", null);
 
         for (int i = 0; i < branches.size(); i++) {
             Assertions.assertThat(branches.get(i).getName()).isEqualTo(branchNames.get(i));
@@ -100,7 +99,7 @@ class BranchServiceTest {
     public void 시_구_지점이름으로_지점_검색() {
         String branchName = "강남본점";
 
-        List<Branch> branches = branchRepository.searchByKeywordWithBrandId(10L, "서울시", "강남구", "강남본점");
+        List<Branch> branches = branchService.searchBranch(10L, "서울시", "강남구", "강남본점");
 
         Assertions.assertThat(branches.get(0).getName()).isEqualTo(branchName);
     }
@@ -108,94 +107,94 @@ class BranchServiceTest {
     @Test
     public void 브랜드에_속한_모든_지점_가져오기_성공() {
         int resultCount = 1;
-        List<Branch> branches = branchRepository.findByBrandId(1L);
+        List<Branch> branches = branchService.getBranchByBrandId(1L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 12;
-        branches = branchRepository.findByBrandId(2L);
+        branches = branchService.getBranchByBrandId(2L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 7;
-        branches = branchRepository.findByBrandId(3L);
+        branches = branchService.getBranchByBrandId(3L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 2;
-        branches = branchRepository.findByBrandId(4L);
+        branches = branchService.getBranchByBrandId(4L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 3;
-        branches = branchRepository.findByBrandId(5L);
+        branches = branchService.getBranchByBrandId(5L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 1;
-        branches = branchRepository.findByBrandId(6L);
+        branches = branchService.getBranchByBrandId(6L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 2;
-        branches = branchRepository.findByBrandId(7L);
+        branches = branchService.getBranchByBrandId(7L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 1;
-        branches = branchRepository.findByBrandId(8L);
+        branches = branchService.getBranchByBrandId(8L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 22;
-        branches = branchRepository.findByBrandId(9L);
+        branches = branchService.getBranchByBrandId(9L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 29;
-        branches = branchRepository.findByBrandId(10L);
+        branches = branchService.getBranchByBrandId(10L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 6;
-        branches = branchRepository.findByBrandId(11L);
+        branches = branchService.getBranchByBrandId(11L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 8;
-        branches = branchRepository.findByBrandId(12L);
+        branches = branchService.getBranchByBrandId(12L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 0;
-        branches = branchRepository.findByBrandId(13L);
+        branches = branchService.getBranchByBrandId(13L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 1;
-        branches = branchRepository.findByBrandId(14L);
+        branches = branchService.getBranchByBrandId(14L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 2;
-        branches = branchRepository.findByBrandId(15L);
+        branches = branchService.getBranchByBrandId(15L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 8;
-        branches = branchRepository.findByBrandId(16L);
+        branches = branchService.getBranchByBrandId(16L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 2;
-        branches = branchRepository.findByBrandId(17L);
+        branches = branchService.getBranchByBrandId(17L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 1;
-        branches = branchRepository.findByBrandId(18L);
+        branches = branchService.getBranchByBrandId(18L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
 
         resultCount = 2;
-        branches = branchRepository.findByBrandId(19L);
+        branches = branchService.getBranchByBrandId(19L);
         Assertions.assertThat(branches.size()).isEqualTo(resultCount);
     }
 
     @Test
     public void 브랜드에_속한_모든_지점_가져오기_실패() {
-        BranchException e = assertThrows(BranchException.class,
+        BrandException e = assertThrows(BrandException.class,
                 () -> branchService.getBranchByBrandId(9999L));
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 브랜드 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 브랜드 id입니다.");
     }
 
     @Test
     public void 사용자가_속한_지점_가져오기_지점있음() {
         String branchName= "역삼초교사거리점";
 
-        Branch branch = branchRepository.findByMemberId(543L);
+        Branch branch = branchService.getMemberBranch(543L);
 
         Assertions.assertThat(branch.getName()).isEqualTo(branchName);
     }

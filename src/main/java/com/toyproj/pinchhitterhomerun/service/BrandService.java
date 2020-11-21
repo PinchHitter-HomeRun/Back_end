@@ -53,7 +53,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id);
 
         if (brand == null) {
-            throw new BrandException("유효하지 않는 id 값 입니다.");
+            throw new BrandException("유효하지 않는 브랜드 id입니다.");
         }
 
         return brand;

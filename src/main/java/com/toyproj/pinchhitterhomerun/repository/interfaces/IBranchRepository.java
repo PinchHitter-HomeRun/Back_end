@@ -12,5 +12,6 @@ public interface IBranchRepository {
     List<Branch> searchByKeywordWithBrandId(Long brandId, String city, String sub, String text);
     List<Branch> findByBrandId(Long brandId);
     Branch findByMemberId(Long memberId);
-
+    Branch findByName(String name);
+    Branch findByAddress(String address);
 }

@@ -90,7 +90,7 @@ class BrandServiceTest {
     public void id로_브랜드_가져오기_실패() {
         BrandException e = assertThrows(BrandException.class, () -> brandService.getBrandById(20L));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 id 값 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 브랜드 id입니다.");
     }
 
     @Test

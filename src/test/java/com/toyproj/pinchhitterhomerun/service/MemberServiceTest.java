@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -21,36 +23,13 @@ class MemberServiceTest {
     @Autowired
     MemberService memberService;
     @Autowired
-    MemberRepository memberRepository;
-    @Autowired
     MemberPasswordHintRepository memberPasswordHintRepository;
     @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    BranchRepository branchRepository;
-    @Autowired
-    BranchRequestRepository branchRequestRepository;
-    @Autowired
     BranchRequestService branchRequestService;
-
 
     @BeforeEach
     @Test
     public void 회원_가입_지점_없음() {
-
-//        Member member = new Member(
-//                "ojang@naver.com",
-//                "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9",
-//                SnsType.None,
-//                "홍길동",
-//                "930903",
-//                SexType.Male,
-//                "01012345678",
-//                null,
-//                roleRepository.findByRoleName("employee"),
-//                null
-//        );
-
         MemberJoin givenMember = MemberJoin.builder()
                 .loginId("ojang@naver.com")
                 .passWord("7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9")
@@ -67,8 +46,9 @@ class MemberServiceTest {
 
         Member joinedMember = memberService.join(givenMember);
 
-        Member findMember = memberRepository.findById(joinedMember.getId());
-        Assertions.assertThat(findMember).isEqualTo(joinedMember);
+        Member findMember = memberService.getMemberInfo(joinedMember.getId());
+
+        Assertions.assertThat(joinedMember.getId()).isEqualTo(findMember.getId());
     }
 
     @Test
@@ -89,11 +69,16 @@ class MemberServiceTest {
 
         Member joinedMember = memberService.join(givenMember);
 
-        BranchRequest request = new BranchRequest(joinedMember.getId(), givenMember.getBranchId());
+        List<BranchRequest> findRequest = branchRequestService.getBranchRequest(givenMember.getBranchId());
 
-        BranchRequest findRequest = branchRequestRepository.findByMemberId(joinedMember.getId());
+        for (BranchRequest branchRequest : findRequest) {
+            if (branchRequest.getMemberId().equals(joinedMember.getId())) {
+                assertTrue(true);
+                return;
+            }
+        }
 
-        Assertions.assertThat(findRequest.getMemberId()).isEqualTo(joinedMember.getId());
+        fail();
     }
 
     @Test
@@ -153,16 +138,14 @@ class MemberServiceTest {
     @Test
     public void 탈퇴() throws MemberException {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
-        Member leaveMember = memberRepository.findById(signedMember.getId());
-        leaveMember.updateDeletedDate();
-        Assertions.assertThat(memberRepository.findById(signedMember.getId()).getDeletedDate()).isNotNull();
+        memberService.leave(signedMember.getId());
+        Assertions.assertThat(memberService.getMemberInfo(signedMember.getId()).getDeletedDate()).isNotNull();
     }
 
     @Test
     public void 탈퇴_사용자_로그인() {
         Member signedMember = memberService.signIn("ojang@naver.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9");
-        Member leaveMember = memberRepository.findById(signedMember.getId());
-        leaveMember.updateDeletedDate();
+        memberService.leave(signedMember.getId());
         MemberException e = assertThrows(MemberException.class,
                 () -> memberService.signIn("ojang@naver.com.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9"));
         Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");

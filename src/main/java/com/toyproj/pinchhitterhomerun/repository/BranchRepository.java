@@ -1,11 +1,13 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
+import com.toyproj.pinchhitterhomerun.model.Address;
 import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBranchRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -60,5 +62,25 @@ public class BranchRepository implements IBranchRepository {
         return em.createQuery("select m.branch from Member m where m.id = :memberId", Branch.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();
+    }
+
+    @Override
+    public Branch findByName(String name) {
+        return em.createQuery("select b from Branch b where b.name = :name", Branch.class)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+
+    @Override
+    public Branch findByAddress(String address) {
+        List<Branch> branches = em.createQuery("select b from Branch b", Branch.class).getResultList();
+
+        for (Branch branch : branches) {
+            if (branch.getAddress().getFullAddress().equals(address)) {
+                return branch;
+            }
+        }
+
+        return null;
     }
 }
