@@ -28,14 +28,14 @@ public class BranchRequestRepository implements IBranchRequestRepository {
 
     @Override
     public List<BranchRequest> findByBranchId(Long branchId) {
-        return em.createQuery("select br from BranchRequest br where br.branchId = :branchId and br.deletedDate is null", BranchRequest.class)
+        return em.createQuery("select br from BranchRequest br where br.branchId = :branchId and br.updatedDate is null and br.deletedDate is null", BranchRequest.class)
                 .setParameter("branchId", branchId)
                 .getResultList();
     }
 
     @Override
     public BranchRequest findByMemberId(Long memberId) {
-        return em.createQuery("select br from BranchRequest br where br.memberId = :memberId and br.deletedDate is null", BranchRequest.class)
+        return em.createQuery("select br from BranchRequest br where br.memberId = :memberId and br.updatedDate is null and br.deletedDate is null", BranchRequest.class)
                 .setParameter("memberId", memberId)
                 .getSingleResult();
     }

@@ -1,7 +1,9 @@
 package com.toyproj.pinchhitterhomerun.exception;
 
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
+
 public class CategoryException extends RuntimeException{
-    public CategoryException(String message) {
-        super(message);
+    public CategoryException(ErrorMessage errorMessage) {
+        super(errorMessage.getMessage());
     }
 }

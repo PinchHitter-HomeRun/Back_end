@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.CategoryException;
 import com.toyproj.pinchhitterhomerun.model.Category;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ class CategoryServiceTest {
     public void id_값으로_카테고리_가져오기_실패() {
         CategoryException e = assertThrows(CategoryException.class, () -> categoryService.getCategoryById(6L));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 id 값 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.CATEGORY_NOT_EXIST.getMessage());
     }
 
     @Test
@@ -72,7 +73,7 @@ class CategoryServiceTest {
     public void 이름으로_카테고리_가져오기_실패() {
         CategoryException e = assertThrows(CategoryException.class, () -> categoryService.getCategoryByName("오류"));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 name 값 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.CATEGORY_NOT_EXIST.getMessage());
     }
 
 }

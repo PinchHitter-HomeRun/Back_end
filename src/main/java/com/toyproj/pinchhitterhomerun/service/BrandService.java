@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Brand;
 import com.toyproj.pinchhitterhomerun.model.Category;
 import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class BrandService {
         categories = brandRepository.findByCategoryId(categoryId);
 
         if (categories.size() < 1) {
-            throw new BrandException("유효하지 않는 Category id 입니다.");
+            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
         }
 
         return categories;
@@ -42,7 +43,7 @@ public class BrandService {
         try {
             brand = brandRepository.findByName(name);
         } catch (Exception e) {
-            throw new BrandException("존재하지 않는 브랜드명입니다.");
+            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
         }
 
         return brand;
@@ -53,7 +54,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id);
 
         if (brand == null) {
-            throw new BrandException("유효하지 않는 브랜드 id입니다.");
+            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
         }
 
         return brand;

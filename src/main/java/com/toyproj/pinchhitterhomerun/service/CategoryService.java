@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.service;
 import com.toyproj.pinchhitterhomerun.exception.CategoryException;
 import com.toyproj.pinchhitterhomerun.model.Category;
 import com.toyproj.pinchhitterhomerun.repository.CategoryRepository;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id);
 
         if (category == null) {
-            throw new CategoryException("유효하지 않는 id 값 입니다.");
+            throw new CategoryException(ErrorMessage.CATEGORY_NOT_EXIST);
         }
 
         return category;
@@ -38,7 +39,7 @@ public class CategoryService {
         try{
             category = categoryRepository.findByName(name);
         } catch (Exception e) {
-            throw new CategoryException("유효하지 않는 name 값 입니다.");
+            throw new CategoryException(ErrorMessage.CATEGORY_NOT_EXIST);
         }
 
         return category;

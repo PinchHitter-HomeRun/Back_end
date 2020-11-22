@@ -1,8 +1,10 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.*;
 import com.toyproj.pinchhitterhomerun.repository.*;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class MemberService {
             return true;
         }
 
-        throw new MemberException("이미 사용중인 아이디입니다.");
+        throw new MemberException(ErrorMessage.MEMBER_ID_ALREADY_USED);
     }
 
     // 로그인
@@ -70,7 +72,7 @@ public class MemberService {
             }
             signMember.updateLastLoginDate();
         } catch (Exception e) {
-            throw new MemberException("아이디 혹은 비밀번호가 잘못 되었습니다.");
+            throw new MemberException(ErrorMessage.MEMBER_LOGIN_FAILED);
         }
 
         return signMember;
@@ -82,7 +84,7 @@ public class MemberService {
         Member findMember = memberRepository.findById(memberId);
 
         if (findMember == null) {
-            throw new MemberException("존재하지 않는 회원입니다.");
+            throw new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
         return findMember;
@@ -124,22 +126,23 @@ public class MemberService {
         try {
             foundMember = memberRepository.findLoginIdByInfo(name, birthDay);
         } catch (Exception e) {
-            throw new MemberException("존재하지 않는 사용자 입니다.");
+            throw new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
         return foundMember.getLoginId();
     }
+    
+    // 멤버가 속한 지점
+    public Branch getMemberBranch(Long memberId) {
+        Branch branch;
 
-    // 지점에 속한 모든 인원 찾기
-    public List<Member> getBranchMembers(Long branchId) {
-        List<Member> members;
-
-        members = memberRepository.findByBranchId(branchId);
-
-        if (members.size() == 0) {
-            throw new MemberException("존재하지 않는 지점 입니다.");
+        try {
+            branch = branchRepository.findByMemberId(memberId);
+        } catch (Exception e) {
+            throw new MemberException(ErrorMessage.MEMBER_BRANCH_NOT_EXIST);
         }
 
-        return members;
+        return branch;
     }
+
 }

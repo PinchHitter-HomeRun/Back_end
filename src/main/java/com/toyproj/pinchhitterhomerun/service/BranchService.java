@@ -2,9 +2,13 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.Branch;
+import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
+import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +22,14 @@ public class BranchService {
 
     private final BranchRepository branchRepository;
     private final BrandService brandService;
+    private final MemberRepository memberRepository;
 
     // 아이디로 지점 가져오기
     public Branch getBranchById(Long id) {
         Branch branch = branchRepository.findById(id);
 
         if (branch == null) {
-            throw new BranchException("존재하지 않는 지점입니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
         return branch;
@@ -37,7 +42,7 @@ public class BranchService {
         try {
             branch = branchRepository.findByBrandAndName(brandId, name);
         } catch (Exception e) {
-            throw new BranchException("존재하지 않는 지점입니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
         return branch;
@@ -49,7 +54,7 @@ public class BranchService {
         try {
             branch = branchRepository.findByName(name);
         } catch (Exception e) {
-            throw new BranchException("존재하지 않는 지점입니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
         return branch;
@@ -62,7 +67,7 @@ public class BranchService {
         try {
             branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, branchName);
         } catch (Exception e) {
-            throw new BranchException("조회된 지점이 없습니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
         }
 
         return branches;
@@ -75,7 +80,7 @@ public class BranchService {
         try {
             branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, null);
         } catch (Exception e) {
-            throw new BranchException("조회된 지점이 없습니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
         }
 
         return branches;
@@ -94,19 +99,6 @@ public class BranchService {
         return branches;
     }
 
-    // 사용자의 지점 가져오기
-    public Branch getMemberBranch(Long memberId) {
-        Branch branch;
-
-        try {
-            branch = branchRepository.findByMemberId(memberId);
-        } catch (Exception e) {
-            throw new BranchException("사용자가 속한 지점이 없습니다.");
-        }
-
-        return branch;
-    }
-
     // 주소로 지점 가져오기
     public Branch getBranchByAddress(String address) {
         Branch branch;
@@ -114,9 +106,22 @@ public class BranchService {
         try {
             branch = branchRepository.findByAddress(address);
         } catch (Exception e) {
-            throw new BranchException("해당 주소를 가진 지점이 없습니다.");
+            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
         }
 
         return branch;
+    }
+
+    // 지점에 속한 모든 인원 찾기
+    public List<Member> getBranchMembers(Long branchId) {
+        List<Member> members;
+
+        members = memberRepository.findByBranchId(branchId);
+
+        if (members.size() == 0) {
+            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
+        }
+
+        return members;
     }
 }

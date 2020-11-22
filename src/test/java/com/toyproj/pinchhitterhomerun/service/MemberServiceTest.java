@@ -1,8 +1,10 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.*;
 import com.toyproj.pinchhitterhomerun.repository.*;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
 import org.assertj.core.api.Assertions;
@@ -26,6 +28,8 @@ class MemberServiceTest {
     MemberPasswordHintRepository memberPasswordHintRepository;
     @Autowired
     BranchRequestService branchRequestService;
+    @Autowired
+    BranchService branchService;
 
     @BeforeEach
     @Test
@@ -85,7 +89,7 @@ class MemberServiceTest {
     public void 중복_체크_중복() {
         MemberException e = assertThrows(MemberException.class,
                 () -> memberService.isAvailable("ojang@naver.com"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("이미 사용중인 아이디입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.MEMBER_ID_ALREADY_USED.getMessage());
     }
 
     @Test
@@ -104,7 +108,7 @@ class MemberServiceTest {
     public void 로그인_실패() {
         MemberException e = assertThrows(MemberException.class,
                 () -> memberService.signIn("ojang@naver.com", "ojang!!"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.MEMBER_LOGIN_FAILED.getMessage());
     }
 
     @Test
@@ -148,7 +152,7 @@ class MemberServiceTest {
         memberService.leave(signedMember.getId());
         MemberException e = assertThrows(MemberException.class,
                 () -> memberService.signIn("ojang@naver.com.com", "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("아이디 혹은 비밀번호가 잘못 되었습니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.MEMBER_LOGIN_FAILED.getMessage());
     }
 
     @Test
@@ -167,6 +171,22 @@ class MemberServiceTest {
     @Test
     public void 아이디_찾기_실패() {
         MemberException e = assertThrows(MemberException.class, () -> memberService.findLoginId("오장원", "930911"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 사용자 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.MEMBER_NOT_EXIST.getMessage());
+    }
+
+    @Test
+    public void 사용자가_속한_지점_가져오기_지점있음() {
+        String branchName= "역삼초교사거리점";
+
+        Branch branch = memberService.getMemberBranch(543L);
+
+        Assertions.assertThat(branch.getName()).isEqualTo(branchName);
+    }
+
+    @Test
+    public void 사용자가_속한_지점_가져오기_지점없음() {
+        MemberException e = assertThrows(MemberException.class,
+                () -> memberService.getMemberBranch(7L));
+        Assertions.assertThat(e.getMessage()).isEqualTo("해당 회원이 속한 지점이 없습니다.");
     }
 }

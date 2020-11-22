@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.service;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Brand;
 import com.toyproj.pinchhitterhomerun.model.Category;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ class BrandServiceTest {
     public void 카테고리_id로_브랜드_가져오기_실패() {
         BrandException e = assertThrows(BrandException.class, () -> brandService.getBrandByCategoryId(6L));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 Category id 입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRAND_NOT_EXIST.getMessage());
     }
 
     @Test
@@ -90,7 +91,7 @@ class BrandServiceTest {
     public void id로_브랜드_가져오기_실패() {
         BrandException e = assertThrows(BrandException.class, () -> brandService.getBrandById(20L));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 브랜드 id입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRAND_NOT_EXIST.getMessage());
     }
 
     @Test
@@ -108,6 +109,6 @@ class BrandServiceTest {
     public void 이름으로_브랜드_가져오기_실패() {
         BrandException e = assertThrows(BrandException.class, () -> brandService.getBrandByName("오류"));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 브랜드명입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRAND_NOT_EXIST.getMessage());
     }
 }

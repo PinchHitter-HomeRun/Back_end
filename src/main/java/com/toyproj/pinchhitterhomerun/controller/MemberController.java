@@ -121,17 +121,11 @@ public class MemberController {
         return result;
     }
 
-    // 지점에 속한 사용자들 가져오기
-    @GetMapping("/branch/{branchId}")
-    public Map<String, List<Member>> getBranchMembers(@PathVariable Long branchId) {
-        Map<String, List<Member>> result = new HashMap<>();
-
-        result.put("result", memberService.getBranchMembers(branchId));
-
-        return result;
+    // 멤버가 속한 지점 가져오기
+    @GetMapping("/member/{memberId}")
+    public Branch getMemberBranch(@PathVariable Long memberId) {
+        return memberService.getMemberBranch(memberId);
     }
-
-
 
     @ResponseBody
     @GetMapping("/")

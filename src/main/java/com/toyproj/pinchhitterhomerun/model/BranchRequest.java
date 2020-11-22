@@ -38,7 +38,7 @@ public class BranchRequest extends Base {
         this.setUpdatedDate();
     }
 
-    public void softDelete() {
+    public void delete() {
         this.setDeletedDate();
     }
 

@@ -3,7 +3,9 @@ package com.toyproj.pinchhitterhomerun.service;
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.model.Branch;
+import com.toyproj.pinchhitterhomerun.model.Member;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ class BranchServiceTest {
     @Test
     public void 아이디로_지점_가져오기_실패() {
         BranchException e = assertThrows(BranchException.class, () -> branchService.getBranchById(1000L));
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 지점입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRANCH_NOT_EXIST.getMessage());
     }
 
     @Test
@@ -49,7 +51,7 @@ class BranchServiceTest {
     @Test
     public void 지점명으로_검색_실패() {
         BranchException e = assertThrows(BranchException.class, () -> branchService.getBranchByBranchIdAndName(1L,"장원지점"));
-        Assertions.assertThat(e.getMessage()).isEqualTo("존재하지 않는 지점입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRANCH_NOT_EXIST.getMessage());
     }
 
     @Test
@@ -187,22 +189,13 @@ class BranchServiceTest {
     public void 브랜드에_속한_모든_지점_가져오기_실패() {
         BrandException e = assertThrows(BrandException.class,
                 () -> branchService.getBranchByBrandId(9999L));
-        Assertions.assertThat(e.getMessage()).isEqualTo("유효하지 않는 브랜드 id입니다.");
+        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.BRAND_NOT_EXIST.getMessage());
     }
 
     @Test
-    public void 사용자가_속한_지점_가져오기_지점있음() {
-        String branchName= "역삼초교사거리점";
+    public void 지점에_속한_모든_사용자_가져오기() {
+        List<Member> members = branchService.getBranchMembers(10L);
 
-        Branch branch = branchService.getMemberBranch(543L);
-
-        Assertions.assertThat(branch.getName()).isEqualTo(branchName);
-    }
-
-    @Test
-    public void 사용자가_속한_지점_가져오기_지점없음() {
-        BranchException e = assertThrows(BranchException.class,
-                () -> branchService.getMemberBranch(7L));
-        Assertions.assertThat(e.getMessage()).isEqualTo("사용자가 속한 지점이 없습니다.");
+        Assertions.assertThat(members.size()).isEqualTo(1);
     }
 }
