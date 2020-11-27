@@ -1,7 +1,9 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
+import com.toyproj.pinchhitterhomerun.model.ResponseResult;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +19,18 @@ public class CustomerController {
 
     // 생년월일로 아이디 찾기
     @PostMapping("/")
-    public Map<String, String> findLoginId(@RequestParam(value = "birth_day") String birthDay, @RequestParam(value = "name") String name) {
-        Map<String, String> result = new HashMap<>();
+    public ResponseResult<String> findLoginId(@RequestParam(value = "birth_day") String birthDay, @RequestParam(value = "name") String name) {
+       String result = memberService.findLoginId(name,birthDay);
 
-        result.put("result", memberService.findLoginId(name,birthDay));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 아이디 사용가능 여부 체크
     @PostMapping("/{requestId}")
-    public Map<String, Boolean> checkAvailableId(@PathVariable String requestId) throws MemberException {
-        Map<String, Boolean> result = new HashMap<>();
+    public ResponseResult<Boolean> checkAvailableId(@PathVariable String requestId) throws MemberException {
+        boolean result = memberService.isAvailable(requestId);
 
-        result.put("result", memberService.isAvailable(requestId));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
 }

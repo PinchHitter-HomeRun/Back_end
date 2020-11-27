@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.model.*;
 import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,115 +23,94 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("/")
-    public Map<String, Member> signUp(@RequestBody MemberJoin newMember) throws MemberException {
+    public ResponseResult<Member> signUp(@RequestBody MemberJoin newMember) throws MemberException {
 
         if (!memberService.isAvailable(newMember.getLoginId())) {
             return null;
         }
 
-        Member joinedMember = memberService.join(newMember);
+        Member result = memberService.join(newMember);
 
         if (null != newMember.getBranchId()) {
-            BranchRequest request = new BranchRequest(joinedMember.getId(), joinedMember.getBranch().getId());
+            BranchRequest request = new BranchRequest(result.getId(), result.getBranch().getId());
             branchRequestService.requestToBranchMaster(request);
         }
 
-        Map<String, Member> result = new HashMap<>();
-        result.put("result", joinedMember);
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
-    /*public TestResult signUp() {
-        TestResult test = new TestResult("success");
-        return test;
-    }*/
 
     // 로그인
     @PostMapping("/{loginId}")
-    public Map<String, Member> signIn(@PathVariable String loginId, String passWord) throws MemberException {
-        Map<String, Member> result = new HashMap<>();
+    public ResponseResult<Member> signIn(@PathVariable String loginId, String passWord) throws MemberException {
+        Member result = memberService.signIn(loginId, passWord);
 
-        result.put("result", memberService.signIn(loginId, passWord));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 사용자 정보 가져오기
     @GetMapping("/{memberId}")
-    public Map<String, Member> getMemberInfo(@PathVariable Long memberId) {
-        Map<String, Member> result = new HashMap<>();
+    public ResponseResult<Member> getMemberInfo(@PathVariable Long memberId) {
+        Member result = memberService.getMemberInfo(memberId);
 
-        result.put("result", memberService.getMemberInfo(memberId));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 탈퇴
     @DeleteMapping("/{memberId}")
-    public Map<String, Member> leaveMember(@PathVariable Long memberId) {
-        Map<String, Member> result = new HashMap<>();
+    public ResponseResult<Member> leaveMember(@PathVariable Long memberId) {
+        Member result = memberService.leave(memberId);
 
-        result.put("result", memberService.leave(memberId));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 패스워드 분실 질문 가져오기
     @GetMapping("/{memberId}/hint")
-    public Map<String, String> getMemberPasswordHint(@PathVariable Long memberId) {
-        Map<String, String> result = new HashMap<>();
+    public ResponseResult<String> getMemberPasswordHint(@PathVariable Long memberId) {
+        String result = memberService.getPasswordHint(memberId).getText();
 
-        result.put("result", memberService.getPasswordHint(memberId).getText());
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 답변이 일치하는지 판단
     @PostMapping("{memberId}/answer")
-    public Map<String, Boolean> isCorrectAnswer(@PathVariable Long memberId, @RequestParam(value = "answer") String answer) {
-        Map<String, Boolean> result = new HashMap<>();
+    public ResponseResult<Boolean> isCorrectAnswer(@PathVariable Long memberId, @RequestParam(value = "answer") String answer) {
+        boolean result = memberService.matchHintAnswer(memberId, answer);
 
-        result.put("result", memberService.matchHintAnswer(memberId, answer));
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 비밀번호 수정
     @PutMapping("{loginId}/password")
-    public Map<String, Boolean> updateMemberPassword(@PathVariable String loginId, String passWord) {
-        Map<String, Boolean> result = new HashMap<>();
+    public ResponseResult<Boolean> updateMemberPassword(@PathVariable String loginId, String passWord) {
+        boolean result = memberService.updatePassword(loginId, passWord) != null;
 
-        result.put("result", memberService.updatePassword(loginId, passWord) != null);
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 모든 질문 가져오기
     @GetMapping("/hint")
-    public Map<String, List<String>> getHintList() {
-        List<String> hintList = new ArrayList<>();
+    public ResponseResult<List<String>> getHintList() {
+        List<String> result = new ArrayList<>();
         List<PasswordHint> passwordHintList = memberService.getAllHint();
         for (PasswordHint passwordHint : passwordHintList) {
-            hintList.add(passwordHint.getText());
+            result.add(passwordHint.getText());
         }
 
-        Map<String, List<String>> result = new HashMap<>();
-
-        result.put("result", hintList);
-
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 멤버가 속한 지점 가져오기
     @GetMapping("/member/{memberId}")
-    public Branch getMemberBranch(@PathVariable Long memberId) {
-        return memberService.getMemberBranch(memberId);
+    public ResponseResult<Branch> getMemberBranch(@PathVariable Long memberId) {
+        Branch result = memberService.getMemberBranch(memberId);
+
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     @ResponseBody
     @GetMapping("/")
-    public String test1(@RequestParam(value = "msg")String msg) {
-        return msg;
+    public ResponseResult<String> test1(@RequestParam(value = "msg")String msg) {
+        return new ResponseResult<>(ErrorMessage.SUCCESS, msg);
     }
 
 

@@ -1,6 +1,7 @@
 package com.toyproj.pinchhitterhomerun.type;
 
 public enum ErrorMessage {
+    SUCCESS("성공"),
     MEMBER_ID_ALREADY_USED("이미 사용중인 아이디입니다."),
     MEMBER_LOGIN_FAILED("아이디 혹은 비밀번호가 잘못 되었습니다."),
     MEMBER_NOT_EXIST("존재하지 않는 회원입니다."),

@@ -2,7 +2,9 @@ package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.model.Branch;
 import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.model.ResponseResult;
 import com.toyproj.pinchhitterhomerun.service.BranchService;
+import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,28 +21,36 @@ public class BranchController {
 
     // 지점 검색
     @PostMapping("/{brandId}")
-    public List<Branch> searchBranch(@PathVariable Long brandId, String city, String sub, String text) {
-        return branchService.searchBranch(brandId, city, sub, text);
+    public ResponseResult<List<Branch>> searchBranch(@PathVariable Long brandId, String city, String sub, String text) {
+
+        List<Branch> result = branchService.searchBranch(brandId, city, sub, text);
+
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 아이디로 지점 가져오기
     @GetMapping("/id/{id}")
-    public Branch getBranchById(@PathVariable Long id) {
-        return branchService.getBranchById(id);
+    public ResponseResult<Branch> getBranchById(@PathVariable Long id) {
+
+        Branch result = branchService.getBranchById(id);
+
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     @GetMapping("/{brandId}/{name}")
-    public Branch getBranchByName(@PathVariable Long brandId, @PathVariable String name) {
-        return branchService.getBranchByBranchIdAndName(brandId, name);
+    public ResponseResult<Branch> getBranchByName(@PathVariable Long brandId, @PathVariable String name) {
+
+        Branch result = branchService.getBranchByBranchIdAndName(brandId, name);
+
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
     // 지점에 속한 사용자들 가져오기
     @GetMapping("/branch/{branchId}")
-    public Map<String, List<Member>> getBranchMembers(@PathVariable Long branchId) {
-        Map<String, List<Member>> result = new HashMap<>();
+    public ResponseResult<List<Member>> getBranchMembers(@PathVariable Long branchId) {
 
-        result.put("result", branchService.getBranchMembers(branchId));
+        List<Member> result = branchService.getBranchMembers(branchId);
 
-        return result;
+        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 }
