@@ -20,6 +20,10 @@ public class Board extends Base{
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private Long brandId;
+
+    private Long branchId;
+
     private String title;
 
     private String content;

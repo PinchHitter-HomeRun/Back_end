@@ -107,11 +107,8 @@ public class MemberController {
         return new ResponseResult<>(ErrorMessage.SUCCESS, result);
     }
 
-    @ResponseBody
     @GetMapping("/")
     public ResponseResult<String> test1(@RequestParam(value = "msg")String msg) {
         return new ResponseResult<>(ErrorMessage.SUCCESS, msg);
     }
-
-
 }
