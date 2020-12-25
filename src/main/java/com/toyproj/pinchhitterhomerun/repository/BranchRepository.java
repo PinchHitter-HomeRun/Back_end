@@ -25,10 +25,10 @@ public class BranchRepository implements IBranchRepository {
     }
 
     @Override
-    public Branch findByBrandAndName(Long brandId, String name) {
-        return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.name = :name", Branch.class)
+    public Branch findByBrandAndName(Long brandId, String brandName) {
+        return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.name = :brandName", Branch.class)
                 .setParameter("brandId", brandId)
-                .setParameter("name", name)
+                .setParameter("brandName", brandName)
                 .getSingleResult();
     }
 

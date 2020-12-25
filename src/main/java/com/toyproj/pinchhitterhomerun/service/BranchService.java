@@ -36,11 +36,11 @@ public class BranchService {
     }
 
     // 지점명과 브랜드로 지점 가져오기
-    public Branch getBranchByBranchIdAndName(Long brandId, String name) {
+    public Branch getBranchByBranchIdAndName(Long brandId, String brandName) {
         Branch branch;
 
         try {
-            branch = branchRepository.findByBrandAndName(brandId, name);
+            branch = branchRepository.findByBrandAndName(brandId, brandName);
         } catch (Exception e) {
             throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
         }
