@@ -1,9 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.model.Logger;
-import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import com.toyproj.pinchhitterhomerun.entity.Logger;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

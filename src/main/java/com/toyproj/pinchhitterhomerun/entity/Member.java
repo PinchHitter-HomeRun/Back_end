@@ -1,19 +1,22 @@
-package com.toyproj.pinchhitterhomerun.model;
+package com.toyproj.pinchhitterhomerun.entity;
 
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Member extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,25 +88,25 @@ public class Member extends Base {
     }
 
     @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", loginId='" + loginId + '\'' +
-                ", passWord='" + passWord + '\'' +
-                ", sns=" + sns +
-                ", name='" + name + '\'' +
-                ", birthDay='" + birthDay + '\'' +
-                ", sex=" + sex +
-                ", phone='" + phone + '\'' +
-                ", branch=" + branch +
-                ", role=" + role +
-                ", profileImage='" + profileImage + '\'' +
-                ", lastLoginDate=" + lastLoginDate +
-                ", createdDate=" + this.getCreatedDate() +
-                ", updatedDate=" + this.getUpdatedDate() +
-                ", deletedDate=" + this.getDeletedDate() +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return Objects.equals(loginId, member.loginId) &&
+                Objects.equals(passWord, member.passWord) &&
+                sns == member.sns &&
+                Objects.equals(name, member.name) &&
+                Objects.equals(birthDay, member.birthDay) &&
+                sex == member.sex &&
+                Objects.equals(phone, member.phone) &&
+                Objects.equals(branch, member.branch) &&
+                Objects.equals(role, member.role) &&
+                Objects.equals(profileImage, member.profileImage) &&
+                Objects.equals(lastLoginDate, member.lastLoginDate);
     }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(passWord, sns, name, birthDay, sex, phone, branch, role, profileImage, lastLoginDate);
+    }
 }

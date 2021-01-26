@@ -1,17 +1,16 @@
-package com.toyproj.pinchhitterhomerun.model;
+package com.toyproj.pinchhitterhomerun.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
+@ToString
 public class Branch extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,23 +22,11 @@ public class Branch extends Base {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 
 //    private LocalDateTime createdDate;
 //
 //    private LocalDateTime deletedDate;
-
-    @Override
-    public String toString() {
-        return "Branch{" +
-                "id=" + id +
-                ", brand=" + brand +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", createdDate=" + this.getCreatedDate() +
-                ", deletedDate=" + this.getDeletedDate() +
-                '}';
-    }
 }

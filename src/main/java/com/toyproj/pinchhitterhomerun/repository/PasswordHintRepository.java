@@ -1,6 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.model.PasswordHint;
+import com.toyproj.pinchhitterhomerun.entity.PasswordHint;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IPasswordHintRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,9 +23,13 @@ public class PasswordHintRepository implements IPasswordHintRepository {
 
     @Override
     public PasswordHint findByText(String text) {
-        return em.createQuery("select ph from PasswordHint ph where ph.text = :text", PasswordHint.class)
-                .setParameter("text", text)
-                .getSingleResult();
+        try {
+            return em.createQuery("select ph from PasswordHint ph where ph.text = :text", PasswordHint.class)
+                    .setParameter("text", text)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

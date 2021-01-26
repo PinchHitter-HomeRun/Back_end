@@ -1,15 +1,13 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
-import com.toyproj.pinchhitterhomerun.model.Brand;
-import com.toyproj.pinchhitterhomerun.model.Category;
+import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

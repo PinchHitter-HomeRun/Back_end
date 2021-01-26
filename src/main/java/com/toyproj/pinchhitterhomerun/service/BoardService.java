@@ -1,7 +1,7 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BoardException;
-import com.toyproj.pinchhitterhomerun.model.Board;
+import com.toyproj.pinchhitterhomerun.entity.Board;
 import com.toyproj.pinchhitterhomerun.repository.BoardRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;

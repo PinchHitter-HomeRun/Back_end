@@ -1,4 +1,4 @@
-package com.toyproj.pinchhitterhomerun.model;
+package com.toyproj.pinchhitterhomerun.entity;
 
 import lombok.Getter;
 import javax.persistence.MappedSuperclass;

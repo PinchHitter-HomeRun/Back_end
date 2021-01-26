@@ -1,9 +1,8 @@
 package com.toyproj.pinchhitterhomerun.service;
 
-import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
-import com.toyproj.pinchhitterhomerun.model.BranchRequest;
-import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.BranchRequestRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,11 +31,10 @@ public class BranchRequestService {
             throw new BranchRequestException("이미 " + branchName + "에 속해있습니다.");
         }
 
-        try {
-            // 중복 요청이 있는지 확인
-            branchRequestRepository.findByMemberId(request.getMemberId());
-        } catch (Exception e) {
-            // 중복이 없으면 EmptyResultDataAccessException
+        // 중복 요청이 있는지 확인
+        final var checkDuplicate = branchRequestRepository.findByMemberId(request.getMemberId());
+
+        if (checkDuplicate == null) {
             branchRequestRepository.save(request);
             return;
         }

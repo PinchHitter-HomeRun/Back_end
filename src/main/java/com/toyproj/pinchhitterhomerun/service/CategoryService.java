@@ -1,7 +1,7 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.CategoryException;
-import com.toyproj.pinchhitterhomerun.model.Category;
+import com.toyproj.pinchhitterhomerun.entity.Category;
 import com.toyproj.pinchhitterhomerun.repository.CategoryRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;

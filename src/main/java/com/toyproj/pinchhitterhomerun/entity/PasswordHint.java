@@ -1,4 +1,4 @@
-package com.toyproj.pinchhitterhomerun.model;
+package com.toyproj.pinchhitterhomerun.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

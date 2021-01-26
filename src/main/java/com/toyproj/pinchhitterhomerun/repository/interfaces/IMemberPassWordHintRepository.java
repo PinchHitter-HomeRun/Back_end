@@ -1,8 +1,8 @@
 package com.toyproj.pinchhitterhomerun.repository.interfaces;
 
-import com.toyproj.pinchhitterhomerun.model.MemberPasswordHint;
+import com.toyproj.pinchhitterhomerun.entity.MemberPasswordHint;
 
 public interface IMemberPassWordHintRepository {
-    void save(MemberPasswordHint memberPasswordHint);
-    MemberPasswordHint findByMemberId(Long memberId);
+    boolean save(MemberPasswordHint memberPasswordHint);
+    MemberPasswordHint findByMemberId(String loginId, String birthDay);
 }

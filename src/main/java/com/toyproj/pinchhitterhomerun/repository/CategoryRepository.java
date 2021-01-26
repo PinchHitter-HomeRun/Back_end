@@ -1,6 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.model.Category;
+import com.toyproj.pinchhitterhomerun.entity.Category;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.ICategoryRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,13 +24,21 @@ public class CategoryRepository implements ICategoryRepository {
 
     @Override
     public Category findByName(String name) {
-        return em.createQuery("select c from Category c where c.name = :name", Category.class)
-                .setParameter("name",name)
-                .getSingleResult();
+        try {
+            return em.createQuery("select c from Category c where c.name = :name", Category.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Category findById(Long id) {
-        return em.find(Category.class, id);
+        try {
+            return em.find(Category.class, id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -2,9 +2,8 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
-import com.toyproj.pinchhitterhomerun.model.Branch;
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
+import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

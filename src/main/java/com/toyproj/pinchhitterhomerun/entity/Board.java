@@ -1,4 +1,4 @@
-package com.toyproj.pinchhitterhomerun.model;
+package com.toyproj.pinchhitterhomerun.entity;
 
 import com.toyproj.pinchhitterhomerun.type.MatchType;
 import com.toyproj.pinchhitterhomerun.type.PayType;

@@ -1,6 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository.interfaces;
 
-import com.toyproj.pinchhitterhomerun.model.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Branch;
 
 import java.util.List;
 

@@ -1,12 +1,9 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
-import com.toyproj.pinchhitterhomerun.exception.BrandException;
-import com.toyproj.pinchhitterhomerun.exception.MemberException;
-import com.toyproj.pinchhitterhomerun.model.Branch;
-import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
-import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;

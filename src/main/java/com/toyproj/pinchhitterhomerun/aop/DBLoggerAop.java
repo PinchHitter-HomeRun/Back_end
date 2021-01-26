@@ -1,14 +1,12 @@
 package com.toyproj.pinchhitterhomerun.aop;
 
-import com.toyproj.pinchhitterhomerun.model.Logger;
+import com.toyproj.pinchhitterhomerun.entity.Logger;
 import com.toyproj.pinchhitterhomerun.repository.LoggerRepository;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 

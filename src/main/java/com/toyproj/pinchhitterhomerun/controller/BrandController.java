@@ -1,21 +1,15 @@
 package com.toyproj.pinchhitterhomerun.controller;
 
-import com.toyproj.pinchhitterhomerun.model.Brand;
-import com.toyproj.pinchhitterhomerun.model.ResponseResult;
+import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.service.BrandService;
-import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -27,38 +21,38 @@ public class BrandController {
     // 모든 브랜드 가져오기
     @ApiOperation("모든 브랜드 검색")
     @GetMapping("")
-    public ResponseResult<List<Brand>> getAllBrand() {
+    public List<Brand> getAllBrand() {
         List<Brand> result = brandService.getAllBrand();
 
-        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
+        return result;
     }
 
     // 카테고리에 속한 브랜드들 가져오기
     @ApiOperation("카테고리에 속한 브랜드 검색")
     @GetMapping("/category/{categoryId}")
-    public ResponseResult<List<Brand>> getCategoryBrand(@PathVariable("categoryId") Long categoryId) {
+    public List<Brand> getCategoryBrand(@PathVariable("categoryId") Long categoryId) {
 
         List<Brand> result = brandService.getBrandByCategoryId(categoryId);
 
-        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
+        return result;
     }
 
     // 아이디로 브랜드 가져오기
     @ApiOperation("컬럼 id로 브랜드 검색")
     @GetMapping("/id/{id}")
-    public ResponseResult<Brand> getBrand(@PathVariable("id") Long id) {
+    public Brand getBrand(@PathVariable("id") Long id) {
         Brand result = brandService.getBrandById(id);
 
-        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
+        return result;
     }
 
     // 이름으로 브랜드 가져오기
     @ApiOperation("브랜드 이름으로 검색")
     @GetMapping("/name/{name}")
-    public ResponseResult<Brand> getBrand(@PathVariable("name") String name) {
+    public Brand getBrand(@PathVariable("name") String name) {
         Brand result = brandService.getBrandByName(name);
 
-        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
+        return result;
     }
 
 }

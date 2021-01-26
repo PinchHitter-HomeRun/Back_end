@@ -1,11 +1,15 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
 
-import com.toyproj.pinchhitterhomerun.model.Member;
+import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IMemberRepository;
+import com.toyproj.pinchhitterhomerun.type.SnsType;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -18,36 +22,61 @@ public class MemberRepository implements IMemberRepository {
     }
 
     @Override
-    public void save(Member member) {
-        em.persist(member);
+    public boolean save(Member member) {
+        try {
+            em.persist(member);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public Member findByLoginId(String loginId) {
-        return em.createQuery("select m from Member m where m.loginId = :loginId and m.deletedDate is null", Member.class)
-                .setParameter("loginId", loginId)
-                .getSingleResult();
+        try {
+            return em.createQuery("select m from Member m where m.loginId = :loginId and m.sns = :sns and m.deletedDate is null", Member.class)
+                    .setParameter("loginId", loginId)
+                    .setParameter("sns", SnsType.None)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Member findByLoginId(String loginId, String passWord) {
-        return em.createQuery("select m from Member m where m.loginId = :loginId and m.passWord = :passWord and m.deletedDate is null", Member.class)
-                .setParameter("loginId", loginId)
-                .setParameter("passWord", passWord)
-                .getSingleResult();
+        try {
+            return em.createQuery("select m from Member m where m.loginId = :loginId and m.passWord = :passWord and m.deletedDate is null", Member.class)
+                    .setParameter("loginId", loginId)
+                    .setParameter("passWord", passWord)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Member findById(Long id) {
-        return em.find(Member.class, id);
+        try {
+            return em.createQuery("select m from Member m where m.id = :id and m.deletedDate is null", Member.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Member findLoginIdByInfo(String name, String birthDay) {
-        return em.createQuery("select m from Member m where m.name = :name and m.birthDay = :birthDay and m.deletedDate is null", Member.class)
-                .setParameter("name", name)
-                .setParameter("birthDay", birthDay)
-                .getSingleResult();
+        try {
+            return em.createQuery("select m from Member m where m.name = :name and m.birthDay = :birthDay and m.deletedDate is null", Member.class)
+                    .setParameter("name", name)
+                    .setParameter("birthDay", birthDay)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -55,5 +84,21 @@ public class MemberRepository implements IMemberRepository {
         return em.createQuery("select m from Member m where m.branch.id = :branchId and m.deletedDate is null", Member.class)
                 .setParameter("branchId", branchId)
                 .getResultList();
+    }
+
+    @Override
+    public int updateBranch(Long memberId, Branch branch) {
+        return em.createQuery("update Member m set m.branch = :branch where m.id = :memberId and m.deletedDate is null")
+                .setParameter("branch", branch)
+                .setParameter("memberId", memberId)
+                .executeUpdate();
+    }
+
+    @Override
+    public int updateLastLoginDate(Long memberId, LocalDateTime dateTime) {
+        return em.createQuery("update Member m set m.lastLoginDate = :dateTime where m.id = :memberId and m.deletedDate is null")
+                .setParameter("dateTime", dateTime)
+                .setParameter("memberId", memberId)
+                .executeUpdate();
     }
 }

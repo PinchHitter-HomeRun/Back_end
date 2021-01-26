@@ -1,6 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.model.Board;
+import com.toyproj.pinchhitterhomerun.entity.Board;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBoardRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,8 +17,14 @@ public class BoardRepository implements IBoardRepository {
     }
 
     @Override
-    public void save(Board board) {
-        em.persist(board);
+    public boolean save(Board board) {
+        try {
+            em.persist(board);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

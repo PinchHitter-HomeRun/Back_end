@@ -1,7 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository.interfaces;
 
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.model.PasswordHint;
+import com.toyproj.pinchhitterhomerun.entity.PasswordHint;
 
 import java.util.List;
 

@@ -1,15 +1,11 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
-import com.toyproj.pinchhitterhomerun.model.Branch;
-import com.toyproj.pinchhitterhomerun.model.BranchRequest;
-import com.toyproj.pinchhitterhomerun.model.Member;
-import com.toyproj.pinchhitterhomerun.repository.BranchRequestRepository;
+import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
-import org.graalvm.compiler.asm.sparc.SPARCAssembler;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

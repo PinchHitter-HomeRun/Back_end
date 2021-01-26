@@ -1,6 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.model.Brand;
+import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBrandRepository;
 import org.springframework.stereotype.Repository;
 
@@ -31,13 +31,21 @@ public class BrandRepository implements IBrandRepository {
 
     @Override
     public Brand findByName(String name) {
-        return em.createQuery("select b from Brand b where b.name = :name",Brand.class)
-                .setParameter("name", name)
-                .getSingleResult();
+        try {
+            return em.createQuery("select b from Brand b where b.name = :name", Brand.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Brand findById(Long id) {
-        return em.find(Brand.class, id);
+        try {
+            return em.find(Brand.class, id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
