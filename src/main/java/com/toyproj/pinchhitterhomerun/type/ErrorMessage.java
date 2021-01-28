@@ -24,6 +24,7 @@ public enum ErrorMessage {
 
     BRANCH_NOT_EXIST("존재하지 않는 지점입니다."),
     BRANCH_NOT_FOUND("지점을 찾을 수 없습니다."),
+    BRANCH_EMPTY_EMPLOYEE("알바생이 없습니다."),
 
     REQUEST_NOT_EXIST("존재하지 않는 요청입니다."),
     REQUEST_NOT_FOUND("요청을 찾을 수 없습니다."),

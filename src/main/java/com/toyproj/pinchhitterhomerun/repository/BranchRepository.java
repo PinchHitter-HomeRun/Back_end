@@ -82,16 +82,13 @@ public class BranchRepository implements IBranchRepository {
 
     @Override
     public Branch findByAddress(String address) {
-        List<Branch> branches = em.createQuery("select b from Branch b", Branch.class).getResultList();
+        List<Branch> branches = em.createQuery("select b from Branch b", Branch.class)
+                .getResultList();
 
-        if (branches != null && branches.size() > 0) {
-            for (Branch branch : branches) {
-                if (branch.getAddress().getFullAddress().equals(address)) {
-                    return branch;
-                }
-            }
-        }
-
-        return null;
+        return branches
+                .stream()
+                .filter(x -> x.getAddress().getFullAddress().equals(address))
+                .findFirst()
+                .orElse(null);
     }
 }

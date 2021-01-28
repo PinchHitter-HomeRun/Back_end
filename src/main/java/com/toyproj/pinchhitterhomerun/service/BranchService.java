@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
 import com.toyproj.pinchhitterhomerun.exception.BranchException;
 import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
@@ -7,118 +8,127 @@ import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @Transactional
-@AllArgsConstructor
 public class BranchService {
 
-    private final BranchRepository branchRepository;
-    private final BrandService brandService;
-    private final MemberRepository memberRepository;
+    @Autowired
+    BranchRepository branchRepository;
 
-    // 아이디로 지점 가져오기
-    public Branch getBranchById(Long id) {
-        Branch branch = branchRepository.findById(id);
+    @Autowired
+    BrandService brandService;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    /**
+     * ID로 지점 가져오기
+     */
+    public ServiceResult<Branch> getBranchById(Long id) {
+        final var branch = branchRepository.findById(id);
 
         if (branch == null) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branch;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branch);
     }
 
-    // 지점명과 브랜드로 지점 가져오기
-    public Branch getBranchByBranchIdAndName(Long brandId, String brandName) {
-        Branch branch;
+    /**
+     * 브랜드ID와 지점명으로 지점 가져오기
+     */
+    public ServiceResult<Branch> getBranchByBrandIdAndName(Long brandId, String brandName) {
+        final var branch = branchRepository.findByBrandAndName(brandId, brandName);
 
-        try {
-            branch = branchRepository.findByBrandAndName(brandId, brandName);
-        } catch (Exception e) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
+        if (branch == null) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branch;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branch);
     }
 
-    public Branch getBranchByName(String name) {
-        Branch branch;
+    /**
+     * 지점명으로 지점 가져오기
+     */
+    public ServiceResult<Branch> getBranchByName(String branchName) {
+        final var branch = branchRepository.findByName(branchName);
 
-        try {
-            branch = branchRepository.findByName(name);
-        } catch (Exception e) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
+        if (branch == null) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branch;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branch);
     }
 
-    // 시, 구, 지점명으로 지점 검색
-    public List<Branch> searchBranch(Long brandId, String city, String gu, String branchName) {
-        List<Branch> branches;
+    /**
+     * 시, 구, 지점명으로 지점 검색
+     */
+    public ServiceResult<Collection<Branch>> searchBranch(Long brandId, String city, String gu, String branchName) {
+        final var branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, branchName);
 
-        try {
-            branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, branchName);
-        } catch (Exception e) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
+        if (branches.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branches;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branches);
     }
 
-    // 시, 구로 지점 검색
-    public List<Branch> searchBranch(Long brandId, String city, String gu) {
-        List<Branch> branches;
+    /**
+     * 시, 구로 지점 검색
+     */
+    public ServiceResult<Collection<Branch>> searchBranch(Long brandId, String city, String gu) {
+        final var branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, null);
 
-        try {
-            branches = branchRepository.searchByKeywordWithBrandId(brandId, city, gu, null);
-        } catch (Exception e) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
+        if (branches.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branches;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branches);
     }
 
-    // 브랜드에 속한 모든 지점 가져오기
-    public List<Branch> getBranchByBrandId(Long brandId) {
-        List<Branch> branches;
+    /**
+     * 브랜드에 속한 모든 지점 가져오기
+     */
+    public ServiceResult<Collection<Branch>> getBranchByBrandId(Long brandId) {
+        final var branches = branchRepository.findByBrandId(brandId);
 
-        branches = branchRepository.findByBrandId(brandId);
-
-        if (branches.size() == 0) {
-            brandService.getBrandById(brandId);
+        if (branches.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branches;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branches);
     }
 
-    // 주소로 지점 가져오기
-    public Branch getBranchByAddress(String address) {
-        Branch branch;
+    /**
+     * 주소로 지점 가져오기
+     */
+    public ServiceResult<Branch> getBranchByAddress(String address) {
+        final var branch = branchRepository.findByAddress(address);
 
-        try {
-            branch = branchRepository.findByAddress(address);
-        } catch (Exception e) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_FOUND);
+        if (branch == null) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        return branch;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branch);
     }
 
-    // 지점에 속한 모든 인원 찾기
-    public List<Member> getBranchMembers(Long branchId) {
-        List<Member> members;
+    /**
+     * 지점에 속한 모든 인원 찾기
+     */
+    public ServiceResult<Collection<Member>> getBranchMembers(Long branchId) {
+        final var members = memberRepository.findByBranchId(branchId);
 
-        members = memberRepository.findByBranchId(branchId);
-
-        if (members.size() == 0) {
-            throw new BranchException(ErrorMessage.BRANCH_NOT_EXIST);
+        if (members.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_EMPTY_EMPLOYEE);
         }
 
-        return members;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, members);
     }
 }
