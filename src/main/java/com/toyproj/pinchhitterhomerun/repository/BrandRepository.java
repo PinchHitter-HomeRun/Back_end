@@ -5,6 +5,7 @@ import com.toyproj.pinchhitterhomerun.repository.interfaces.IBrandRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -17,13 +18,13 @@ public class BrandRepository implements IBrandRepository {
     }
 
     @Override
-    public List<Brand> findAll() {
+    public Collection<Brand> findAll() {
         return em.createQuery("select b from Brand b", Brand.class)
                 .getResultList();
     }
 
     @Override
-    public List<Brand> findByCategoryId(Long categoryId) {
+    public Collection<Brand> findByCategoryId(Long categoryId) {
         return em.createQuery("select b from Brand b where b.category.id = :categoryId", Brand.class)
                 .setParameter("categoryId", categoryId)
                 .getResultList();

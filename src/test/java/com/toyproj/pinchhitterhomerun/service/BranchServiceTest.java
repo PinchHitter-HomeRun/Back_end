@@ -117,9 +117,9 @@ class BranchServiceTest {
     public void 시_구로_지점_검색_성공() {
         // given
         final var testBrand = brandService.getBrandById(10L);
-        assertThat(testBrand).isNotNull();
+        assertThat(testBrand.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var testBrandId= testBrand.getId();
+        final var testBrandId= testBrand.getResponse().getId();
         final String testCity = "서울시";
         final String testGu = "강남구";
         final String testBranchName = "역삼흑룡점";
@@ -138,9 +138,9 @@ class BranchServiceTest {
     public void 시_구로_지점_검색_실패() {
         // given
         final var testBrand = brandService.getBrandById(10L);
-        assertThat(testBrand).isNotNull();
+        assertThat(testBrand.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var testBrandId= testBrand.getId();
+        final var testBrandId= testBrand.getResponse().getId();
         final String testCity = "아무개시";
         final String testGu = "아무개구";
         final String testBranchName = "아무개점";
@@ -157,9 +157,9 @@ class BranchServiceTest {
     public void 시_구_지점이름으로_지점_검색_성공() {
         // given
         final var testBrand = brandService.getBrandById(10L);
-        assertThat(testBrand).isNotNull();
+        assertThat(testBrand.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var testBrandId= testBrand.getId();
+        final var testBrandId= testBrand.getResponse().getId();
         final String testCity = "서울시";
         final String testGu = "강남구";
         final String testBranchName = "역삼흑룡점";
@@ -178,7 +178,9 @@ class BranchServiceTest {
     public void 브랜드에_속한_모든_지점_가져오기_성공() {
         // given
         final var testBrand = brandService.getBrandById(1L);
-        final var testBrandId = testBrand.getId();
+        assertThat(testBrand.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        final var testBrandId = testBrand.getResponse().getId();
 
         // when
         final var branches = branchService.getBranchByBrandId(testBrandId);

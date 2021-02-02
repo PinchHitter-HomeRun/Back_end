@@ -5,6 +5,8 @@ import com.toyproj.pinchhitterhomerun.repository.interfaces.ICategoryRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -17,7 +19,7 @@ public class CategoryRepository implements ICategoryRepository {
     }
 
     @Override
-    public List<Category> findAll() {
+    public Collection<Category> findAll() {
         return em.createQuery("select c from Category c", Category.class)
                 .getResultList();
     }

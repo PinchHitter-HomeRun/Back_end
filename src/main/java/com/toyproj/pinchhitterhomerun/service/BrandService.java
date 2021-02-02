@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
 import com.toyproj.pinchhitterhomerun.exception.BrandException;
 import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.repository.BrandRepository;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -17,44 +19,46 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
 
-    public List<Brand> getAllBrand() {
-        return brandRepository.findAll();
+    public ServiceResult<Collection<Brand>> getAllBrand() {
+        final var brands = brandRepository.findAll();
+
+        if (brands.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRAND_NOT_FOUND);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, brands);
     }
 
     // 카테고리 아이디로 브랜드 가져오기
-    public List<Brand> getBrandByCategoryId(Long categoryId) {
-        List<Brand> categories;
+    public ServiceResult<Collection<Brand>> getBrandByCategoryId(Long categoryId) {
+        final var brands = brandRepository.findByCategoryId(categoryId);
 
-        categories = brandRepository.findByCategoryId(categoryId);
-
-        if (categories.size() < 1) {
-            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
+        if (brands.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRAND_NOT_FOUND);
         }
 
-        return categories;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, brands);
     }
 
     // 브랜드 이름으로 브랜드 가져오기
-    public Brand getBrandByName(String name) {
-        Brand brand;
+    public ServiceResult<Brand> getBrandByName(String name) {
+        final var brand = brandRepository.findByName(name);
 
-        try {
-            brand = brandRepository.findByName(name);
-        } catch (Exception e) {
-            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
+        if (brand == null) {
+            return new ServiceResult<>(ErrorMessage.BRAND_NOT_EXIST);
         }
 
-        return brand;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, brand);
     }
 
     // 아이디로 브랜드 가져오기
-    public Brand getBrandById(Long id) {
-        Brand brand = brandRepository.findById(id);
+    public ServiceResult<Brand> getBrandById(Long id) {
+        final var brand = brandRepository.findById(id);
 
         if (brand == null) {
-            throw new BrandException(ErrorMessage.BRAND_NOT_EXIST);
+            return new ServiceResult<>(ErrorMessage.BRAND_NOT_EXIST);
         }
 
-        return brand;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, brand);
     }
 }

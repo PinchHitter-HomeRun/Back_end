@@ -13,7 +13,7 @@ public class ResponseResult<T> {
     private HttpStatus httpStatus;
 
     public ResponseResult(ServiceResult<T> serviceResult) {
-        if (serviceResult.getResult().equals(ErrorMessage.SUCCESS.getMessage())) {
+        if (serviceResult.isSuccess()) {
             httpStatus = HttpStatus.OK;
             this.result = serviceResult.getResult();
             this.response = serviceResult.getResponse();

@@ -19,8 +19,10 @@ public enum ErrorMessage {
     HINT_DB_FAIL("힌트 DB 에러"),
 
     CATEGORY_NOT_EXIST("존재하지 않는 카테고리입니다."),
+    CATEGORY_NOT_FOUND("카테고리를 찾을 수 없습니다."),
 
     BRAND_NOT_EXIST("존재하지 않는 브랜드입니다."),
+    BRAND_NOT_FOUND("브랜드를 찾을 수 없습니다."),
 
     BRANCH_NOT_EXIST("존재하지 않는 지점입니다."),
     BRANCH_NOT_FOUND("지점을 찾을 수 없습니다."),
