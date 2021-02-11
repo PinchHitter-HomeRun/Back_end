@@ -29,6 +29,19 @@ public class BranchService {
     MemberRepository memberRepository;
 
     /**
+     * 모든 지점 가져오기
+     */
+    public ServiceResult<Collection<Branch>> getAllBranch() {
+        final var branches = branchRepository.findAll();
+
+        if (branches.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_FOUND);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branches);
+    }
+
+    /**
      * ID로 지점 가져오기
      */
     public ServiceResult<Branch> getBranchById(Long id) {

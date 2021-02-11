@@ -1,6 +1,8 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
+import com.toyproj.pinchhitterhomerun.exception.PasswordHintException;
 import com.toyproj.pinchhitterhomerun.repository.PasswordHintRepository;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class PasswordHintService {
         final var hints = passwordHintRepository.findAll();
 
         if (hints == null) {
-            return new ServiceResult<>(ErrorMessage.HINT_DB_FAIL);
+            throw new PasswordHintException(ErrorMessage.HINT_DB_ERROR);
         }
 
         final Collection<String> hintTexts = new ArrayList<>();

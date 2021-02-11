@@ -5,6 +5,7 @@ import com.toyproj.pinchhitterhomerun.repository.interfaces.IBranchRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -14,6 +15,12 @@ public class BranchRepository implements IBranchRepository {
 
     public BranchRepository(EntityManager em) {
         this.em = em;
+    }
+
+    @Override
+    public Collection<Branch> findAll() {
+        return em.createQuery("select b from Branch b", Branch.class)
+                .getResultList();
     }
 
     @Override
@@ -34,7 +41,7 @@ public class BranchRepository implements IBranchRepository {
     }
 
     @Override
-    public List<Branch> searchByKeywordWithBrandId(Long brandId, String city, String gu, String branchNameOrNull) {
+    public Collection<Branch> searchByKeywordWithBrandId(Long brandId, String city, String gu, String branchNameOrNull) {
         if (branchNameOrNull == null) {
             return em.createQuery("select b from Branch b where b.brand.id = :brandId and b.address.city = :city and b.address.gu = :gu", Branch.class)
                     .setParameter("brandId", brandId)
@@ -52,7 +59,7 @@ public class BranchRepository implements IBranchRepository {
     }
 
     @Override
-    public List<Branch> findByBrandId(Long brandId) {
+    public Collection<Branch> findByBrandId(Long brandId) {
         return em.createQuery("select b from Branch b where b.brand.id = :brandId", Branch.class)
                 .setParameter("brandId", brandId)
                 .getResultList();
@@ -90,5 +97,13 @@ public class BranchRepository implements IBranchRepository {
                 .filter(x -> x.getAddress().getFullAddress().equals(address))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public int updateMemberBranch(Long memberId, Branch branch) {
+        return em.createQuery("update Member m set m.branch = :branch where m.id = :memberId")
+                .setParameter("memberId", memberId)
+                .setParameter("branch", branch)
+                .executeUpdate();
     }
 }

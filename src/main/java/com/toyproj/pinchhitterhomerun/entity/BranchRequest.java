@@ -3,10 +3,12 @@ package com.toyproj.pinchhitterhomerun.entity;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
+@Setter
 @Getter
 @NoArgsConstructor
 public class BranchRequest extends Base {
@@ -20,7 +22,7 @@ public class BranchRequest extends Base {
     private Long branchId;
 
     @Enumerated(EnumType.STRING)
-    private AcceptType isAccept = null;
+    private AcceptType acceptType = null;
 
 //    private LocalDateTime createdDate;
 //
@@ -34,7 +36,7 @@ public class BranchRequest extends Base {
     }
 
     public void setIsAccept(AcceptType acceptType) {
-        this.isAccept = acceptType;
+        this.acceptType = acceptType;
         this.setUpdatedDate();
     }
 
@@ -48,7 +50,7 @@ public class BranchRequest extends Base {
                 "id=" + id +
                 ", memberId=" + memberId +
                 ", branchId=" + branchId +
-                ", isAccept=" + isAccept +
+                ", isAccept=" + acceptType +
                 ", createdDate=" + this.getCreatedDate() +
                 ", updatedDate=" + this.getUpdatedDate() +
                 ", deletedDate=" + this.getDeletedDate() +

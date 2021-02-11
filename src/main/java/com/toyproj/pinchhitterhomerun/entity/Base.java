@@ -1,12 +1,16 @@
 package com.toyproj.pinchhitterhomerun.entity;
 
 import lombok.Getter;
+import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @MappedSuperclass
 @Getter
+@ToString
 public class Base {
 
     private LocalDateTime createdDate;

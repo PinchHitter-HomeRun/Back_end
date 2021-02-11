@@ -1,6 +1,8 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.entity.*;
+import com.toyproj.pinchhitterhomerun.helper.TestAccountManager;
+import com.toyproj.pinchhitterhomerun.helper.TestHelper;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
@@ -15,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class MemberServiceTest {
+class MemberServiceTest extends TestHelper {
 
     @Autowired
     MemberService memberService;
@@ -98,8 +100,9 @@ class MemberServiceTest {
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var findRequest = branchRequestService.getBranchRequest(givenMember.getBranchId());
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        for (BranchRequest branchRequest : findRequest) {
+        for (BranchRequest branchRequest : findRequest.getResponse()) {
             if (branchRequest.getMemberId().equals(result.getResponse().getId())) {
                 assertTrue(true);
                 return;

@@ -19,7 +19,7 @@ public class MemberPasswordHint {
     @JoinColumn(name = "member_id")
     private Member memberId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hint_id")
     private PasswordHint hintId;
 

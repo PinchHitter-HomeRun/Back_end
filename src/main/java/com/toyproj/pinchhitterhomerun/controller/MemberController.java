@@ -2,10 +2,9 @@ package com.toyproj.pinchhitterhomerun.controller;
 
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.entity.*;
-import com.toyproj.pinchhitterhomerun.requestbean.LoginRequestBean;
+import com.toyproj.pinchhitterhomerun.requestbean.LoginReq;
 import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
-import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +34,7 @@ public class MemberController {
         }
 
         if (null != newMember.getBranchId()) {
-            BranchRequest request = new BranchRequest(result.getResponse().getId(), result.getResponse().getBranch().getId());
-            branchRequestService.requestToBranchMaster(request);
+            branchRequestService.requestToBranchMaster(result.getResponse().getId(), result.getResponse().getBranch().getId());
         }
 
         return new ResponseResult<>(result);
@@ -44,7 +42,7 @@ public class MemberController {
 
     @ApiOperation("로그인")
     @PostMapping
-    public ResponseResult<Member> signIn(LoginRequestBean request) {
+    public ResponseResult<Member> signIn(LoginReq request) {
         final var result = memberService.signIn(request.getLoginId(), request.getPassWord());
 
         return new ResponseResult<>(result);

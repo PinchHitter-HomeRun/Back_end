@@ -2,10 +2,12 @@ package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
 import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
-import com.toyproj.pinchhitterhomerun.entity.Member;
+import com.toyproj.pinchhitterhomerun.helper.TestAccountManager;
+import com.toyproj.pinchhitterhomerun.helper.TestHelper;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,228 +15,229 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
-class BranchRequestServiceTest {
+class BranchRequestServiceTest extends TestHelper {
     @Autowired
     BranchRequestService branchRequestService;
 
-    Member haveBranchMember = new Member(543L);
-    Member haveNoBranchMember = new Member(177L);
+    @Autowired
+    TestAccountManager testAccountManager;
+
+    private class BranchRequestSet {
+        public BranchRequest getMemberRequest() {
+            return branchRequestService.getMemberRequest(TestAccountManager.testMember.getId()).getResponse();
+        }
+    }
+
+    BranchRequestSet branchRequestSet = new BranchRequestSet();
+    static boolean initialized = false;
+
+    @BeforeEach
+    public void clean() {
+        if (!initialized) {
+            testAccountManager.process();
+            initialized = true;
+        }
+
+        if (testAccountManager.haveBranch()) {
+            testAccountManager.removeBranch();
+        }
+
+        if (testAccountManager.haveRequest()) {
+            testAccountManager.cancelRequest();
+        }
+    }
 
     @Test
     public void 지점_알바생_등록_신청() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
 
-        BranchRequest findRequest = branchRequestService.getMemberRequest(newRequest.getMemberId());
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        Assertions.assertThat(findRequest.getId()).isEqualTo(newRequest.getId());
+        final var findRequest = branchRequestSet.getMemberRequest();
+        assertThat(findRequest.getBranchId()).isEqualTo(testBranch.getId());
+        assertThat(findRequest.getMemberId()).isEqualTo(memberId);
+        assertThat(findRequest.getAcceptType()).isNull();
     }
 
     @Test
     public void 지점에_속한_알바생_다른_지점_등록_신청() {
-        BranchRequest newRequest = new BranchRequest(haveBranchMember.getId(), 11L);
+        // given
+        testAccountManager.setBranch();
+        final var memberBranch = TestAccountManager.testMember.getBranch();
+        final var memberId = TestAccountManager.testMember.getId();
 
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.requestToBranchMaster(newRequest));
+        // when
+        final var result = branchRequestService.requestToBranchMaster(memberId, memberBranch.getId());
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("이미 역삼초교사거리점에 속해있습니다.");
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_ALREADY_HAVE_BRANCH.getMessage());
     }
 
     @Test
     public void 지점에_연속으로_등록_신청() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
 
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.requestToBranchMaster(newRequest));
-
-        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_ALREADY_EXIST.getMessage());
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_ALREADY_REQUESTED.getMessage());
     }
 
     @Test
     public void 다른_지점에_신청후_또_다른_지점_신청() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var testBranch2 = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.requestToBranchMaster(memberId, testBranch2.getId());
 
-        BranchRequest anotherRequest = new BranchRequest(haveNoBranchMember.getId(), 11L);
-
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.requestToBranchMaster(anotherRequest));
-
-        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_ALREADY_EXIST.getMessage());
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_ALREADY_REQUESTED.getMessage());
     }
 
-    // 지점 신청 취소
     @Test
     public void 지점_모든_요청_가져오기() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.getBranchRequest(testBranch.getId());
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+        assertThat(result.getResponse().size()).isGreaterThan(0);
     }
 
     @Test
     public void 지점_신청_취소() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.cancelRequest(haveNoBranchMember.getId());
+        // when
+        final var result = branchRequestService.cancelRequest(findRequest.getResponse().getId());
 
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.getMemberRequest(haveNoBranchMember.getId()));
-
-        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_NOT_FOUND.getMessage());
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
     }
 
     @Test
     public void 지점_신청_없이_취소() {
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.cancelRequest(haveNoBranchMember.getId()));
+        // given
+        final var testRequestId = 0L;
 
-        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_NOT_FOUND.getMessage());
-    }
+        // when
+        final var result = branchRequestService.cancelRequest(testRequestId);
 
-    // 지점의 모든 요청 가져오기
-    @Test
-    public void 지점에_신청된_모든_요청_가져오기() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
-
-        branchRequestService.requestToBranchMaster(newRequest);
-
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
-
-        Assertions.assertThat(requests.size()).isEqualTo(1);
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
     }
 
     @Test
     public void 요청_처리_완료된_요청_가져오기() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
+        final var requestDeny = branchRequestService.responseForRequest(findRequest.getResponse().getId(), AcceptType.Deny);
+        assertThat(requestDeny.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                branchRequestService.responseForRequest(request.getId(), AcceptType.Accept);
-                break;
-            }
-        }
+        // when
+        final var result = branchRequestService.cancelRequest(findRequest.getResponse().getId());
 
-        BranchRequestException e = assertThrows(BranchRequestException.class,
-                () -> branchRequestService.getBranchRequest(10L));
-
-        // 요청에 대해 응답 했으니 요청을 가져올때 못가져와야한다.
-        Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_NOT_FOUND.getMessage());
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
     }
 
-    // 요청 수락 or 거절
     @Test
     public void 요청_수락() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
+        // when
+        final var result = branchRequestService.responseForRequest(findRequest.getResponse().getId(), AcceptType.Accept);
 
-        Long id = 0L;
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                id = request.getId();
-                branchRequestService.responseForRequest(request.getId(), AcceptType.Accept);
-                break;
-            }
-        }
-
-        BranchRequest findRequest = branchRequestService.getBranchById(id);
-        Assertions.assertThat(findRequest.getIsAccept()).isEqualTo(AcceptType.Accept);
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
     }
 
     @Test
     public void 요청_거절() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
+        // when
+        final var result = branchRequestService.responseForRequest(findRequest.getResponse().getId(), AcceptType.Deny);
 
-        Long id = 0L;
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                id = request.getId();
-                branchRequestService.responseForRequest(request.getId(), AcceptType.Deny);
-                break;
-            }
-        }
-
-        BranchRequest findRequest = branchRequestService.getBranchById(id);
-        Assertions.assertThat(findRequest.getIsAccept()).isEqualTo(AcceptType.Deny);
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
     }
 
     @Test
     public void 없는_요청_수락() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testRequestId = 0L;
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.responseForRequest(testRequestId, AcceptType.Accept);
 
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                branchRequestService.responseForRequest(request.getId(), AcceptType.Accept);
-                break;
-            }
-        }
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                try {
-                    branchRequestService.responseForRequest(request.getId(), AcceptType.Accept);
-                } catch (Exception e) {
-                    Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
-                    return;
-                }
-            }
-        }
-
-        Assertions.fail("fail");
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
     }
 
     @Test
     public void 없는_요청_거절() {
-        BranchRequest newRequest = new BranchRequest(haveNoBranchMember.getId(), 10L);
+        // given
+        final var testRequestId = 0L;
 
-        branchRequestService.requestToBranchMaster(newRequest);
+        // when
+        final var result = branchRequestService.responseForRequest(testRequestId, AcceptType.Deny);
 
-        List<BranchRequest> requests = branchRequestService.getBranchRequest(10L);
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                branchRequestService.responseForRequest(request.getId(), AcceptType.Deny);
-                break;
-            }
-        }
-
-        for (BranchRequest request : requests) {
-            if (request.getMemberId().equals(haveNoBranchMember.getId())) {
-                try {
-                    branchRequestService.responseForRequest(request.getId(), AcceptType.Deny);
-                } catch (Exception e) {
-                    Assertions.assertThat(e.getMessage()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
-                    return;
-                }
-            }
-        }
-
-        Assertions.fail("fail");
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
     }
 }

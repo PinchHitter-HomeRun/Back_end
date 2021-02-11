@@ -1,6 +1,5 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-
 import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IMemberRepository;
@@ -15,7 +14,7 @@ import java.util.List;
 @Repository
 public class MemberRepository implements IMemberRepository {
 
-    private final EntityManager em;
+    final EntityManager em;
 
     public MemberRepository(EntityManager em) {
         this.em = em;
@@ -80,6 +79,18 @@ public class MemberRepository implements IMemberRepository {
     }
 
     @Override
+    public Member findByLoginIdAndBirthDay(String loginId, String birthDay) {
+        try {
+            return em.createQuery("select m from Member m where m.loginId = :loginId and m.birthDay = :birthDay and m.deletedDate is null", Member.class)
+                    .setParameter("loginId", loginId)
+                    .setParameter("birthDay", birthDay)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public List<Member> findByBranchId(Long branchId) {
         return em.createQuery("select m from Member m where m.branch.id = :branchId and m.deletedDate is null", Member.class)
                 .setParameter("branchId", branchId)
@@ -97,6 +108,14 @@ public class MemberRepository implements IMemberRepository {
     @Override
     public int updateLastLoginDate(Long memberId, LocalDateTime dateTime) {
         return em.createQuery("update Member m set m.lastLoginDate = :dateTime where m.id = :memberId and m.deletedDate is null")
+                .setParameter("dateTime", dateTime)
+                .setParameter("memberId", memberId)
+                .executeUpdate();
+    }
+
+    @Override
+    public int updateDeleteTime(Long memberId, LocalDateTime dateTime) {
+        return em.createQuery("update Member m set m.deletedDate = :dateTime where m.id = :memberId and m.deletedDate is null")
                 .setParameter("dateTime", dateTime)
                 .setParameter("memberId", memberId)
                 .executeUpdate();

@@ -12,7 +12,9 @@ public interface IMemberRepository {
     Member findByLoginId(String loginId, String passWord);
     Member findById(Long id);
     Member findLoginIdByInfo(String name, String birth);
+    Member findByLoginIdAndBirthDay(String loginId, String birthDay);
     List<Member> findByBranchId(Long branchId);
     int updateBranch(Long memberId, Branch branch);
     int updateLastLoginDate(Long memberId, LocalDateTime dateTime);
+    int updateDeleteTime(Long memberId, LocalDateTime dateTime);
 }

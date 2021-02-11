@@ -1,8 +1,10 @@
 package com.toyproj.pinchhitterhomerun.service;
 
 import com.toyproj.pinchhitterhomerun.entity.*;
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.repository.*;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
+import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class MemberService {
     RoleRepository roleRepository;
 
     @Autowired
-    BranchRequestService branchRequestService;
+    BranchRequestRepository branchRequestRepository;
 
     /**
      * 회원가입
@@ -56,16 +58,23 @@ public class MemberService {
         final var memberPasswordHint = new MemberPasswordHint(member, hint, newMember.getAnswer());
 
         if (!memberRepository.save(member)) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_DB_FAIL);
+            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
         }
 
         if (!memberPasswordHintRepository.save(memberPasswordHint)) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_HINT_DB_FAIL);
+            throw new MemberException(ErrorMessage.MEMBER_HINT_DB_ERROR);
         }
 
         if (newMember.getBranchId() != null) {
-            final var request = new BranchRequest(member.getId(), newMember.getBranchId());
-            branchRequestService.requestToBranchMaster(request);
+            final var findMember = memberRepository.findByLoginId(newMember.getLoginId());
+
+            BranchRequest branchRequest = new BranchRequest();
+            branchRequest.setMemberId(findMember.getId());
+            branchRequest.setBranchId(newMember.getBranchId());
+
+            if (!branchRequestRepository.save(branchRequest)) {
+                throw new MemberException(ErrorMessage.REQUEST_DB_ERROR);
+            }
         }
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, member);
@@ -76,7 +85,7 @@ public class MemberService {
      */
     public ServiceResult<Boolean> isAvailable(String loginId) {
         final var result = memberRepository.findByLoginId(loginId);
-        System.out.println("리절트 : " + result);
+
         if (result != null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_ID_ALREADY_USED);
         }
@@ -103,7 +112,7 @@ public class MemberService {
         final var updateRow = memberRepository.updateLastLoginDate(signMember.getId(), LocalDateTime.now());
 
         if (updateRow == 0) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_DB_FAIL);
+            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
         }
 
         signMember = memberRepository.findById(signMember.getId());
@@ -147,6 +156,23 @@ public class MemberService {
 
         if (leaveMember == null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
+        }
+
+        // 지점 요청건이 있으면 삭제
+        final var findRequest = branchRequestRepository.findByMemberId(memberId);
+
+        if (findRequest != null) {
+            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), TimeManager.now());
+
+            if (updatedRow != 1) {
+                throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
+            }
+        }
+
+        final var updatedRow = memberRepository.updateDeleteTime(memberId, TimeManager.now());
+
+        if (updatedRow != 1) {
+            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
         }
 
         leaveMember.updateDeletedDate();
@@ -220,13 +246,13 @@ public class MemberService {
         final var branch = branchRepository.findById(branchId);
 
         if (branch == null) {
-            return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
+            throw new MemberException(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
         final var updateMember = memberRepository.updateBranch(memberId, branch);
 
         if (updateMember == 0) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_DB_FAIL);
+            return new ServiceResult<>(ErrorMessage.MEMBER_DB_ERROR);
         }
 
         final var member = memberRepository.findById(memberId);

@@ -1,112 +1,164 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
 import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
 import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
 import com.toyproj.pinchhitterhomerun.entity.Member;
+import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import com.toyproj.pinchhitterhomerun.repository.BranchRequestRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
+import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @Transactional
-@AllArgsConstructor
 public class BranchRequestService {
 
-    private final BranchRequestRepository branchRequestRepository;
-    private final MemberRepository memberRepository;
+    @Autowired
+    BranchRequestRepository branchRequestRepository;
 
-    // 지점에 알바생 등록 신청
-    public void requestToBranchMaster(BranchRequest request) {
+    @Autowired
+    BranchRepository branchRepository;
 
-        Member findMember = memberRepository.findById(request.getMemberId());
+    @Autowired
+    MemberRepository memberRepository;
+
+    /**
+     * 지점에 알바생 등록 신청
+     */
+    public ServiceResult<Void> requestToBranchMaster(Long memberId, Long branchId) {
+
+        final var findMember = memberRepository.findById(memberId);
 
         if (findMember.getBranch() != null) {
-            String branchName = findMember.getBranch().getName();
-            throw new BranchRequestException("이미 " + branchName + "에 속해있습니다.");
+            return new ServiceResult<>(ErrorMessage.REQUEST_ALREADY_HAVE_BRANCH);
         }
 
         // 중복 요청이 있는지 확인
-        final var checkDuplicate = branchRequestRepository.findByMemberId(request.getMemberId());
+        final var checkDuplicate = branchRequestRepository.findByMemberId(memberId);
 
-        if (checkDuplicate == null) {
-            branchRequestRepository.save(request);
-            return;
+        if (checkDuplicate != null) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_ALREADY_REQUESTED);
         }
 
-        throw new BranchRequestException(ErrorMessage.REQUEST_ALREADY_EXIST);
-    }
+        BranchRequest branchRequest = new BranchRequest();
+        branchRequest.setMemberId(memberId);
+        branchRequest.setBranchId(branchId);
 
-    // 멤버가 요청한 등록 신청 가져오기
-    public BranchRequest getMemberRequest(Long memberId) {
-        BranchRequest branchRequest;
-
-        try {
-            branchRequest = branchRequestRepository.findByMemberId(memberId);
-        } catch (Exception e) {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_FOUND);
+        if (!branchRequestRepository.save(branchRequest)) {
+            throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
         }
 
-        return branchRequest;
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
     }
 
-    // 지점 신청 취소
-    public void cancelRequest(Long memberId) {
-        BranchRequest findRequest;
+    /**
+     * 멤버가 요청한 등록 신청 가져오기
+     */
+    public ServiceResult<BranchRequest> getMemberRequest(Long memberId) {
+        final var branchRequest = branchRequestRepository.findByMemberId(memberId);
 
-        try {
-            findRequest = branchRequestRepository.findByMemberId(memberId);
-        } catch (Exception e) {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_FOUND);
+        if (branchRequest == null) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_ALREADY_REQUESTED);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, branchRequest);
+    }
+
+    /**
+     * 지점 신청 취소
+     */
+    public ServiceResult<Void> cancelRequest(Long requestId) {
+        final var findRequest = branchRequestRepository.findById(requestId);
+
+        if (findRequest == null) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_NOT_EXIST);
+        }
+
+        final var updatedRow = branchRequestRepository.updateDeleteTime(requestId, TimeManager.now());
+
+        if (updatedRow != 1) {
+            throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
         }
 
         findRequest.delete();
 
-        branchRequestRepository.save(findRequest);
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
     }
 
-    // 요청 수락 or 거절
-    public void responseForRequest(Long id, AcceptType acceptType) {
-        BranchRequest findRequest;
+    /**
+     * 요청 수락 or 거절
+     */
+    public ServiceResult<Void> responseForRequest(Long requestId, AcceptType acceptType) {
+        final var findRequest = branchRequestRepository.findById(requestId);
 
-        try {
-            findRequest = branchRequestRepository.findById(id);
-        } catch (Exception e) {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_EXIST);
+        if (findRequest == null) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_NOT_EXIST);
         }
 
-        if (findRequest.getIsAccept() == null) {
-            findRequest.setIsAccept(acceptType);
-        } else {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_EXIST);
+        if (findRequest.getAcceptType() != null) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_ALREADY_EXPIRED);
         }
 
-        branchRequestRepository.save(findRequest);
+        final var updatedRow = branchRequestRepository.updateAccept(requestId, acceptType, TimeManager.now());
+
+        if (updatedRow != 1) {
+            throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
+        }
+
+        if (acceptType == AcceptType.Accept) {
+            final var findBranch = branchRepository.findById(findRequest.getBranchId());
+
+            if (findBranch == null) {
+                throw new BranchRequestException(ErrorMessage.BRANCH_NOT_EXIST);
+            }
+
+            final var updateMember = branchRepository.updateMemberBranch(findRequest.getMemberId(), findBranch);
+
+            if (updateMember != 1) {
+                throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
+            }
+        }
+
+        findRequest.setIsAccept(acceptType);
+        // 요청 처리 완료됐으니 soft 삭제
+        findRequest.delete();
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
     }
 
-    // 지점의 모든 요청 가져오기
-    public List<BranchRequest> getBranchRequest(Long branchId) {
-        List<BranchRequest> requests = branchRequestRepository.findByBranchId(branchId);
+    /**
+     * 지점의 모든 요청 가져오기
+     */
+    public ServiceResult<Collection<BranchRequest>> getBranchRequest(Long branchId) {
+        final var requests = branchRequestRepository.findByBranchId(branchId);
 
-        if (requests.size() == 0) {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_FOUND);
+        if (requests.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_NOT_FOUND);
         }
 
-        return requests;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, requests);
     }
 
-    public BranchRequest getBranchById(Long id) {
-        BranchRequest request = branchRequestRepository.findById(id);
+    /**
+     * 지점 ID로 지점 찾기
+     */
+    public ServiceResult<BranchRequest> getBranchById(Long requestId) {
+        final var request = branchRequestRepository.findById(requestId);
 
         if (request == null) {
-            throw new BranchRequestException(ErrorMessage.REQUEST_NOT_EXIST);
+            return new ServiceResult<>(ErrorMessage.REQUEST_NOT_EXIST);
         }
 
-        return request;
+        return new ServiceResult<>(ErrorMessage.SUCCESS, request);
     }
 }

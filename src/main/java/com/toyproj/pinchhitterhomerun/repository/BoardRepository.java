@@ -1,10 +1,14 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
 import com.toyproj.pinchhitterhomerun.entity.Board;
+import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Brand;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBoardRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -23,8 +27,13 @@ public class BoardRepository implements IBoardRepository {
         } catch (Exception e) {
             return false;
         }
-
         return true;
+    }
+
+    @Override
+    public Collection<Board> findAll() {
+        return em.createQuery("select bbs from Board bbs", Board.class)
+                .getResultList();
     }
 
     @Override
@@ -33,32 +42,25 @@ public class BoardRepository implements IBoardRepository {
     }
 
     @Override
-    public List<Board> findByMemberId(long id) {
-        return em.createQuery("select bbs from Board bbs where bbs.id = :id", Board.class)
-                .setParameter("id", id)
+    public Collection<Board> findByMember(Member member) {
+        return em.createQuery("select bbs from Board bbs where bbs.member = :member", Board.class)
+                .setParameter("member", member)
                 .getResultList();
     }
 
     @Override
-    public List<Board> findByMemberLoginId(String loginId) {
-        return em.createQuery("select bbs from Board bbs where bbs.member.loginId = :loginId", Board.class)
-                .setParameter("loginId", loginId)
+    public Collection<Board> findByBranchId(Long branchId) {
+        return em.createQuery("select bbs from Board bbs where bbs.branchId = :branchId", Board.class)
+                .setParameter("branchId", branchId)
                 .getResultList();
     }
 
     @Override
-    public List<Board> findByBranchName(String branchName) {
-        return em.createQuery("select bbs from Board bbs " +
-                "where bbs.brandId = (select b.id from Branch b where b.name = :branchName)", Board.class)
-                .setParameter("branchName", branchName)
+    public Collection<Board> findByBrandId(Long brandId) {
+        return em.createQuery("select bbs from Board bbs where bbs.brandId = :brandId", Board.class)
+                .setParameter("brandId", brandId)
                 .getResultList();
     }
 
-    @Override
-    public List<Board> findByBrandName(String brandName) {
-        return em.createQuery("select bbs from Board bbs " +
-                "where bbs.brandId = (select b.id from Brand b where b.name = :brandName)", Board.class)
-                .setParameter("brandName", brandName)
-                .getResultList();
-    }
+
 }
