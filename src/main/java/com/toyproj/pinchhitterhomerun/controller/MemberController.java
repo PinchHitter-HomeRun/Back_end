@@ -64,16 +64,6 @@ public class MemberController {
         return new ResponseResult<>(result);
     }
 
-//    // 답변이 일치하는지 판단
-//    @ApiOperation("질문 답변 일치 여부")
-//    @PostMapping("{memberId}/answer")
-//    public ResponseResult<Boolean> isCorrectAnswer(@PathVariable("memberId") Long memberId,
-//                                                   @RequestParam("answer") String answer) {
-//        boolean result = memberService.matchHintAnswer(memberId, answer);
-//
-//        return new ResponseResult<>(ErrorMessage.SUCCESS, result);
-//    }
-
     @ApiOperation("비밀번호 변경")
     @PutMapping("{memberId}/password")
     public ResponseResult<Member> updateMemberPassword(@PathVariable("memberId") Long memberId,
@@ -99,6 +89,14 @@ public class MemberController {
     @GetMapping("{memberId}/branch")
     public ResponseResult<Branch> getMemberBranch(@PathVariable("memberId") Long memberId) {
         final var result = memberService.getMemberBranch(memberId);
+
+        return new ResponseResult<>(result);
+    }
+
+    @ApiOperation("사용자 지점에서 탈퇴")
+    @PutMapping("{memberId}/branch/leave")
+    public ResponseResult<Member> leaveMemberBranch(@PathVariable("memberId") Long memberId) {
+        final var result = memberService.leaveBranch(memberId);
 
         return new ResponseResult<>(result);
     }

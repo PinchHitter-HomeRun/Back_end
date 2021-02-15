@@ -8,6 +8,7 @@ import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -15,6 +16,8 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
+@Rollback(value = false)
 class BranchServiceTest extends TestHelper {
 
     @Autowired
@@ -65,7 +68,6 @@ class BranchServiceTest extends TestHelper {
     }
 
     @Test
-    @Transactional
     public void 주소로_검색_성공() {
         // given
         final var testBranch = getRandomBranch();
@@ -121,7 +123,6 @@ class BranchServiceTest extends TestHelper {
     }
 
     @Test
-    @Transactional
     public void 시_구로_지점_검색_성공() {
         // given
         final var testBrand = getRandomBrand();
@@ -184,7 +185,7 @@ class BranchServiceTest extends TestHelper {
     public void 지점에_속한_모든_사용자_가져오기() {
         // given
         testAccountManager.process();
-        testAccountManager.setBranch();
+        testAccountManager.setBranch(getRandomBranch());
 
         final var testBranch = TestAccountManager.testMember.getBranch();
         final var testBranchId = testBranch.getId();

@@ -10,13 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
+@Rollback(value = false)
 class MemberServiceTest extends TestHelper {
 
     @Autowired
@@ -48,7 +50,7 @@ class MemberServiceTest extends TestHelper {
     }
 
     @Test
-    @Transactional
+    @Rollback(value = true)
     public void 회원_가입_지점_없음() {
         // given
         final var givenMember = MemberJoin.builder()
@@ -76,7 +78,7 @@ class MemberServiceTest extends TestHelper {
     }
 
     @Test
-    @Transactional
+    @Rollback(value = true)
     public void 회원_가입_지점_있음() {
         // given
         final var givenMember = MemberJoin.builder()
@@ -252,12 +254,11 @@ class MemberServiceTest extends TestHelper {
     }
 
     @Test
-    @Transactional
     public void 사용자가_속한_지점_가져오기_지점있음() {
         // given
         final var memberId = TestAccountManager.testMember.getId();
 
-        testAccountManager.setBranch();
+        testAccountManager.setBranch(getRandomBranch());
 
         // when
         final var result = memberService.getMemberBranch(memberId);
@@ -306,5 +307,34 @@ class MemberServiceTest extends TestHelper {
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.MEMBER_WRONG_PASSWORD.getMessage());
+    }
+
+    @Test
+    public void 지점에_속했을_때_지점에서_탈퇴하기() {
+        // given
+        testAccountManager.setBranch(getRandomBranch());
+        final var memberId = TestAccountManager.testMember.getId();
+
+        // when
+        final var result = memberService.leaveBranch(memberId);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        final var afterMemberInfo = memberService.getMemberInfo(memberId);
+        assertThat(afterMemberInfo.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+        assertThat(afterMemberInfo.getResponse().getBranch()).isNull();
+    }
+
+    @Test
+    public void 속한_지점이_없을_때_지점에서_탈퇴하기() {
+        // given
+        final var memberId = TestAccountManager.testMember.getId();
+
+        // when
+        final var result = memberService.leaveBranch(memberId);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.MEMBER_BRANCH_NOT_EXIST.getMessage());
     }
 }

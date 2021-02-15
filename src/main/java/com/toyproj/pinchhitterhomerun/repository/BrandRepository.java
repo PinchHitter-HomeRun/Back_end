@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
+import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBrandRepository;
 import org.springframework.stereotype.Repository;

@@ -1,19 +1,20 @@
 package com.toyproj.pinchhitterhomerun.helper;
 
-import com.toyproj.pinchhitterhomerun.entity.Member;
-import com.toyproj.pinchhitterhomerun.entity.MemberPasswordHint;
-import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
+import com.toyproj.pinchhitterhomerun.entity.*;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.repository.*;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
+import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
 
 @Service
 @Transactional
@@ -36,6 +37,9 @@ public class TestAccountManager {
 
     @Autowired
     BranchRepository branchRepository;
+
+    @Autowired
+    BoardRepository boardRepository;
 
     public static Member testMember;
 
@@ -73,50 +77,69 @@ public class TestAccountManager {
         }
     }
 
-    public void setBranch() {
-        final var branch = branchRepository.findById(1L);
-        final var updateMember = memberRepository.updateBranch(testMember.getId(), branch);
+    public void setBranch(Branch branch) {
+//        final var updateBranch = memberRepository.updateBranch(testMember.getId(), branch);
+//
+//        if (updateBranch != 1) {
+//            throw new TestAccountManagerException("TestAccount Set Branch Failed");
+//        }
+//
+//        testMember = memberRepository.findById(testMember.getId());
+        testMember = memberRepository.findById(testMember.getId());
+        testMember.updateBranch(branch);
 
-        if (updateMember == 0) {
+        if(!memberRepository.save(testMember)) {
             throw new TestAccountManagerException("TestAccount Set Branch Failed");
         }
-
-        testMember = memberRepository.findById(testMember.getId());
     }
 
     public void removeBranch() {
-        final var updateMember = memberRepository.updateBranch(testMember.getId(), null);
+//        final var updateBranch = memberRepository.updateBranch(testMember.getId(), null);
+//
+//        if (updateBranch != 1) {
+//            throw new TestAccountManagerException("TestAccount Remove Branch Failed");
+//        }
+//
+//        testMember = memberRepository.findById(testMember.getId());
+        testMember = memberRepository.findById(testMember.getId());
+        testMember.updateBranch(null);
 
-        if (updateMember == 0) {
+        if(!memberRepository.save(testMember)) {
             throw new TestAccountManagerException("TestAccount Remove Branch Failed");
         }
-
-        testMember = memberRepository.findById(testMember.getId());
     }
 
     public void leaveTestAccount() {
-        LocalDateTime deleteTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        LocalDateTime deleteTime = TimeManager.now();
 
         // 지점 요청건이 있으면 삭제
         final var findRequest = branchRequestRepository.findByMemberId(testMember.getId());
 
         if (findRequest != null) {
-            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), deleteTime);
+//            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), deleteTime);
+//
+//            if (updatedRow != 1) {
+//                throw new TestAccountManagerException("TestAccount Remove Request Failed");
+//            }
+            findRequest.delete();
+        }
 
-            if (updatedRow != 1) {
-                throw new TestAccountManagerException("TestAccount Remove Request Failed");
+        // 작성한 게시글이 있으면 삭제
+        final var memberBoard = boardRepository.findByMember(testMember);
+
+        if (!memberBoard.isEmpty()) {
+            final var deleteBoard = boardRepository.deleteAll(testMember, deleteTime);
+
+            if (deleteBoard == 0) {
+                throw new MemberException(ErrorMessage.BOARD_DB_ERROR);
             }
         }
 
-        final var updatedRow = memberRepository.updateDeleteTime(testMember.getId(), deleteTime);
-
-        if (updatedRow != 1) {
-            throw new TestAccountManagerException("TestAccount Leave Failed");
-        }
+        testMember.updateDeletedDate();
     }
 
     public boolean haveBranch() {
-        return memberRepository.findById(testMember.getId()) != null;
+        return memberRepository.findById(testMember.getId()).getBranch() != null;
     }
 
     public boolean haveRequest() {
@@ -129,5 +152,50 @@ public class TestAccountManager {
         final var request = branchRequestRepository.findByMemberId(testMember.getId());
 
         branchRequestRepository.updateDeleteTime(request.getId(), deleteTime);
+    }
+
+    public void deleteAllBoard() {
+        final var boards = boardRepository.findByMember(testMember);
+
+        if (!boards.isEmpty()) {
+            boards.forEach(Board::updateDeleteTime);
+        }
+    }
+
+    public Member newMember() {
+        final var createMember = Member.builder()
+                .birthDay("971112")
+                .branch(branchRepository.findById(1L))
+                .loginId("testSubAccount@daeta.com")
+                .name("테스트서브계정")
+                .passWord("30b4559e8f0435b14b9eca6b98d33f28d9fdd42ecd1ef1f5094470b592752d2a")
+                .phone("01098765432")
+                .role(roleRepository.findById(1L))
+                .sns(SnsType.None)
+                .sex(SexType.Male)
+                .build();
+
+        final var hint = passwordHintRepository.findById(1L);
+
+        if (memberRepository.save(createMember)) {
+            final var testSubMember = memberRepository.findByLoginId("testSubAccount@daeta.com");
+
+            final var memberPasswordHint = new MemberPasswordHint(testSubMember, hint, "답변");
+            if (!memberPasswordHintRepository.save(memberPasswordHint)) {
+                throw new TestAccountManagerException("testSubAccount SetHint Failed");
+            }
+        } else {
+            throw new TestAccountManagerException("testSubAccount Create Failed");
+        }
+
+        return createMember;
+    }
+
+    public void leaveSubTestAccount() {
+        final var testSubMember = memberRepository.findByLoginId("testSubAccount@daeta.com");
+
+        if (testSubMember != null) {
+            testSubMember.updateDeletedDate();
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 public interface IMemberRepository {
@@ -13,8 +14,8 @@ public interface IMemberRepository {
     Member findById(Long id);
     Member findLoginIdByInfo(String name, String birth);
     Member findByLoginIdAndBirthDay(String loginId, String birthDay);
-    List<Member> findByBranchId(Long branchId);
+    Collection<Member> findByBranchId(Long branchId);
+    Collection<Member> findByContainsName(String name);
+
     int updateBranch(Long memberId, Branch branch);
-    int updateLastLoginDate(Long memberId, LocalDateTime dateTime);
-    int updateDeleteTime(Long memberId, LocalDateTime dateTime);
 }

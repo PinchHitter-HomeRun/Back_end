@@ -2,8 +2,8 @@ package com.toyproj.pinchhitterhomerun.entity;
 
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
+import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -76,37 +75,18 @@ public class Member extends Base {
     }
 
     public void updateLastLoginDate() {
-        this.lastLoginDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
-    public void updateUpdatedDate() {
-        this.setUpdatedDate();
+        this.lastLoginDate = TimeManager.now();
     }
 
     public void updateDeletedDate() {
         this.setDeletedDate();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Member member = (Member) o;
-        return Objects.equals(loginId, member.loginId) &&
-                Objects.equals(passWord, member.passWord) &&
-                sns == member.sns &&
-                Objects.equals(name, member.name) &&
-                Objects.equals(birthDay, member.birthDay) &&
-                sex == member.sex &&
-                Objects.equals(phone, member.phone) &&
-                Objects.equals(branch, member.branch) &&
-                Objects.equals(role, member.role) &&
-                Objects.equals(profileImage, member.profileImage) &&
-                Objects.equals(lastLoginDate, member.lastLoginDate);
+    public void updatePassWord(String passWord) {
+        this.passWord = passWord;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(passWord, sns, name, birthDay, sex, phone, branch, role, profileImage, lastLoginDate);
+    public void updateBranch(Branch branch) {
+        this.branch = branch;
     }
 }

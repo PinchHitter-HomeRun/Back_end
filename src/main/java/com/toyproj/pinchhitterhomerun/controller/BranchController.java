@@ -19,7 +19,6 @@ public class BranchController {
 
     private final BranchService branchService;
 
-    // 지점 검색
     @ApiOperation("지점 검색 (city - 시, gu - 구, branchName - 지점 명)")
     @GetMapping("/{brandId}")
     public ResponseResult<Collection<Branch>> searchBranch(@PathVariable("brandId") Long brandId,
@@ -28,16 +27,6 @@ public class BranchController {
                                                            @RequestParam("branchName") String branchName) {
 
         final var result = branchService.searchBranch(brandId, city, gu, branchName);
-
-        return new ResponseResult<>(result);
-    }
-
-    // 아이디로 지점 가져오기
-    @ApiOperation("컬럼 id 값으로 지점 검색")
-    @GetMapping("/{id}")
-    public ResponseResult<Branch> getBranchById(@PathVariable("id") Long id) {
-
-        final var result = branchService.getBranchById(id);
 
         return new ResponseResult<>(result);
     }

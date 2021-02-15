@@ -1,5 +1,7 @@
 package com.toyproj.pinchhitterhomerun.type;
 
+import java.util.Arrays;
+
 public enum ErrorMessage {
     SUCCESS("성공"),
 
@@ -35,12 +37,14 @@ public enum ErrorMessage {
     REQUEST_ALREADY_REQUESTED("이미 요청하였습니다."),
     REQUEST_ALREADY_EXPIRED("이미 처리된 지점 요청입니다."),
 
-    BOARD_NOT_FOUND("찾으려는 결과가 없습니다."),
+    BOARD_NOT_EXIST("존재하지 않는 게시글입니다."),
     BOARD_DB_ERROR("게시판 DB 에러"),
     BOARD_MEMBER_HAVE_NOT_BRANCH("사용자가 속한 지점이 없습니다."),
     BOARD_INVALID_DATE_TIME("유효하지 않는 시간 설정입니다."),
-    BOARD_HAVE_TO_24_HOURS_BEFORE("24시간 이전의 대타만 모집할 수 있습니다.");
-
+    BOARD_HAVE_TO_24_HOURS_BEFORE("시작시간 기준 24시간 이전의 대타만 모집할 수 있습니다."),
+    BOARD_SEARCH_KEYWORD_HAVE_TO_OVER_TWO_LETTERS("2글자 이상으로 검색해주세요."),
+    BOARD_CANNOT_WRITE_NO_MORE("매칭 대기중인 게시물은 최대 3개까지 작성 가능합니다."),
+    BOARD_CAN_NOT_UPDATE_NOT_MINE("내가 쓴 글만 수정 및 삭제 할 수 있습니다.");
     private final String message;
 
     ErrorMessage(String message) {
@@ -49,5 +53,11 @@ public enum ErrorMessage {
 
     public String getMessage() {
         return message;
+    }
+
+    public static ErrorMessage fromString(String message) {
+        final var enums = ErrorMessage.values();
+
+        return Arrays.stream(enums).filter(x -> x.getMessage().equals(message)).findFirst().orElse(null);
     }
 }

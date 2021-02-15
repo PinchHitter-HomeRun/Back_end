@@ -1,6 +1,8 @@
 package com.toyproj.pinchhitterhomerun.entity;
 
+import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -24,10 +26,10 @@ public class Base {
 //    }
 
     protected void setUpdatedDate() {
-        this.updatedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        this.updatedDate = TimeManager.now();
     }
 
     protected void setDeletedDate() {
-        this.deletedDate = LocalDateTime.now().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        this.deletedDate = TimeManager.now();
     }
 }

@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.repository;
 import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBranchRequestRepository;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -61,18 +62,28 @@ public class BranchRequestRepository implements IBranchRequestRepository {
 
     @Override
     public int updateDeleteTime(Long requestId, LocalDateTime localDateTime) {
-        return em.createQuery("update BranchRequest br set br.deletedDate = :localDateTime where br.id = :requestId and br.deletedDate is null")
+        final var updatedRow = em.createQuery("update BranchRequest br set br.deletedDate = :localDateTime where br.id = :requestId and br.deletedDate is null")
                 .setParameter("localDateTime", localDateTime)
                 .setParameter("requestId", requestId)
                 .executeUpdate();
+
+        em.flush();
+        em.clear();
+
+        return updatedRow;
     }
 
     @Override
     public int updateAccept(Long requestId, AcceptType acceptType, LocalDateTime localDateTime) {
-        return em.createQuery("update BranchRequest br set br.acceptType = :acceptType, br.updatedDate = :localDateTime ,br.deletedDate = :localDateTime where br.id = :requestId and br.updatedDate is null and br.deletedDate is null")
+        final var updatedRow = em.createQuery("update BranchRequest br set br.acceptType = :acceptType, br.updatedDate = :localDateTime ,br.deletedDate = :localDateTime where br.id = :requestId and br.updatedDate is null and br.deletedDate is null")
                 .setParameter("localDateTime", localDateTime)
                 .setParameter("requestId", requestId)
                 .setParameter("acceptType", acceptType)
                 .executeUpdate();
+
+        em.flush();
+        em.clear();
+
+        return updatedRow;
     }
 }

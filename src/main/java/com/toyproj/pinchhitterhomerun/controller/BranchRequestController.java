@@ -3,6 +3,7 @@ package com.toyproj.pinchhitterhomerun.controller;
 import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
 import com.toyproj.pinchhitterhomerun.entity.ResponseResult;
 import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +17,7 @@ public class BranchRequestController {
 
     private final BranchRequestService branchRequestService;
 
-    /**
-     * 알바생 등록 신청
-     */
+    @ApiOperation("알바생 지점에 등록 요청")
     @PutMapping
     public ResponseResult<Void> requestToBranchMaster(@RequestParam Long memberId, @RequestParam Long branchId) {
         final var response = branchRequestService.requestToBranchMaster(memberId, branchId);
@@ -37,6 +36,7 @@ public class BranchRequestController {
     }
 
     // 요청 수락 or 거절
+    
 
 
     // 지점의 모든 요청 가져오기

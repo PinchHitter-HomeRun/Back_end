@@ -7,11 +7,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
+@Rollback(value = false)
 public class MemberPasswordHintServiceTest extends TestHelper {
 
     @Autowired
@@ -38,7 +41,7 @@ public class MemberPasswordHintServiceTest extends TestHelper {
 
         // when
         final var result = memberPasswordHintService.getPasswordHint(loginId, birthDay);
-        System.out.println(result.getResponse());
+
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
         assertThat(result.getResponse().getHintText()).isEqualTo("none");

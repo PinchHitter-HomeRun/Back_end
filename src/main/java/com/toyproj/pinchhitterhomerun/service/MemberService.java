@@ -33,6 +33,9 @@ public class MemberService {
     @Autowired
     BranchRequestRepository branchRequestRepository;
 
+    @Autowired
+    BoardRepository boardRepository;
+
     /**
      * 회원가입
      */
@@ -48,6 +51,12 @@ public class MemberService {
                 null,
                 roleRepository.findByRoleName(newMember.getRoleName())
         );
+
+        final var checkDuplicate = memberRepository.findByLoginId(newMember.getLoginId());
+
+        if (checkDuplicate != null) {
+            return new ServiceResult<>(ErrorMessage.MEMBER_ID_ALREADY_USED);
+        }
 
         final var hint = passwordHintRepository.findById(newMember.getHintId());
 
@@ -68,9 +77,11 @@ public class MemberService {
         if (newMember.getBranchId() != null) {
             final var findMember = memberRepository.findByLoginId(newMember.getLoginId());
 
-            BranchRequest branchRequest = new BranchRequest();
-            branchRequest.setMemberId(findMember.getId());
-            branchRequest.setBranchId(newMember.getBranchId());
+            if (findMember == null) {
+                throw new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
+            }
+
+            final var branchRequest = new BranchRequest(findMember.getId(), newMember.getBranchId());
 
             if (!branchRequestRepository.save(branchRequest)) {
                 throw new MemberException(ErrorMessage.REQUEST_DB_ERROR);
@@ -109,13 +120,7 @@ public class MemberService {
             return new ServiceResult<>(ErrorMessage.MEMBER_LOGIN_FAILED);
         }
 
-        final var updateRow = memberRepository.updateLastLoginDate(signMember.getId(), LocalDateTime.now());
-
-        if (updateRow == 0) {
-            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
-        }
-
-        signMember = memberRepository.findById(signMember.getId());
+        signMember.updateLastLoginDate();
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, signMember);
     }
@@ -143,7 +148,7 @@ public class MemberService {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
-        updateMember.setPassWord(passWord);
+        updateMember.updatePassWord(passWord);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, updateMember);
     }
@@ -153,6 +158,7 @@ public class MemberService {
      */
     public ServiceResult<Member> leave(Long memberId) {
         final var leaveMember = memberRepository.findById(memberId);
+        final var deleteTime = TimeManager.now();
 
         if (leaveMember == null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
@@ -162,17 +168,22 @@ public class MemberService {
         final var findRequest = branchRequestRepository.findByMemberId(memberId);
 
         if (findRequest != null) {
-            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), TimeManager.now());
+            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), deleteTime);
 
             if (updatedRow != 1) {
-                throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
+                throw new MemberException(ErrorMessage.REQUEST_DB_ERROR);
             }
         }
 
-        final var updatedRow = memberRepository.updateDeleteTime(memberId, TimeManager.now());
+        // 작성한 게시글이 있으면 삭제
+        final var memberBoard = boardRepository.findByMember(leaveMember);
 
-        if (updatedRow != 1) {
-            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
+        if (!memberBoard.isEmpty()) {
+            final var deleteBoard = boardRepository.deleteAll(leaveMember, deleteTime);
+
+            if (deleteBoard == 0) {
+               throw new MemberException(ErrorMessage.BOARD_DB_ERROR);
+            }
         }
 
         leaveMember.updateDeletedDate();
@@ -249,14 +260,35 @@ public class MemberService {
             throw new MemberException(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        final var updateMember = memberRepository.updateBranch(memberId, branch);
-
-        if (updateMember == 0) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_DB_ERROR);
-        }
+        memberInfo.updateBranch(branch);
 
         final var member = memberRepository.findById(memberId);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, member);
+    }
+
+    /**
+     * 멤버 지점에서 탈퇴
+     */
+    public ServiceResult<Member> leaveBranch(Long memberId) {
+        final var memberInfo = memberRepository.findById(memberId);
+
+        if (memberInfo == null) {
+            return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
+        }
+
+        if (memberInfo.getBranch() == null) {
+            return new ServiceResult<>(ErrorMessage.MEMBER_BRANCH_NOT_EXIST);
+        }
+
+        memberInfo.updateBranch(null);
+
+        final var afterMemberInfo = memberRepository.findById(memberId);
+
+        if (afterMemberInfo == null) {
+            throw new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, afterMemberInfo);
     }
 }

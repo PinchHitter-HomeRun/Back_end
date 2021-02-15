@@ -44,7 +44,6 @@ public class MemberPasswordHintService {
 
     // 힌트 답변 매핑
     public ServiceResult<Boolean> matchHintAnswer(Long memberHintId, String answer) {
-        System.out.println(memberHintId);
         final var memberHint = memberPasswordHintRepository.findById(memberHintId);
 
         if (memberHint == null) {

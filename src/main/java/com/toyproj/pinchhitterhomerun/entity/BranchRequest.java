@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Setter
 @Getter
 @NoArgsConstructor
 public class BranchRequest extends Base {

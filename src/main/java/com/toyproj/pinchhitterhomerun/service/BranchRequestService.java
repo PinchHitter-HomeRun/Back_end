@@ -50,9 +50,7 @@ public class BranchRequestService {
             return new ServiceResult<>(ErrorMessage.REQUEST_ALREADY_REQUESTED);
         }
 
-        BranchRequest branchRequest = new BranchRequest();
-        branchRequest.setMemberId(memberId);
-        branchRequest.setBranchId(branchId);
+        BranchRequest branchRequest = new BranchRequest(memberId, branchId);
 
         if (!branchRequestRepository.save(branchRequest)) {
             throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);

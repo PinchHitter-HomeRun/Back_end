@@ -1,7 +1,9 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
 import com.toyproj.pinchhitterhomerun.entity.Branch;
+import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBranchRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -101,9 +103,14 @@ public class BranchRepository implements IBranchRepository {
 
     @Override
     public int updateMemberBranch(Long memberId, Branch branch) {
-        return em.createQuery("update Member m set m.branch = :branch where m.id = :memberId")
+        final var updatedRow = em.createQuery("update Member m set m.branch = :branch where m.id = :memberId")
                 .setParameter("memberId", memberId)
                 .setParameter("branch", branch)
                 .executeUpdate();
+
+        em.flush();
+        em.clear();
+
+        return updatedRow;
     }
 }

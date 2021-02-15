@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
+@Rollback(value = false)
 class BranchRequestServiceTest extends TestHelper {
     @Autowired
     BranchRequestService branchRequestService;
@@ -26,13 +29,6 @@ class BranchRequestServiceTest extends TestHelper {
     @Autowired
     TestAccountManager testAccountManager;
 
-    private class BranchRequestSet {
-        public BranchRequest getMemberRequest() {
-            return branchRequestService.getMemberRequest(TestAccountManager.testMember.getId()).getResponse();
-        }
-    }
-
-    BranchRequestSet branchRequestSet = new BranchRequestSet();
     static boolean initialized = false;
 
     @BeforeEach
@@ -63,16 +59,17 @@ class BranchRequestServiceTest extends TestHelper {
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var findRequest = branchRequestSet.getMemberRequest();
-        assertThat(findRequest.getBranchId()).isEqualTo(testBranch.getId());
-        assertThat(findRequest.getMemberId()).isEqualTo(memberId);
-        assertThat(findRequest.getAcceptType()).isNull();
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+        assertThat(findRequest.getResponse().getBranchId()).isEqualTo(testBranch.getId());
+        assertThat(findRequest.getResponse().getMemberId()).isEqualTo(memberId);
+        assertThat(findRequest.getResponse().getAcceptType()).isNull();
     }
 
     @Test
     public void 지점에_속한_알바생_다른_지점_등록_신청() {
         // given
-        testAccountManager.setBranch();
+        testAccountManager.setBranch(getRandomBranch());
         final var memberBranch = TestAccountManager.testMember.getBranch();
         final var memberId = TestAccountManager.testMember.getId();
 

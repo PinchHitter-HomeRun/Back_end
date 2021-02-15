@@ -30,14 +30,11 @@ public class DBLoggerAop {
         CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        //System.out.println(request.getRequestURL());
 
         StringBuilder logString = new StringBuilder();
         for (int i = 0; i < args.length; i++) {
             logString.append(codeSignature.getParameterNames()[i]).append(" : ").append(args[i]).append("\n");
         }
-
-        //System.out.println(logString.toString());
 
         Logger logger = new Logger(logString.toString(), request.getRequestURL().toString());
         loggerRepository.save(logger);

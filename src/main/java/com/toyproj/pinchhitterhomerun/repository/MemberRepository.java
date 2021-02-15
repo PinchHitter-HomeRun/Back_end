@@ -4,11 +4,13 @@ import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IMemberRepository;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -91,33 +93,29 @@ public class MemberRepository implements IMemberRepository {
     }
 
     @Override
-    public List<Member> findByBranchId(Long branchId) {
+    public Collection<Member> findByBranchId(Long branchId) {
         return em.createQuery("select m from Member m where m.branch.id = :branchId and m.deletedDate is null", Member.class)
                 .setParameter("branchId", branchId)
                 .getResultList();
     }
 
     @Override
+    public Collection<Member> findByContainsName(String name) {
+        return em.createQuery("select m from Member m where m.name like :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+    @Override
     public int updateBranch(Long memberId, Branch branch) {
-        return em.createQuery("update Member m set m.branch = :branch where m.id = :memberId and m.deletedDate is null")
+        final var updatedRow = em.createQuery("update Member m set m.branch = :branch where m.id = :memberId and m.deletedDate is null")
                 .setParameter("branch", branch)
                 .setParameter("memberId", memberId)
                 .executeUpdate();
-    }
 
-    @Override
-    public int updateLastLoginDate(Long memberId, LocalDateTime dateTime) {
-        return em.createQuery("update Member m set m.lastLoginDate = :dateTime where m.id = :memberId and m.deletedDate is null")
-                .setParameter("dateTime", dateTime)
-                .setParameter("memberId", memberId)
-                .executeUpdate();
-    }
+        em.flush();
+        em.clear();
 
-    @Override
-    public int updateDeleteTime(Long memberId, LocalDateTime dateTime) {
-        return em.createQuery("update Member m set m.deletedDate = :dateTime where m.id = :memberId and m.deletedDate is null")
-                .setParameter("dateTime", dateTime)
-                .setParameter("memberId", memberId)
-                .executeUpdate();
+        return updatedRow;
     }
 }
