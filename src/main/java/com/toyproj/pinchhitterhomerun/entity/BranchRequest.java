@@ -23,12 +23,6 @@ public class BranchRequest extends Base {
     @Enumerated(EnumType.STRING)
     private AcceptType acceptType = null;
 
-//    private LocalDateTime createdDate;
-//
-//    private LocalDateTime updatedDate;
-//
-//    private LocalDateTime deletedDate;
-
     public BranchRequest(Long memberId, Long branchId) {
         this.memberId = memberId;
         this.branchId = branchId;

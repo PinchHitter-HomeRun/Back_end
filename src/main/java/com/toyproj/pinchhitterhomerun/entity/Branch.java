@@ -17,16 +17,10 @@ public class Branch extends Base {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id")
     private Brand brand;
 
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
     private Address address;
-
-//    private LocalDateTime createdDate;
-//
-//    private LocalDateTime deletedDate;
 }

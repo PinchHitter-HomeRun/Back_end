@@ -36,6 +36,7 @@ public class MemberPasswordHintServiceTest extends TestHelper {
     @Test
     public void 아이디와_생년월일로_비밀번호_힌트_가져오기() {
         // given
+        final var testMemberId = TestAccountManager.testMember.getId();
         final var loginId = TestAccountManager.testMember.getLoginId();
         final var birthDay = TestAccountManager.testMember.getBirthDay();
 
@@ -44,7 +45,7 @@ public class MemberPasswordHintServiceTest extends TestHelper {
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
-        assertThat(result.getResponse().getHintText()).isEqualTo("none");
+        assertThat(result.getResponse().getMember().getId()).isEqualTo(testMemberId);
     }
 
     @Test

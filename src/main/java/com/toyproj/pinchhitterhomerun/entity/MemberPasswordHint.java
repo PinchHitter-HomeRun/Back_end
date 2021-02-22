@@ -16,18 +16,16 @@ public class MemberPasswordHint {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member memberId;
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hint_id")
-    private PasswordHint hintId;
+    private PasswordHint hint;
 
     private String answer;
 
     public MemberPasswordHint(Member memberId, PasswordHint hintId, String answer) {
-        this.memberId = memberId;
-        this.hintId = hintId;
+        this.member = memberId;
+        this.hint = hintId;
         this.answer = answer;
     }
 
@@ -35,8 +33,8 @@ public class MemberPasswordHint {
     public String toString() {
         return "MemberPasswordHint{" +
                 "id=" + id +
-                ", memberId=" + memberId +
-                ", hintId=" + hintId +
+                ", memberId=" + member +
+                ", hintId=" + hint +
                 ", answer='" + answer + '\'' +
                 '}';
     }

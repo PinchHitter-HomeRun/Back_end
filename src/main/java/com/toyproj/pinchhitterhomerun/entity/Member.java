@@ -29,7 +29,7 @@ public class Member extends Base {
     @Enumerated(EnumType.STRING)
     private SnsType sns;
 
-    @Column(length = 10)
+    @Column(length = 5)
     private String name;
 
     private String birthDay;
@@ -41,22 +41,12 @@ public class Member extends Base {
     private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id")
     private Branch branch;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_code")
     private Role role;
 
-    private String profileImage;
-
     private LocalDateTime lastLoginDate;
-
-//    private LocalDateTime createdDate;
-//
-//    private LocalDateTime updatedDate;
-//
-//    private LocalDateTime deletedDate;
 
     public Member(String loginId, String passWord, SnsType sns, String name, String birthDay, SexType sex, String phone, Branch branch, Role role) {
         this.loginId = loginId;
@@ -88,5 +78,12 @@ public class Member extends Base {
 
     public void updateBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public SnsType getSns() {
+        if (this.sns == null) {
+            return SnsType.None;
+        }
+        return this.sns;
     }
 }

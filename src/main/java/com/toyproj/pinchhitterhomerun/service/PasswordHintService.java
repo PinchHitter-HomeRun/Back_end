@@ -26,7 +26,7 @@ public class PasswordHintService {
         final var hints = passwordHintRepository.findAll();
 
         if (hints == null) {
-            throw new PasswordHintException(ErrorMessage.HINT_DB_ERROR);
+            return new ServiceResult<>(ErrorMessage.HINT_DB_ERROR);
         }
 
         final Collection<String> hintTexts = new ArrayList<>();
@@ -36,5 +36,18 @@ public class PasswordHintService {
         }
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, hintTexts);
+    }
+
+    /**
+     * id로 힌트 텍스트 조회
+     */
+    public ServiceResult<String> getHintText(Long hintId) {
+        final var hint = passwordHintRepository.findById(hintId);
+
+        if (hint == null) {
+            return new ServiceResult<>(ErrorMessage.HINT_DB_ERROR);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, hint.getText());
     }
 }

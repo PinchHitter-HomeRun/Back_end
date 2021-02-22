@@ -18,7 +18,6 @@ public class Board extends Base{
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "member_id")
     private Member member;
 
     private Long brandId;

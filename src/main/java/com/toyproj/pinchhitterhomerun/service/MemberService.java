@@ -4,12 +4,12 @@ import com.toyproj.pinchhitterhomerun.entity.*;
 import com.toyproj.pinchhitterhomerun.exception.MemberException;
 import com.toyproj.pinchhitterhomerun.repository.*;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
+import com.toyproj.pinchhitterhomerun.type.SexType;
+import com.toyproj.pinchhitterhomerun.type.SnsType;
 import com.toyproj.pinchhitterhomerun.util.TimeManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -39,56 +39,59 @@ public class MemberService {
     /**
      * 회원가입
      */
-    public ServiceResult<Member> join(MemberJoin newMember) {
-        final var member = new Member(
-                newMember.getLoginId(),
-                newMember.getPassWord(),
-                newMember.getSns(),
-                newMember.getName(),
-                newMember.getBirthDay(),
-                newMember.getSex(),
-                newMember.getPhone(),
+    public ServiceResult<Member> join(final String loginId, final String passWord, final SnsType snsType,
+                                      final String name, final String birthDay, final SexType sexType,
+                                      final String phone, final Long branchId, final Long hintId,
+                                      final String answer) {
+        final var newMember = new Member(
+                loginId,
+                passWord,
+                snsType,
+                name,
+                birthDay,
+                sexType,
+                phone,
                 null,
-                roleRepository.findByRoleName(newMember.getRoleName())
+                roleRepository.findByRoleName("none")
         );
+        if (snsType.equals(SnsType.None)) {
 
-        final var checkDuplicate = memberRepository.findByLoginId(newMember.getLoginId());
+            final var checkDuplicate = memberRepository.findByLoginId(loginId);
 
-        if (checkDuplicate != null) {
-            return new ServiceResult<>(ErrorMessage.MEMBER_ID_ALREADY_USED);
-        }
-
-        final var hint = passwordHintRepository.findById(newMember.getHintId());
-
-        if (hint == null) {
-            return new ServiceResult<>(ErrorMessage.HINT_NOT_EXIST);
-        }
-
-        final var memberPasswordHint = new MemberPasswordHint(member, hint, newMember.getAnswer());
-
-        if (!memberRepository.save(member)) {
-            throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
-        }
-
-        if (!memberPasswordHintRepository.save(memberPasswordHint)) {
-            throw new MemberException(ErrorMessage.MEMBER_HINT_DB_ERROR);
-        }
-
-        if (newMember.getBranchId() != null) {
-            final var findMember = memberRepository.findByLoginId(newMember.getLoginId());
-
-            if (findMember == null) {
-                throw new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
+            if (checkDuplicate != null) {
+                return new ServiceResult<>(ErrorMessage.MEMBER_ID_ALREADY_USED);
             }
 
-            final var branchRequest = new BranchRequest(findMember.getId(), newMember.getBranchId());
+            final var hint = passwordHintRepository.findById(hintId);
+
+            if (hint == null) {
+                return new ServiceResult<>(ErrorMessage.HINT_NOT_EXIST);
+            }
+
+            if (!memberRepository.save(newMember)) {
+                throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
+            }
+
+            final var memberPasswordHint = new MemberPasswordHint(newMember, hint, answer);
+
+            if (!memberPasswordHintRepository.save(memberPasswordHint)) {
+                throw new MemberException(ErrorMessage.MEMBER_HINT_DB_ERROR);
+            }
+        } else {
+            if (!memberRepository.save(newMember)) {
+                throw new MemberException(ErrorMessage.MEMBER_DB_ERROR);
+            }
+        }
+
+        if (branchId != null) {
+            final var branchRequest = new BranchRequest(newMember.getId(), branchId);
 
             if (!branchRequestRepository.save(branchRequest)) {
                 throw new MemberException(ErrorMessage.REQUEST_DB_ERROR);
             }
         }
 
-        return new ServiceResult<>(ErrorMessage.SUCCESS, member);
+        return new ServiceResult<>(ErrorMessage.SUCCESS, newMember);
     }
 
     /**
@@ -156,7 +159,7 @@ public class MemberService {
     /**
      * 탈퇴
      */
-    public ServiceResult<Member> leave(Long memberId) {
+    public ServiceResult<Void> leave(Long memberId) {
         final var leaveMember = memberRepository.findById(memberId);
         final var deleteTime = TimeManager.now();
 
@@ -188,7 +191,7 @@ public class MemberService {
 
         leaveMember.updateDeletedDate();
 
-        return new ServiceResult<>(ErrorMessage.SUCCESS, leaveMember);
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
     }
 
     /**
@@ -224,7 +227,7 @@ public class MemberService {
     /**
      * 정보 수정을 위한 현재 비밀번호 확인
      */
-    public ServiceResult<Member> checkPassword(Long memberId, String passWord) {
+    public ServiceResult<Void> checkPassword(Long memberId, String passWord) {
         final var member = memberRepository.findById(memberId);
 
         if (member == null) {
@@ -237,7 +240,7 @@ public class MemberService {
             return new ServiceResult<>(ErrorMessage.MEMBER_WRONG_PASSWORD);
         }
 
-        return new ServiceResult<>(ErrorMessage.SUCCESS, member);
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
     }
 
     /**

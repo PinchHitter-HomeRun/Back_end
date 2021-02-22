@@ -53,22 +53,29 @@ class MemberServiceTest extends TestHelper {
     @Rollback(value = true)
     public void 회원_가입_지점_없음() {
         // given
-        final var givenMember = MemberJoin.builder()
-                .loginId("ojang@naver.com")
-                .passWord("7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9")
-                .sns(SnsType.None)
-                .name("홍길동")
-                .birthDay("930903")
-                .sex(SexType.Male)
-                .phone("01012345678")
-                .branchId(null)
-                .roleName("employee")
-                .hintId(1L)
-                .answer("안녕")
-                .build();
+        final String loginId = "ojang@naver.com";
+        final String passWord = "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9";
+        final String name = "홍킬동";
+        final SnsType snsType = SnsType.None;
+        final String birthDay = "930903";
+        final SexType sex = SexType.Male;
+        final String phone = "01012345678";
+        final Long hintId = 1L;
+        final String answer = "안녕";
 
         // when
-        final var result = memberService.join(givenMember);
+        final var result = memberService.join(
+                loginId,
+                passWord,
+                snsType,
+                name,
+                birthDay,
+                sex,
+                phone,
+                null,
+                hintId,
+                answer
+        );
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -81,27 +88,35 @@ class MemberServiceTest extends TestHelper {
     @Rollback(value = true)
     public void 회원_가입_지점_있음() {
         // given
-        final var givenMember = MemberJoin.builder()
-                .loginId("ojang@ddddd.com")
-                .passWord("7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9")
-                .sns(SnsType.None)
-                .name("홍길동")
-                .birthDay("930903")
-                .sex(SexType.Male)
-                .phone("01012345678")
-                .branchId(1L)
-                .roleName("employee")
-                .hintId(1L)
-                .answer("안녕")
-                .build();
+        final String loginId = "ojang@naver.com";
+        final String passWord = "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9";
+        final String name = "홍킬동";
+        final SnsType snsType = SnsType.None;
+        final String birthDay = "930903";
+        final SexType sex = SexType.Male;
+        final String phone = "01012345678";
+        final Long branchId = 1L;
+        final Long hintId = 1L;
+        final String answer = "안녕";
 
         // when
-        final var result = memberService.join(givenMember);
+        final var result = memberService.join(
+                loginId,
+                passWord,
+                snsType,
+                name,
+                birthDay,
+                sex,
+                phone,
+                branchId,
+                hintId,
+                answer
+        );
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var findRequest = branchRequestService.getBranchRequest(givenMember.getBranchId());
+        final var findRequest = branchRequestService.getBranchRequest(branchId);
         assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         for (BranchRequest branchRequest : findRequest.getResponse()) {
@@ -112,6 +127,38 @@ class MemberServiceTest extends TestHelper {
         }
 
         fail();
+    }
+
+    @Test
+    @Rollback(value = true)
+    public void 소셜_회원_가입() {
+        // given
+        final String loginId = "ojang@naver.com";
+        final String passWord = "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9";
+        final String name = "홍킬동";
+        final SnsType snsType = SnsType.Kakao;
+        final String birthDay = "930903";
+        final SexType sex = SexType.Male;
+        final String phone = "01012345678";
+        final Long branchId = 1L;
+        final Long hintId = 1L;
+        final String answer = "안녕";
+
+        // when
+        final var result = memberService.join(
+                loginId,
+                passWord,
+                snsType,
+                name,
+                birthDay,
+                sex,
+                phone,
+                branchId,
+                hintId,
+                answer
+        );
+
+        // then
     }
 
     @Test
@@ -192,7 +239,6 @@ class MemberServiceTest extends TestHelper {
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
-        assertThat(result.getResponse().getDeletedDate()).isNotNull();
     }
 
     @Test
@@ -293,7 +339,6 @@ class MemberServiceTest extends TestHelper {
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
-        assertThat(result.getResponse()).isNotNull();
     }
 
     @Test

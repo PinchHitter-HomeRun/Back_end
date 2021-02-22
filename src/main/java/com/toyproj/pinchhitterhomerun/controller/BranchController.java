@@ -20,12 +20,11 @@ public class BranchController {
     private final BranchService branchService;
 
     @ApiOperation("지점 검색 (city - 시, gu - 구, branchName - 지점 명)")
-    @GetMapping("/{brandId}")
+    @GetMapping("/search")
     public ResponseResult<Collection<Branch>> searchBranch(@PathVariable("brandId") Long brandId,
                                                            @RequestParam("city") String city,
                                                            @RequestParam("gu") String gu,
                                                            @RequestParam("branchName") String branchName) {
-
         final var result = branchService.searchBranch(brandId, city, gu, branchName);
 
         return new ResponseResult<>(result);
@@ -34,7 +33,6 @@ public class BranchController {
     @ApiOperation("지점이름으로 지점 검색")
     @GetMapping
     public ResponseResult<Branch> getBranchByName(@RequestParam("branchName") String branchName) {
-
         final var result = branchService.getBranchByName(branchName);
 
         return new ResponseResult<>(result);
@@ -44,7 +42,6 @@ public class BranchController {
     @ApiOperation("지점에 속한 사용자들 검색")
     @GetMapping("/{branchId}/members")
     public ResponseResult<Collection<Member>> getBranchMembers(@PathVariable("branchId") Long branchId) {
-
         final var result = branchService.getBranchMembers(branchId);
 
         return new ResponseResult<>(result);
