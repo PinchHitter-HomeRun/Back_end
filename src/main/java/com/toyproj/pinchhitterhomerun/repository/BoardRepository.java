@@ -1,5 +1,6 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
+import com.toyproj.pinchhitterhomerun.bean.BoardTitleResultBean;
 import com.toyproj.pinchhitterhomerun.entity.Board;
 import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Brand;

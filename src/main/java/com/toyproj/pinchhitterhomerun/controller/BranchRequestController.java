@@ -8,17 +8,18 @@ import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/request")
 public class BranchRequestController {
 
-    private final BranchRequestService branchRequestService;
+    @Autowired
+    BranchRequestService branchRequestService;
 
     @ApiOperation("알바생 지점에 등록 요청")
     @PutMapping

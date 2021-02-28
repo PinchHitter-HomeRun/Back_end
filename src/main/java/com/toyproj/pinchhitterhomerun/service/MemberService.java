@@ -294,4 +294,19 @@ public class MemberService {
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, afterMemberInfo);
     }
+
+    /**
+     * 관리자 권한을 부여하거나 해제함
+     */
+    public ServiceResult<Void> grantAdminPermission(String loginId, boolean grant) {
+        final var memberInfo = memberRepository.findByLoginId(loginId);
+
+        if (memberInfo == null) {
+            return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
+        }
+
+        memberInfo.setAdminPermission(grant);
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS);
+    }
 }

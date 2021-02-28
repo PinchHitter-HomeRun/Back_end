@@ -1,5 +1,9 @@
 package com.toyproj.pinchhitterhomerun.service;
 
+import com.toyproj.pinchhitterhomerun.bean.BoardContentResultBean;
+import com.toyproj.pinchhitterhomerun.bean.BoardTitleResultBean;
+import com.toyproj.pinchhitterhomerun.bean.MemberBoardBean;
+import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
 import com.toyproj.pinchhitterhomerun.exception.BoardException;
 import com.toyproj.pinchhitterhomerun.entity.Board;
@@ -14,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,11 +35,45 @@ public class BoardService {
 
     @Autowired
     BranchRepository branchRepository;
+
+    private MemberBoardBean convertToMemberBean(Member member) {
+        final var memberBoardBean = new MemberBoardBean();
+
+        memberBoardBean.setMemberProperty(member);
+
+        return memberBoardBean;
+    }
+
+    private Collection<BoardTitleResultBean> getBoardBean(Collection<Board> boards) {
+        final var result = new ArrayList<BoardTitleResultBean>();
+
+        boards.forEach(x -> {
+                    final var bean = new BoardTitleResultBean();
+
+                    bean.setId(x.getId());
+                    bean.setAuthor(convertToMemberBean(x.getMember()));
+                    bean.setTitle(x.getTitle());
+                    bean.setWriteDate(x.getCreatedDate());
+                    bean.setStarDate(x.getStartDate());
+                    bean.setEndDate(x.getEndDate());
+                    bean.setPayType(x.getPayType());
+                    bean.setPay(x.getPay());
+                    bean.setMatchType(x.getMatchType());
+
+                    result.add(bean);
+                }
+        );
+
+        return result;
+    }
+
     /**
      * 모든 게시글 조회
      */
-    public ServiceResult<Collection<Board>> getAllBoards() {
-        final var result = boardRepository.findAll();
+    public ServiceResult<Collection<BoardTitleResultBean>> getAllBoards() {
+        final var boards = boardRepository.findAll();
+
+        final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
@@ -44,12 +81,24 @@ public class BoardService {
     /**
      * 해당 id의 게시글 조회
      */
-    public ServiceResult<Board> getBoard(Long id) {
-        final var result = boardRepository.findById(id);
+    public ServiceResult<BoardContentResultBean> getBoard(Long id) {
+        final var board = boardRepository.findById(id);
 
-        if (result == null) {
+        if (board == null) {
             return new ServiceResult<>(ErrorMessage.BOARD_NOT_EXIST);
         }
+
+        final var result = new BoardContentResultBean();
+        result.setId(board.getId());
+        result.setAuthor(convertToMemberBean(board.getMember()));
+        result.setTitle(board.getTitle());
+        result.setContent(board.getContent());
+        result.setWriteDate(board.getCreatedDate());
+        result.setStarDate(board.getStartDate());
+        result.setEndDate(board.getEndDate());
+        result.setPayType(board.getPayType());
+        result.setPay(board.getPay());
+        result.setMatchType(board.getMatchType());
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
@@ -98,14 +147,15 @@ public class BoardService {
     /**
      * 사용자 id로 게시글 조회
      */
-    public ServiceResult<Collection<Board>> getBoardsByMemberId(Long memberId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByMemberId(Long memberId) {
         final var findMember = memberRepository.findById(memberId);
 
         if (findMember == null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
-        final var result = boardRepository.findByMember(findMember);
+        final var boards = boardRepository.findByMember(findMember);
+        final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
@@ -113,14 +163,15 @@ public class BoardService {
     /**
      * 특정 브랜드의 모든 게시글 조회
      */
-    public ServiceResult<Collection<Board>> getBoardsByBrandId(Long brandId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBrandId(Long brandId) {
         final var findBrand = brandRepository.findById(brandId);
 
         if (findBrand == null) {
             return new ServiceResult<>(ErrorMessage.BRAND_NOT_EXIST);
         }
 
-        final var result = boardRepository.findByBrandId(brandId);
+        final var boards = boardRepository.findByBrandId(brandId);
+        final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
@@ -128,14 +179,15 @@ public class BoardService {
     /**
      * 특정 지점의 모든 게시글 조회
      */
-    public ServiceResult<Collection<Board>> getBoardsByBranchId(Long branchId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBranchId(Long branchId) {
         final var findBranch = branchRepository.findById(branchId);
 
         if (findBranch == null) {
             return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        final var result = boardRepository.findByBranchId(branchId);
+        final var boards = boardRepository.findByBranchId(branchId);
+        final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
@@ -177,7 +229,7 @@ public class BoardService {
     /**
      * 사용자 이름으로 게시글 조회 (이름이 표함된 모든 게시글 조회) (2글자 이상)
      */
-    public ServiceResult<Collection<Board>> getBoardByContainsName(String name) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardByContainsName(String name) {
         if (name.length() < 2) {
             return new ServiceResult<>(ErrorMessage.BOARD_SEARCH_KEYWORD_HAVE_TO_OVER_TWO_LETTERS);
         }
@@ -188,22 +240,23 @@ public class BoardService {
             return new ServiceResult<>(ErrorMessage.SUCCESS, new ArrayList<>());
         }
 
-        final var findBoards = boardRepository.findByMembers(findMember);
+        final var boards = boardRepository.findByMembers(findMember);
+        final var result = getBoardBean(boards);
 
-        return new ServiceResult<>(ErrorMessage.SUCCESS, findBoards);
+        return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }
 
     /**
      * 게시글 삭제
      */
-    public ServiceResult<Void> deleteBoard(Long memberId, Long id) {
+    public ServiceResult<Void> deleteBoard(Long memberId, Long boardId) {
         final var findMember = memberRepository.findById(memberId);
 
         if (findMember == null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
-        final var findBoard = boardRepository.findById(id);
+        final var findBoard = boardRepository.findById(boardId);
 
         if (findBoard == null) {
             return new ServiceResult<>(ErrorMessage.BOARD_NOT_EXIST);
@@ -221,7 +274,7 @@ public class BoardService {
     /**
      * 브랜드와 지역(시, 구, 동)으로 게시글 조회
      */
-    public ServiceResult<Collection<Board>> getBoardsByAddress(Long brandId, String city, String gu, String street) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByAddress(Long brandId, String city, String gu, String street) {
         final var findBrand = brandRepository.findById(brandId);
 
         if (findBrand == null) {
@@ -237,15 +290,17 @@ public class BoardService {
                         x.getAddress().getSub().startsWith(street))
                 .collect(Collectors.toList());
 
-        final List<Board> result = new ArrayList<>();
+        final var boards = new ArrayList<Board>();
 
         for (var branch : filteredBranches) {
-            final var boards = boardRepository.findByBranchId(branch.getId());
+            final var findBoards = boardRepository.findByBranchId(branch.getId());
 
-            if (boards != null) {
-                result.addAll(boards);
+            if (findBoards != null) {
+                boards.addAll(findBoards);
             }
         }
+
+        final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
     }

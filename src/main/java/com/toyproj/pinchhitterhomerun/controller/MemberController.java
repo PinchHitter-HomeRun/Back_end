@@ -10,7 +10,7 @@ import com.toyproj.pinchhitterhomerun.service.BranchRequestService;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
-import com.toyproj.pinchhitterhomerun.util.EntityToProtocol;
+import com.toyproj.pinchhitterhomerun.util.BeanToProtocol;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +47,7 @@ public class MemberController {
             return new ResponseResult<>(response).setResult(memberJoin.getResult()).build();
         }
 
-        EntityToProtocol.toMemberRes(memberJoin.getResponse(), response);
+        BeanToProtocol.copyPropertyMemberRes(memberJoin.getResponse(), response);
 
         return new ResponseResult<>(response);
     }
@@ -63,7 +63,7 @@ public class MemberController {
             return new ResponseResult<>(response).setResult(memberLogin.getResult()).build();
         }
 
-        EntityToProtocol.toMemberRes(memberLogin.getResponse(), response);
+        BeanToProtocol.copyPropertyMemberRes(memberLogin.getResponse(), response);
 
         return new ResponseResult<>(response);
     }
@@ -79,7 +79,7 @@ public class MemberController {
             return new ResponseResult<>(response).setResult(memberInfo.getResult()).build();
         }
 
-        EntityToProtocol.toMemberRes(memberInfo.getResponse(), response);
+        BeanToProtocol.copyPropertyMemberRes(memberInfo.getResponse(), response);
 
         return new ResponseResult<>(response);
     }
@@ -114,7 +114,7 @@ public class MemberController {
             return new ResponseResult<>(response).setResult(updateMember.getResult());
         }
 
-        EntityToProtocol.toMemberRes(updateMember.getResponse(), response);
+        BeanToProtocol.copyPropertyMemberRes(updateMember.getResponse(), response);
 
         return new ResponseResult<>(response);
     }
@@ -134,7 +134,7 @@ public class MemberController {
 
         final var leaveBranch = memberService.leaveBranch(memberId);
 
-        EntityToProtocol.toMemberRes(leaveBranch.getResponse(), response);
+        BeanToProtocol.copyPropertyMemberRes(leaveBranch.getResponse(), response);
 
         return new ResponseResult<>(response);
     }

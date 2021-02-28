@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-public class Board extends Base{
+public class Board extends Base {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +34,7 @@ public class Board extends Base{
     private int pay;
 
     @Enumerated(EnumType.STRING)
-    private MatchType matchType = MatchType.Waiting;
+    private MatchType matchType;
 
     private LocalDateTime startDate;
 
@@ -58,6 +58,7 @@ public class Board extends Base{
         this.pay = pay;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.matchType = MatchType.Waiting;
     }
 
     public void updateBoard(String title, String content, PayType payType,

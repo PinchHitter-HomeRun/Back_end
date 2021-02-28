@@ -78,13 +78,6 @@ public class TestAccountManager {
     }
 
     public void setBranch(Branch branch) {
-//        final var updateBranch = memberRepository.updateBranch(testMember.getId(), branch);
-//
-//        if (updateBranch != 1) {
-//            throw new TestAccountManagerException("TestAccount Set Branch Failed");
-//        }
-//
-//        testMember = memberRepository.findById(testMember.getId());
         testMember = memberRepository.findById(testMember.getId());
         testMember.updateBranch(branch);
 
@@ -94,13 +87,6 @@ public class TestAccountManager {
     }
 
     public void removeBranch() {
-//        final var updateBranch = memberRepository.updateBranch(testMember.getId(), null);
-//
-//        if (updateBranch != 1) {
-//            throw new TestAccountManagerException("TestAccount Remove Branch Failed");
-//        }
-//
-//        testMember = memberRepository.findById(testMember.getId());
         testMember = memberRepository.findById(testMember.getId());
         testMember.updateBranch(null);
 
@@ -116,11 +102,6 @@ public class TestAccountManager {
         final var findRequest = branchRequestRepository.findByMemberId(testMember.getId());
 
         if (findRequest != null) {
-//            final var updatedRow = branchRequestRepository.updateDeleteTime(findRequest.getId(), deleteTime);
-//
-//            if (updatedRow != 1) {
-//                throw new TestAccountManagerException("TestAccount Remove Request Failed");
-//            }
             findRequest.delete();
         }
 

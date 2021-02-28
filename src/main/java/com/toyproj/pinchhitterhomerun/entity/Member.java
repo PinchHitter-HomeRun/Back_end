@@ -26,6 +26,8 @@ public class Member extends Base {
     @Column(name = "password")
     private String passWord;
 
+    private boolean isAdmin;
+
     @Enumerated(EnumType.STRING)
     private SnsType sns;
 
@@ -85,5 +87,9 @@ public class Member extends Base {
             return SnsType.None;
         }
         return this.sns;
+    }
+
+    public void setAdminPermission(boolean grant) {
+        this.isAdmin = grant;
     }
 }

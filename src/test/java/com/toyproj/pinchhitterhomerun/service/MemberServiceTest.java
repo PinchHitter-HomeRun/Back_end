@@ -382,4 +382,54 @@ class MemberServiceTest extends TestHelper {
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.MEMBER_BRANCH_NOT_EXIST.getMessage());
     }
+
+    @Test
+    public void 관리자_권한_부여() {
+        // given
+        final String loginId = "ojangAdmin@naver.com";
+        final String passWord = "7387ECF02490D22F6E6D98A8F0C638D683778B9D329C5081CE4DCAF8BF2E59B9";
+        final String name = "홍킬동";
+        final SnsType snsType = SnsType.None;
+        final String birthDay = "930903";
+        final SexType sex = SexType.Male;
+        final String phone = "01012345678";
+        final Long hintId = 1L;
+        final String answer = "안녕";
+
+        final var join = memberService.join(
+                loginId,
+                passWord,
+                snsType,
+                name,
+                birthDay,
+                sex,
+                phone,
+                null,
+                hintId,
+                answer
+        );
+        assertThat(join.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        // when
+        final var result = memberService.grantAdminPermission(loginId, true);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        final var afterMember = memberService.getMemberInfo(join.getResponse().getId());
+        assertThat(afterMember.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+        assertThat(afterMember.getResponse().isAdmin()).isEqualTo(true);
+    }
+
+    @Test
+    public void 존재하지_않는_사용자에게_관리자_권한_부여() {
+        // given
+        final var testMemberLoginId = "invalid@daeta.com";
+
+        // when
+        final var result = memberService.grantAdminPermission(testMemberLoginId, true);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.MEMBER_NOT_EXIST.getMessage());
+    }
 }

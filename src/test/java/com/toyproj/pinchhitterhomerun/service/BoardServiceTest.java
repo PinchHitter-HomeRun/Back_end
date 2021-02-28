@@ -254,7 +254,7 @@ class BoardServiceTest extends TestHelper {
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
         assertThat(result.getResponse().size()).isGreaterThan(0);
-        assertThat(result.getResponse().iterator().next().getMember().getName()).isEqualTo(testMemberName);
+        assertThat(result.getResponse().iterator().next().getAuthor().getName()).isEqualTo(testMemberName);
     }
 
     @Test
@@ -544,7 +544,7 @@ class BoardServiceTest extends TestHelper {
         final var afterBoard = boardService.getBoard(testBoardId);
         assertThat(afterBoard.getResponse().getTitle()).isEqualTo(expectedTitle);
         assertThat(afterBoard.getResponse().getContent()).isEqualTo(expectedContent);
-        assertThat(afterBoard.getResponse().getStartDate()).isEqualTo(expectedStartDate);
+        assertThat(afterBoard.getResponse().getStarDate()).isEqualTo(expectedStartDate);
         assertThat(afterBoard.getResponse().getEndDate()).isEqualTo(expectedEndDate);
     }
 

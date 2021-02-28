@@ -7,17 +7,18 @@ import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
 import com.toyproj.pinchhitterhomerun.service.BranchService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/branches")
 public class BranchController {
 
-    private final BranchService branchService;
+    @Autowired
+    BranchService branchService;
 
     @ApiOperation("지점 검색 (city - 시, gu - 구, branchName - 지점 명)")
     @GetMapping("/search")
