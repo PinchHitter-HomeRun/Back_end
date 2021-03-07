@@ -22,6 +22,7 @@ public class BranchRequestController {
     BranchRequestService branchRequestService;
 
     @ApiOperation("알바생 지점에 등록 요청")
+    @ResponseBody
     @PutMapping
     public ResponseResult<Void> requestToBranchMaster(@RequestBody BranchJoinReq request) {
         final var response = branchRequestService
@@ -31,6 +32,7 @@ public class BranchRequestController {
     }
 
     @ApiOperation("지점에 알바생 등록 요청 취소")
+    @ResponseBody
     @DeleteMapping("/{requestId}")
     public ResponseResult<Void> cancelRequest(@PathVariable("requestId") Long requestId) {
         final var response = branchRequestService.cancelRequest(requestId);
@@ -39,6 +41,7 @@ public class BranchRequestController {
     }
 
     @ApiOperation("지점 알바생 층록 요청에 대한 수락 or 거절")
+    @ResponseBody
     @PutMapping("/{requestId}")
     public ResponseResult<Void> responseToRequest(@PathVariable("requestId") Long requestId,
                                                   @RequestBody BranchJoinResponseReq request) {
@@ -49,6 +52,7 @@ public class BranchRequestController {
     }
 
     @ApiOperation("자신의 지점의 모든 요청 조회")
+    @ResponseBody
     @GetMapping("/branch/{branchId}")
     public ResponseResult<Collection<BranchRequest>> getBranchRequest(@PathVariable("branchId") Long branchId) {
         final var response = branchRequestService.getBranchRequest(branchId);

@@ -26,6 +26,7 @@ public class MemberController {
     BranchRequestService branchRequestService;
 
     @ApiOperation("회원가입")
+    @ResponseBody
     @PutMapping
     public ResponseResult<MemberRes> signUp(@RequestBody MemberJoinReq newMember) {
         final var response = new MemberRes();
@@ -53,6 +54,7 @@ public class MemberController {
     }
 
     @ApiOperation("로그인")
+    @ResponseBody
     @PostMapping
     public ResponseResult<MemberRes> signIn(@RequestBody LoginReq request) {
         final var response = new MemberRes();
@@ -69,6 +71,7 @@ public class MemberController {
     }
 
     @ApiOperation("컬럼 id로 사용자 정보 검색")
+    @ResponseBody
     @GetMapping("/{memberId}")
     public ResponseResult<MemberRes> getMemberInfo(@PathVariable("memberId") Long memberId) {
         final var response = new MemberRes();
@@ -85,6 +88,7 @@ public class MemberController {
     }
 
     @ApiOperation("탈퇴")
+    @ResponseBody
     @DeleteMapping("/{memberId}")
     public ResponseResult<Void> leaveMember(@PathVariable("memberId") Long memberId) {
         final var result = memberService.leave(memberId);
@@ -93,6 +97,7 @@ public class MemberController {
     }
     
     @ApiOperation("비밀번호가 맞는지 체크")
+    @ResponseBody
     @PostMapping("{memberId}/checkpassword")
     public ResponseResult<Void> checkPassWord(@PathVariable("memberId") Long memberId,
                                               @RequestBody CheckPassWordReq request) {
@@ -102,6 +107,7 @@ public class MemberController {
     }
 
     @ApiOperation("비밀번호 변경")
+    @ResponseBody
     @PutMapping("{memberId}/password")
     public ResponseResult<MemberRes> updateMemberPassword(@PathVariable("memberId") Long memberId,
                                                        @RequestBody UpdatePassWordReq request) {
@@ -120,6 +126,7 @@ public class MemberController {
     }
     
     @ApiOperation("사용자가 속한 지점 조회")
+    @ResponseBody
     @GetMapping("{memberId}/branch")
     public ResponseResult<Branch> getMemberBranch(@PathVariable("memberId") Long memberId) {
         final var result = memberService.getMemberBranch(memberId);
@@ -128,6 +135,7 @@ public class MemberController {
     }
 
     @ApiOperation("사용자 지점에서 탈퇴")
+    @ResponseBody
     @PutMapping("{memberId}/branch/leave")
     public ResponseResult<MemberRes> leaveMemberBranch(@PathVariable("memberId") Long memberId) {
         final var response = new MemberRes();

@@ -16,6 +16,7 @@ public class CustomerController {
     MemberService memberService;
 
     @ApiOperation("생년월일로 아이디 찾기")
+    @ResponseBody
     @GetMapping
     public ResponseResult<String> findLoginId(@RequestParam("name") String name, @RequestParam("birth_day") String birthDay) {
         final var findLoginId = memberService.findLoginId(name, birthDay);
@@ -24,6 +25,7 @@ public class CustomerController {
     }
 
     @ApiOperation("아이디 사용가능 여부 체크")
+    @ResponseBody
     @PostMapping("/{requestId}")
     public ResponseResult<Boolean> checkAvailableId(@PathVariable("requestId") String requestId) {
         final var result = memberService.isAvailable(requestId);

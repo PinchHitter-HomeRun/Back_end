@@ -19,6 +19,7 @@ public class BrandController {
     BrandService brandService;
 
     @ApiOperation("모든 브랜드 검색")
+    @ResponseBody
     @GetMapping("/all")
     public ResponseResult<Collection<Brand>> getAllBrand() {
         final var result = brandService.getAllBrand();
@@ -27,6 +28,7 @@ public class BrandController {
     }
 
     @ApiOperation("카테고리에 속한 브랜드 검색")
+    @ResponseBody
     @GetMapping("/category/{categoryId}")
     public ResponseResult<Collection<Brand>> getCategoryBrand(@PathVariable("categoryId") Long categoryId) {
         final var result = brandService.getBrandByCategoryId(categoryId);
@@ -35,6 +37,7 @@ public class BrandController {
     }
 
     @ApiOperation("컬럼 id로 브랜드 검색")
+    @ResponseBody
     @GetMapping("/{id}")
     public ResponseResult<Brand> getBrand(@PathVariable("id") Long id) {
         final var result = brandService.getBrandById(id);
@@ -43,6 +46,7 @@ public class BrandController {
     }
 
     @ApiOperation("브랜드 이름으로 검색")
+    @ResponseBody
     @GetMapping
     public ResponseResult<Brand> getBrand(@RequestParam("name") String name) {
         final var result = brandService.getBrandByName(name);

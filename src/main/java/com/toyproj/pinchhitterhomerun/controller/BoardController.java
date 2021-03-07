@@ -21,6 +21,7 @@ public class BoardController {
     BoardService boardService;
 
     @ApiOperation("게시글 작성")
+    @ResponseBody
     @PutMapping
     public ResponseResult<Void> writeBoard(@RequestBody BoardWriteReq request) {
         final var result = boardService.writeBoard(
@@ -37,6 +38,7 @@ public class BoardController {
     }
 
     @ApiOperation("모든 게시글 리스트 조회")
+    @ResponseBody
     @GetMapping
     public ResponseResult<BoardTitleRes> getAllBoard() {
         final var response = new BoardTitleRes();
@@ -52,6 +54,7 @@ public class BoardController {
     }
 
     @ApiOperation("게시글 내용 보기")
+    @ResponseBody
     @GetMapping("/{boardId}")
     public ResponseResult<BoardContentRes> getBoardContent(@PathVariable("boardId") Long boardId) {
         final var response = new BoardContentRes();
@@ -67,6 +70,7 @@ public class BoardController {
     }
 
     @ApiOperation("해당 브랜드의 게시글 리스트 조회")
+    @ResponseBody
     @GetMapping("/brand")
     public ResponseResult<BoardTitleRes> getBrandBoards(@RequestParam("brandId") Long brandId) {
         final var response = new BoardTitleRes();
@@ -82,6 +86,7 @@ public class BoardController {
     }
 
     @ApiOperation("해당 지점의 게시글 리스트 조회")
+    @ResponseBody
     @GetMapping("/branch")
     public ResponseResult<BoardTitleRes> getBranchBoards(@RequestParam("branchId") Long branchId) {
         final var response = new BoardTitleRes();
@@ -97,6 +102,7 @@ public class BoardController {
     }
 
     @ApiOperation("특정 사용자가 작성한 게시글 조회")
+    @ResponseBody
     @GetMapping("/member")
     public ResponseResult<BoardTitleRes> getMemberBoards(@RequestParam("memberId") Long memberId) {
         final var response = new BoardTitleRes();
@@ -112,6 +118,7 @@ public class BoardController {
     }
 
     @ApiOperation("게시글 수정")
+    @ResponseBody
     @PostMapping("/{boardId}")
     public ResponseResult<Void> updateBoard(@PathVariable("boardId") Long boardId,
                                             @RequestBody BoardWriteReq request) {
@@ -130,6 +137,7 @@ public class BoardController {
     }
 
     @ApiOperation("게시글 삭제")
+    @ResponseBody
     @DeleteMapping("/{boardId}")
     public ResponseResult<Void> deleteBoard(@PathVariable("boardId") Long boardId,
                                             @RequestParam("memberId") Long memberId) {

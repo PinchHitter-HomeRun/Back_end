@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 
 @Controller
-@RequestMapping("/board/notification")
+@RequestMapping("/notification")
 public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
 
     @ApiOperation("모든 공지사항 리스트 조회")
+    @ResponseBody
     @GetMapping
     public ResponseResult<Collection<NotificationTitleResultBean>> getAllNotification() {
         final var result = notificationService.getAllNotification();
@@ -28,6 +29,7 @@ public class NotificationController {
     }
 
     @ApiOperation("모든 중요 공지사항 리스트 조회")
+    @ResponseBody
     @GetMapping("/main")
     public ResponseResult<Collection<NotificationTitleResultBean>> getAllMainNotification() {
         final var result = notificationService.getAllMainNotification();
@@ -36,6 +38,7 @@ public class NotificationController {
     }
 
     @ApiOperation("공지사항 작성")
+    @ResponseBody
     @PutMapping
     public ResponseResult<Void> writeNotification(@RequestBody NotificationWriteReq request) {
         final var result = notificationService.writeNotification(
@@ -49,6 +52,7 @@ public class NotificationController {
     }
     
     @ApiOperation("공지사항 수정")
+    @ResponseBody
     @PutMapping("/{notificationId}")
     public ResponseResult<Void> updateNotification(@PathVariable("notificationId") Long notificationId,
                                                    @RequestBody NotificationWriteReq request) {
@@ -65,6 +69,7 @@ public class NotificationController {
     
     // 삭제
     @ApiOperation("공지사항 삭제")
+    @ResponseBody
     @DeleteMapping("/{notificationId}")
     public ResponseResult<Void> deleteNotification(@PathVariable("notificationId") Long notificationId,
                                                    @RequestParam Long adminId) {

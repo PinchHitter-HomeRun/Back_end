@@ -21,6 +21,7 @@ public class MemberPasswordHintController {
     PasswordHintService passwordHintService;
 
     @ApiOperation("로그인 아이디와 생년월일로 사용자가 등록한 힌트 조회")
+    @ResponseBody
     @GetMapping
     public ResponseResult<MemberHintRes> getMemberHint(@RequestParam("loginId") String loginId,
                                                        @RequestParam("birthDay") String birthDay) {
@@ -45,6 +46,7 @@ public class MemberPasswordHintController {
     }
 
     @ApiOperation("입력한 답변과 사용자 질문의 답변이 일치한지 여부")
+    @ResponseBody
     @PostMapping("/{memberHintId}")
     public ResponseResult<Boolean> answerIsMatched(@PathVariable("memberHintId") Long memberHintId,
                                                    @RequestBody HintAnswerReq request) {

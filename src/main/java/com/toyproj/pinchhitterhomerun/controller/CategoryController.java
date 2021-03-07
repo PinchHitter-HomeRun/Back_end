@@ -19,6 +19,7 @@ public class CategoryController {
     CategoryService categoryService;
 
     @ApiOperation("모든 카테고리 검색")
+    @ResponseBody
     @GetMapping("/all")
     public ResponseResult<Collection<Category>> getAllCategory() {
         final var result =  categoryService.getAllCategory();
@@ -27,6 +28,7 @@ public class CategoryController {
     }
 
     @ApiOperation("컬럼 id로 카테고리 검색")
+    @ResponseBody
     @GetMapping("/{id}")
     public ResponseResult<Category> getCategory(@PathVariable("id") Long id) {
         final var result = categoryService.getCategoryById(id);
@@ -35,6 +37,7 @@ public class CategoryController {
     }
 
     @ApiOperation("카테고리 이름으로 카테고리 검색")
+    @ResponseBody
     @GetMapping
     public ResponseResult<Category> getCategory(@RequestParam("name") String name) {
         final var result = categoryService.getCategoryByName(name);
