@@ -5,6 +5,7 @@ import com.toyproj.pinchhitterhomerun.repository.interfaces.INotificationReposit
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Repository
@@ -27,21 +28,23 @@ public class NotificationRepository implements INotificationRepository {
     }
 
     @Override
-    public Collection<Notification> getAllNotification() {
-        return em.createQuery("select n from Notification  n", Notification.class)
+    public Collection<Notification> findAllNotification() {
+        return em.createQuery("select n from Notification  n where n.deletedDate is null", Notification.class)
                 .getResultList();
     }
 
     @Override
-    public Collection<Notification> getMainNotification() {
-        return em.createQuery("select n from Notification n where n.isMain = true", Notification.class)
+    public Collection<Notification> findMainNotification() {
+        return em.createQuery("select n from Notification n where n.isMain = true and n.deletedDate is null", Notification.class)
                 .getResultList();
     }
 
     @Override
-    public Notification getNotificationById(Long notificationId) {
+    public Notification findNotificationById(Long id) {
         try {
-            return em.find(Notification.class, notificationId);
+            return em.createQuery("select n from Notification n where n.id = :id and n.deletedDate is null", Notification.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }

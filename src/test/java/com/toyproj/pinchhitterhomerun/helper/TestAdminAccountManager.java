@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.helper;
 
 import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.entity.MemberPasswordHint;
+import com.toyproj.pinchhitterhomerun.entity.Notification;
 import com.toyproj.pinchhitterhomerun.repository.*;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
@@ -32,6 +33,9 @@ public class TestAdminAccountManager {
 
     @Autowired
     BoardRepository boardRepository;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     public static Member testAdminMember;
 
@@ -66,5 +70,10 @@ public class TestAdminAccountManager {
 
             testAdminMember.setAdminPermission(true);
         }
+    }
+
+    public void deleteAllNotification() {
+        final var notifications = notificationRepository.findAllNotification();
+        notifications.forEach(Notification::deleteNotification);
     }
 }

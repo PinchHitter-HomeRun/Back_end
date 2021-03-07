@@ -44,7 +44,13 @@ public enum ErrorMessage {
     BOARD_HAVE_TO_24_HOURS_BEFORE("시작시간 기준 24시간 이전의 대타만 모집할 수 있습니다."),
     BOARD_SEARCH_KEYWORD_HAVE_TO_OVER_TWO_LETTERS("2글자 이상으로 검색해주세요."),
     BOARD_CANNOT_WRITE_NO_MORE("매칭 대기중인 게시물은 최대 3개까지 작성 가능합니다."),
-    BOARD_CAN_NOT_UPDATE_NOT_MINE("내가 쓴 글만 수정 및 삭제 할 수 있습니다.");
+    BOARD_CAN_NOT_UPDATE_NOT_MINE("내가 쓴 글만 수정 및 삭제 할 수 있습니다."),
+
+    NOTIFICATION_DB_ERROR("공지사항 DB 에러"),
+    NOTIFICATION_NOT_EXIST("존재하지 않는 공지사항입니다."),
+    NOTIFICATION_HAVE_NOT_PERMISSION("권한이 없습니다.");
+
+
     private final String message;
 
     ErrorMessage(String message) {

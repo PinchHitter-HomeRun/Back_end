@@ -20,7 +20,7 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-    @ApiOperation("게시물 작성")
+    @ApiOperation("게시글 작성")
     @PutMapping
     public ResponseResult<Void> writeBoard(@RequestBody BoardWriteReq request) {
         final var result = boardService.writeBoard(
@@ -36,7 +36,7 @@ public class BoardController {
         return new ResponseResult<>(result);
     }
 
-    @ApiOperation("모든 게시판 조회")
+    @ApiOperation("모든 게시글 리스트 조회")
     @GetMapping
     public ResponseResult<BoardTitleRes> getAllBoard() {
         final var response = new BoardTitleRes();
@@ -51,14 +51,14 @@ public class BoardController {
         return new ResponseResult<>(response);
     }
 
-    @ApiOperation("게시판 내용 보기")
+    @ApiOperation("게시글 내용 보기")
     @GetMapping("/{boardId}")
     public ResponseResult<BoardContentRes> getBoardContent(@PathVariable("boardId") Long boardId) {
         final var response = new BoardContentRes();
         final var boardContent = boardService.getBoard(boardId);
 
         if (!boardContent.isSuccess()) {
-            return new ResponseResult<>(response).setResult(boardContent.getResult());
+            return new ResponseResult<>(response).setResult(boardContent.getResult()).build();
         }
 
         BeanToProtocol.copyPropertyBoardContentRes(boardContent.getResponse(), response);
@@ -66,7 +66,7 @@ public class BoardController {
         return new ResponseResult<>(response);
     }
 
-    @ApiOperation("해당 브랜드의 게시물 조회")
+    @ApiOperation("해당 브랜드의 게시글 리스트 조회")
     @GetMapping("/brand")
     public ResponseResult<BoardTitleRes> getBrandBoards(@RequestParam("brandId") Long brandId) {
         final var response = new BoardTitleRes();
@@ -81,7 +81,7 @@ public class BoardController {
         return new ResponseResult<>(response);
     }
 
-    @ApiOperation("해당 지점의 게시물 조회")
+    @ApiOperation("해당 지점의 게시글 리스트 조회")
     @GetMapping("/branch")
     public ResponseResult<BoardTitleRes> getBranchBoards(@RequestParam("branchId") Long branchId) {
         final var response = new BoardTitleRes();

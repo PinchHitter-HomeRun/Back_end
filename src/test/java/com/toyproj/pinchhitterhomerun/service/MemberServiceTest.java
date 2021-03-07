@@ -384,6 +384,7 @@ class MemberServiceTest extends TestHelper {
     }
 
     @Test
+    @Rollback(value = true)
     public void 관리자_권한_부여() {
         // given
         final String loginId = "ojangAdmin@naver.com";

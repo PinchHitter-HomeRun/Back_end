@@ -111,7 +111,7 @@ public class MemberController {
         final var updateMember = memberService.updatePassword(memberId, request.getUpdatePassWord());
 
         if (!updateMember.isSuccess()) {
-            return new ResponseResult<>(response).setResult(updateMember.getResult());
+            return new ResponseResult<>(response).setResult(updateMember.getResult()).build();
         }
 
         BeanToProtocol.copyPropertyMemberRes(updateMember.getResponse(), response);
