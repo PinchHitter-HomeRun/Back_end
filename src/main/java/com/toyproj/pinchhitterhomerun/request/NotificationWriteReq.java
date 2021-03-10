@@ -9,5 +9,5 @@ public class NotificationWriteReq {
     private Long adminId;
     private String title;
     private String content;
-    private boolean isMain;
+    private Boolean isMain;
 }

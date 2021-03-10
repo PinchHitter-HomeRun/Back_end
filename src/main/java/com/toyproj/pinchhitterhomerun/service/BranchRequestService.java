@@ -1,13 +1,13 @@
 package com.toyproj.pinchhitterhomerun.service;
 
-import com.toyproj.pinchhitterhomerun.entity.Branch;
-import com.toyproj.pinchhitterhomerun.entity.ServiceResult;
+import com.toyproj.pinchhitterhomerun.entity.*;
 import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
-import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
-import com.toyproj.pinchhitterhomerun.entity.Member;
+import com.toyproj.pinchhitterhomerun.exception.MemberException;
+import com.toyproj.pinchhitterhomerun.exception.RoleException;
 import com.toyproj.pinchhitterhomerun.repository.BranchRepository;
 import com.toyproj.pinchhitterhomerun.repository.BranchRequestRepository;
 import com.toyproj.pinchhitterhomerun.repository.MemberRepository;
+import com.toyproj.pinchhitterhomerun.repository.RoleRepository;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
 import com.toyproj.pinchhitterhomerun.util.TimeManager;
@@ -31,6 +31,13 @@ public class BranchRequestService {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    public Role getRoleByName(String roleName) {
+        return roleRepository.findByRoleName(roleName);
+    }
 
     /**
      * 지점에 알바생 등록 신청
@@ -113,6 +120,7 @@ public class BranchRequestService {
             throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
         }
 
+        // 수락하면 알바생으로 등록해야함
         if (acceptType == AcceptType.Accept) {
             final var findBranch = branchRepository.findById(findRequest.getBranchId());
 
@@ -120,11 +128,21 @@ public class BranchRequestService {
                 throw new BranchRequestException(ErrorMessage.BRANCH_NOT_EXIST);
             }
 
-            final var updateMember = branchRepository.updateMemberBranch(findRequest.getMemberId(), findBranch);
+            final var findMember = memberRepository.findById(findRequest.getMemberId());
 
-            if (updateMember != 1) {
-                throw new BranchRequestException(ErrorMessage.REQUEST_DB_ERROR);
+           if (findMember == null) {
+               throw  new MemberException(ErrorMessage.MEMBER_NOT_EXIST);
+           }
+
+           findMember.updateBranch(findBranch);
+
+            final var role = getRoleByName("employee");
+
+            if (role == null) {
+                throw new RoleException(ErrorMessage.ROLE_DB_ERROR);
             }
+
+            findMember.setRole(role);
         }
 
         findRequest.setIsAccept(acceptType);
@@ -135,7 +153,7 @@ public class BranchRequestService {
     }
 
     /**
-     * 지점의 모든 요청 가져오기
+     * 치트용 -> 지점의 모든 요청 가져오기
      */
     public ServiceResult<Collection<BranchRequest>> getBranchRequest(Long branchId) {
         final var requests = branchRequestRepository.findByBranchId(branchId);
@@ -148,9 +166,32 @@ public class BranchRequestService {
     }
 
     /**
-     * 지점 ID로 지점 찾기
+     * 지점장이 지점의 모든 요청 가져오기
      */
-    public ServiceResult<BranchRequest> getBranchById(Long requestId) {
+    public ServiceResult<Collection<BranchRequest>> getBranchRequest(Long branchId, Long memberId) {
+        final var member = memberRepository.findById(memberId);
+
+        if (member == null) {
+            return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
+        }
+
+        if (!member.getRole().getName().equals("master")) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_HAVE_NO_PERMISSION);
+        }
+
+        final var requests = branchRequestRepository.findByBranchId(branchId);
+
+        if (requests.isEmpty()) {
+            return new ServiceResult<>(ErrorMessage.REQUEST_NOT_FOUND);
+        }
+
+        return new ServiceResult<>(ErrorMessage.SUCCESS, requests);
+    }
+
+    /**
+     * 요청 ID로 요청 찾기
+     */
+    public ServiceResult<BranchRequest> getBranchRequestById(Long requestId) {
         final var request = branchRequestRepository.findById(requestId);
 
         if (request == null) {

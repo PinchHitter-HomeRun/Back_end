@@ -1,12 +1,9 @@
 package com.toyproj.pinchhitterhomerun.service;
 
-import com.toyproj.pinchhitterhomerun.exception.BranchRequestException;
-import com.toyproj.pinchhitterhomerun.entity.BranchRequest;
 import com.toyproj.pinchhitterhomerun.helper.TestAccountManager;
 import com.toyproj.pinchhitterhomerun.helper.TestHelper;
 import com.toyproj.pinchhitterhomerun.type.AcceptType;
 import com.toyproj.pinchhitterhomerun.type.ErrorMessage;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -45,6 +39,12 @@ class BranchRequestServiceTest extends TestHelper {
         if (testAccountManager.haveRequest()) {
             testAccountManager.cancelRequest();
         }
+
+        if (TestAccountManager.subTestMember != null) {
+            testAccountManager.leaveSubTestAccount();
+        }
+
+        testAccountManager.unSetMaster();
     }
 
     @Test
@@ -112,7 +112,7 @@ class BranchRequestServiceTest extends TestHelper {
     }
 
     @Test
-    public void 지점_모든_요청_가져오기() {
+    public void 권한없는_사용자가_지점_모든_요청_가져오기() {
         // given
         final var testBranch = getRandomBranch();
         final var memberId = TestAccountManager.testMember.getId();
@@ -120,7 +120,26 @@ class BranchRequestServiceTest extends TestHelper {
         assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = branchRequestService.getBranchRequest(testBranch.getId());
+        final var result = branchRequestService.getBranchRequest(testBranch.getId(), memberId);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_HAVE_NO_PERMISSION.getMessage());
+    }
+
+    @Test
+    public void 지점_모든_요청_가져오기() {
+        // given
+        final var testBranch = getRandomBranch();
+        final var subTestMember =  testAccountManager.newMember();
+        final var memberId = TestAccountManager.testMember.getId();
+        testAccountManager.setMaster();
+        testAccountManager.removeSubTestAccountBranch();
+
+        final var request = branchRequestService.requestToBranchMaster(subTestMember.getId(), testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        // when
+        final var result = branchRequestService.getBranchRequest(testBranch.getId(), memberId);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -233,6 +252,39 @@ class BranchRequestServiceTest extends TestHelper {
 
         // when
         final var result = branchRequestService.responseForRequest(testRequestId, AcceptType.Deny);
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());
+    }
+
+    @Test
+    public void 요청_아이디로_요청_찾기() {
+        // given
+        final var testBranch = getRandomBranch();
+        final var memberId = TestAccountManager.testMember.getId();
+        final var request = branchRequestService.requestToBranchMaster(memberId, testBranch.getId());
+        assertThat(request.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        final var findRequest = branchRequestService.getMemberRequest(memberId);
+        assertThat(findRequest.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+
+        // when
+        final var result = branchRequestService.getBranchRequestById(findRequest.getResponse().getId());
+
+        // then
+        assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
+        assertThat(result.getResponse().getBranchId()).isEqualTo(testBranch.getId());
+        assertThat(result.getResponse().getMemberId()).isEqualTo(memberId);
+        assertThat(result.getResponse().getAcceptType()).isNull();
+    }
+
+    @Test
+    public void 없는_요청_아이디로_요청_찾기() {
+        // given
+        final var testId = 0L;
+
+        // when
+        final var result = branchRequestService.getBranchRequestById(testId);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.REQUEST_NOT_EXIST.getMessage());

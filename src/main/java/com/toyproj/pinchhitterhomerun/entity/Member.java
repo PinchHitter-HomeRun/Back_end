@@ -92,4 +92,8 @@ public class Member extends Base {
     public void setAdminPermission(boolean grant) {
         this.isAdmin = grant;
     }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }

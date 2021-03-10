@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.repository;
 
 import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
+import com.toyproj.pinchhitterhomerun.entity.Role;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IMemberRepository;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,6 +42,7 @@ public class MemberRepository implements IMemberRepository {
                     .setParameter("sns", SnsType.None)
                     .getSingleResult();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -110,6 +112,19 @@ public class MemberRepository implements IMemberRepository {
     public int updateBranch(Long memberId, Branch branch) {
         final var updatedRow = em.createQuery("update Member m set m.branch = :branch where m.id = :memberId and m.deletedDate is null")
                 .setParameter("branch", branch)
+                .setParameter("memberId", memberId)
+                .executeUpdate();
+
+        em.flush();
+        em.clear();
+
+        return updatedRow;
+    }
+
+    @Override
+    public int updateRole(Long memberId, Role role) {
+        final var updatedRow = em.createQuery("update Member m set m.role = :role where m.id = :memberId and m.deletedDate is null")
+                .setParameter("role", role)
                 .setParameter("memberId", memberId)
                 .executeUpdate();
 

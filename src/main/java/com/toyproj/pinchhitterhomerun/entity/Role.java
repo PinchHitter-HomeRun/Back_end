@@ -1,16 +1,14 @@
 package com.toyproj.pinchhitterhomerun.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Role {
     @Id

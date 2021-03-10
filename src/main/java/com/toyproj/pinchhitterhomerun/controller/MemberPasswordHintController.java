@@ -5,6 +5,8 @@ import com.toyproj.pinchhitterhomerun.request.HintAnswerReq;
 import com.toyproj.pinchhitterhomerun.response.MemberHintRes;
 import com.toyproj.pinchhitterhomerun.service.MemberPasswordHintService;
 import com.toyproj.pinchhitterhomerun.service.PasswordHintService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,10 @@ public class MemberPasswordHintController {
     PasswordHintService passwordHintService;
 
     @ApiOperation("로그인 아이디와 생년월일로 사용자가 등록한 힌트 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "loginId", value = "사용자의 로그인 아이디", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "birthDay", value = "사용자의 생년월일 (yymmdd)", required = true, dataType = "String")
+    })
     @ResponseBody
     @GetMapping
     public ResponseResult<MemberHintRes> getMemberHint(@RequestParam("loginId") String loginId,
@@ -46,6 +52,10 @@ public class MemberPasswordHintController {
     }
 
     @ApiOperation("입력한 답변과 사용자 질문의 답변이 일치한지 여부")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberHintId", value = "사용자가 등록한 힌트 ID", required = true, dataType = "long", example = "0"),
+            @ApiImplicitParam(name = "request", value = "질문의 답변이 담긴 request", required = true, dataType = "HintAnswerReq")
+    })
     @ResponseBody
     @PostMapping("/{memberHintId}")
     public ResponseResult<Boolean> answerIsMatched(@PathVariable("memberHintId") Long memberHintId,

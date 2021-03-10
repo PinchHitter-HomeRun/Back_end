@@ -5,6 +5,8 @@ import com.toyproj.pinchhitterhomerun.entity.Notification;
 import com.toyproj.pinchhitterhomerun.entity.ResponseResult;
 import com.toyproj.pinchhitterhomerun.request.NotificationWriteReq;
 import com.toyproj.pinchhitterhomerun.service.NotificationService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,15 @@ public class NotificationController {
     }
 
     @ApiOperation("공지사항 작성")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "request", value = "공지사항 작성 request\n" +
+                    "adminId : 관리자 ID\n" +
+                    "title : 제목\n" +
+                    "content : 내용\n" +
+                    "isMain : 중요 공지인지 여부(true or false)",
+                    required = true,
+                    dataType = "NotificationWriteReq")
+    })
     @ResponseBody
     @PutMapping
     public ResponseResult<Void> writeNotification(@RequestBody NotificationWriteReq request) {
@@ -45,13 +56,22 @@ public class NotificationController {
                 request.getAdminId(),
                 request.getTitle(),
                 request.getContent(),
-                request.isMain()
+                request.getIsMain()
         );
 
         return new ResponseResult<>(result.getResponse());
     }
     
     @ApiOperation("공지사항 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "notificationId", value = "공지사항 ID", required = true, dataType = "long", example = "0"),
+            @ApiImplicitParam(name = "request", value = "공지사항 작성 request\n" +
+                    "adminId : 관리자 ID\n" +
+                    "title : 제목\n" +
+                    "content : 내용\n" +
+                    "isMain : 중요 공지인지 여부(true or false)",
+                    dataType = "NotificationWriteReq")
+    })
     @ResponseBody
     @PutMapping("/{notificationId}")
     public ResponseResult<Void> updateNotification(@PathVariable("notificationId") Long notificationId,
@@ -61,7 +81,7 @@ public class NotificationController {
                 request.getAdminId(),
                 request.getTitle(),
                 request.getContent(),
-                request.isMain()
+                request.getIsMain()
         );
 
         return new ResponseResult<>(result);
@@ -69,6 +89,10 @@ public class NotificationController {
     
     // 삭제
     @ApiOperation("공지사항 삭제")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "notificationId", value = "공지사항 ID", required = true, dataType = "long", example = "0"),
+            @ApiImplicitParam(name = "adminId", value = "관리자 ID", required = true, dataType = "long", example = "0")
+    })
     @ResponseBody
     @DeleteMapping("/{notificationId}")
     public ResponseResult<Void> deleteNotification(@PathVariable("notificationId") Long notificationId,

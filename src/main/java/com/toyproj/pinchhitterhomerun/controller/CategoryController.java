@@ -3,6 +3,8 @@ package com.toyproj.pinchhitterhomerun.controller;
 import com.toyproj.pinchhitterhomerun.entity.Category;
 import com.toyproj.pinchhitterhomerun.entity.ResponseResult;
 import com.toyproj.pinchhitterhomerun.service.CategoryService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +30,31 @@ public class CategoryController {
     }
 
     @ApiOperation("컬럼 id로 카테고리 검색")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "categoryId", value = "카테고리 ID\n" +
+                    "1 - 카페\n" +
+                    "2 - 패스트 푸드\n" +
+                    "3 - 편의점\n" +
+                    "4 - 영화관\n" +
+                    "5 - 뷰티", required = true, dataType = "long", example = "0")
+    })
     @ResponseBody
-    @GetMapping("/{id}")
-    public ResponseResult<Category> getCategory(@PathVariable("id") Long id) {
-        final var result = categoryService.getCategoryById(id);
+    @GetMapping("/{categoryId}")
+    public ResponseResult<Category> getCategory(@PathVariable("categoryId") Long categoryId) {
+        final var result = categoryService.getCategoryById(categoryId);
 
         return new ResponseResult<>(result);
     }
 
     @ApiOperation("카테고리 이름으로 카테고리 검색")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "카테고리 이름\n" +
+                    "1 - 카페\n" +
+                    "2 - 패스트 푸드\n" +
+                    "3 - 편의점\n" +
+                    "4 - 영화관\n" +
+                    "5 - 뷰티", required = true, dataType = "String")
+    })
     @ResponseBody
     @GetMapping
     public ResponseResult<Category> getCategory(@RequestParam("name") String name) {

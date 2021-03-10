@@ -3,6 +3,8 @@ package com.toyproj.pinchhitterhomerun.controller;
 import com.toyproj.pinchhitterhomerun.entity.ResponseResult;
 import com.toyproj.pinchhitterhomerun.request.GrantAdminPermissionReq;
 import com.toyproj.pinchhitterhomerun.service.MemberService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class AdminController {
     MemberService memberService;
 
     @ApiOperation("관리자 권한을 부여하거나 취소")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "request", value = "관리자 권한 부여 request", dataType = "GrantAdminPermissionReq")
+    })
     @ResponseBody
     @PutMapping
     public ResponseResult<Void> grantPermission(@RequestBody GrantAdminPermissionReq request) {

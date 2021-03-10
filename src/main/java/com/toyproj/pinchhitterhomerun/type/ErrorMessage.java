@@ -29,6 +29,8 @@ public enum ErrorMessage {
     BRANCH_NOT_EXIST("존재하지 않는 지점입니다."),
     BRANCH_NOT_FOUND("지점을 찾을 수 없습니다."),
     BRANCH_EMPTY_EMPLOYEE("알바생이 없습니다."),
+    
+    ROLE_DB_ERROR("직위 DB 에러"),
 
     REQUEST_DB_ERROR("요청 DB 에러"),
     REQUEST_NOT_EXIST("존재하지 않는 지점 요청입니다."),
@@ -36,6 +38,7 @@ public enum ErrorMessage {
     REQUEST_ALREADY_HAVE_BRANCH("다른 지점에 속해있습니다."),
     REQUEST_ALREADY_REQUESTED("이미 요청하였습니다."),
     REQUEST_ALREADY_EXPIRED("이미 처리된 지점 요청입니다."),
+    REQUEST_HAVE_NO_PERMISSION("지점장만 조회할 수 있습니다."),
 
     BOARD_NOT_EXIST("존재하지 않는 게시글입니다."),
     BOARD_DB_ERROR("게시판 DB 에러"),

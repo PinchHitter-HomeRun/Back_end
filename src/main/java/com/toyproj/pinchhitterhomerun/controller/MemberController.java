@@ -11,6 +11,8 @@ import com.toyproj.pinchhitterhomerun.service.MemberService;
 import com.toyproj.pinchhitterhomerun.type.SexType;
 import com.toyproj.pinchhitterhomerun.type.SnsType;
 import com.toyproj.pinchhitterhomerun.util.BeanToProtocol;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,22 +28,25 @@ public class MemberController {
     BranchRequestService branchRequestService;
 
     @ApiOperation("회원가입")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "request", value = "회원가입 request", required = true, dataType = "MemberJoinReq")
+    })
     @ResponseBody
     @PutMapping
-    public ResponseResult<MemberRes> signUp(@RequestBody MemberJoinReq newMember) {
+    public ResponseResult<MemberRes> signUp(@RequestBody MemberJoinReq request) {
         final var response = new MemberRes();
 
         final var memberJoin = memberService.join(
-                newMember.getLoginId(),
-                newMember.getPassWord(),
-                SnsType.fromInt(newMember.getSnsType()),
-                newMember.getName(),
-                newMember.getBirthDay(),
-                SexType.fromInt(newMember.getSexType()),
-                newMember.getPhone(),
-                newMember.getBranchId(),
-                newMember.getHintId(),
-                newMember.getAnswer()
+                request.getLoginId(),
+                request.getPassWord(),
+                SnsType.fromInt(request.getSnsType()),
+                request.getName(),
+                request.getBirthDay(),
+                SexType.fromInt(request.getSexType()),
+                request.getPhone(),
+                request.getBranchId(),
+                request.getHintId(),
+                request.getAnswer()
         );
 
         if (!memberJoin.isSuccess()) {
@@ -54,6 +59,13 @@ public class MemberController {
     }
 
     @ApiOperation("로그인")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "request", value = "로그인 정보 request\n" +
+                    "loginId : 로그인할 id (이메일 형식)\n" +
+                    "password : 비밀번호 (sha256)",
+                    required = true,
+                    dataType = "LoginReq")
+    })
     @ResponseBody
     @PostMapping
     public ResponseResult<MemberRes> signIn(@RequestBody LoginReq request) {
@@ -71,6 +83,9 @@ public class MemberController {
     }
 
     @ApiOperation("컬럼 id로 사용자 정보 검색")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0")
+    })
     @ResponseBody
     @GetMapping("/{memberId}")
     public ResponseResult<MemberRes> getMemberInfo(@PathVariable("memberId") Long memberId) {
@@ -88,6 +103,9 @@ public class MemberController {
     }
 
     @ApiOperation("탈퇴")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0")
+    })
     @ResponseBody
     @DeleteMapping("/{memberId}")
     public ResponseResult<Void> leaveMember(@PathVariable("memberId") Long memberId) {
@@ -95,8 +113,15 @@ public class MemberController {
 
         return new ResponseResult<>(result);
     }
-    
+
     @ApiOperation("비밀번호가 맞는지 체크")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0"),
+            @ApiImplicitParam(name = "request", value = "현재 비밀번호 request\n" +
+                    "currentPassWord : 현재 비밀번호 (sha256)",
+                    required = true,
+                    dataType = "CheckPassWordReq")
+    })
     @ResponseBody
     @PostMapping("{memberId}/checkpassword")
     public ResponseResult<Void> checkPassWord(@PathVariable("memberId") Long memberId,
@@ -107,10 +132,17 @@ public class MemberController {
     }
 
     @ApiOperation("비밀번호 변경")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0"),
+            @ApiImplicitParam(name = "request", value = "변경할 비밀번호 request\n" +
+                    "updatePassWord : 변경하고자하는 비밀번호 (sha256)",
+                    required = true,
+                    dataType = "UpdatePassWordReq")
+    })
     @ResponseBody
     @PutMapping("{memberId}/password")
     public ResponseResult<MemberRes> updateMemberPassword(@PathVariable("memberId") Long memberId,
-                                                       @RequestBody UpdatePassWordReq request) {
+                                                          @RequestBody UpdatePassWordReq request) {
         // TODO : 비밀번호 체크를 했는지 확인할 필요가 있음
         final var response = new MemberRes();
 
@@ -124,9 +156,12 @@ public class MemberController {
 
         return new ResponseResult<>(response);
     }
-    
+
     @ApiOperation("사용자가 속한 지점 조회")
     @ResponseBody
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0")
+    })
     @GetMapping("{memberId}/branch")
     public ResponseResult<Branch> getMemberBranch(@PathVariable("memberId") Long memberId) {
         final var result = memberService.getMemberBranch(memberId);
@@ -136,6 +171,9 @@ public class MemberController {
 
     @ApiOperation("사용자 지점에서 탈퇴")
     @ResponseBody
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "사용자 ID", required = true, dataType = "long", example = "0")
+    })
     @PutMapping("{memberId}/branch/leave")
     public ResponseResult<MemberRes> leaveMemberBranch(@PathVariable("memberId") Long memberId) {
         final var response = new MemberRes();

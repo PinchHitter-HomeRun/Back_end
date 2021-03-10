@@ -42,6 +42,7 @@ public class TestAccountManager {
     BoardRepository boardRepository;
 
     public static Member testMember;
+    public static Member subTestMember;
 
     public void process() {
         testMember = memberRepository.findByLoginId("testAccount@daeta.com");
@@ -159,9 +160,13 @@ public class TestAccountManager {
         final var hint = passwordHintRepository.findById(1L);
 
         if (memberRepository.save(createMember)) {
-            final var testSubMember = memberRepository.findByLoginId("testSubAccount@daeta.com");
+            subTestMember = memberRepository.findByLoginId(createMember.getLoginId());
 
-            final var memberPasswordHint = new MemberPasswordHint(testSubMember, hint, "답변");
+            if (subTestMember == null) {
+                throw new TestAccountManagerException("testSubAccount is null");
+            }
+
+            final var memberPasswordHint = new MemberPasswordHint(subTestMember, hint, "답변");
             if (!memberPasswordHintRepository.save(memberPasswordHint)) {
                 throw new TestAccountManagerException("testSubAccount SetHint Failed");
             }
@@ -172,11 +177,42 @@ public class TestAccountManager {
         return createMember;
     }
 
-    public void leaveSubTestAccount() {
-        final var testSubMember = memberRepository.findByLoginId("testSubAccount@daeta.com");
+    public void removeSubTestAccountBranch() {
+        subTestMember = memberRepository.findById(subTestMember.getId());
+        subTestMember.updateBranch(null);
 
-        if (testSubMember != null) {
-            testSubMember.updateDeletedDate();
+        if(!memberRepository.save(subTestMember)) {
+            throw new TestAccountManagerException("TestAccount Remove Branch Failed");
         }
+    }
+
+    public void leaveSubTestAccount() {
+        subTestMember = memberRepository.findByLoginId("testSubAccount@daeta.com");
+
+        if (subTestMember != null) {
+            subTestMember.updateDeletedDate();
+        }
+
+        subTestMember = null;
+    }
+
+    public void setMaster() {
+        final var master = roleRepository.findByRoleName("master");
+
+        if (master == null) {
+            throw new TestAccountManagerException("Failed to get master");
+        }
+
+        memberRepository.updateRole(testMember.getId(), master);
+    }
+
+    public void unSetMaster() {
+        final var none = roleRepository.findByRoleName("none");
+
+        if (none == null) {
+            throw new TestAccountManagerException("Failed to get none");
+        }
+
+        testMember.setRole(none);
     }
 }

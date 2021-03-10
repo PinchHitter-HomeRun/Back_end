@@ -2,6 +2,7 @@ package com.toyproj.pinchhitterhomerun.repository.interfaces;
 
 import com.toyproj.pinchhitterhomerun.entity.Branch;
 import com.toyproj.pinchhitterhomerun.entity.Member;
+import com.toyproj.pinchhitterhomerun.entity.Role;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -18,4 +19,5 @@ public interface IMemberRepository {
     Collection<Member> findByContainsName(String name);
 
     int updateBranch(Long memberId, Branch branch);
+    int updateRole(Long memberId, Role role);
 }
