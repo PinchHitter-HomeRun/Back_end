@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+
+  database:
+    image: mariadb
+    restart: always
+    ports:
+      - 13306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: pinch_hit
