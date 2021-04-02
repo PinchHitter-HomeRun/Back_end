@@ -17,7 +17,4 @@ public interface IMemberRepository {
     Member findByLoginIdAndBirthDay(String loginId, String birthDay);
     Collection<Member> findByBranchId(Long branchId);
     Collection<Member> findByContainsName(String name);
-
-    int updateBranch(Long memberId, Branch branch);
-    int updateRole(Long memberId, Role role);
 }

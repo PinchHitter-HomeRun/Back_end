@@ -107,7 +107,7 @@ public class TestAccountManager {
         }
 
         // 작성한 게시글이 있으면 삭제
-        final var memberBoard = boardRepository.findByMember(testMember);
+        final var memberBoard = boardRepository.findAllBoardByMember(testMember);
 
         if (!memberBoard.isEmpty()) {
             final var deleteBoard = boardRepository.deleteAll(testMember, deleteTime);
@@ -117,7 +117,7 @@ public class TestAccountManager {
             }
         }
 
-        testMember.updateDeletedDate();
+        memberRepository.updateDeletedDate(testMember.getId(), deleteTime);
     }
 
     public boolean haveBranch() {
@@ -137,7 +137,7 @@ public class TestAccountManager {
     }
 
     public void deleteAllBoard() {
-        final var boards = boardRepository.findByMember(testMember);
+        final var boards = boardRepository.findAllBoardByMember(testMember);
 
         if (!boards.isEmpty()) {
             boards.forEach(Board::updateDeleteTime);

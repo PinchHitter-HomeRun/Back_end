@@ -179,7 +179,7 @@ public class MemberService {
         }
 
         // 작성한 게시글이 있으면 삭제
-        final var memberBoard = boardRepository.findByMember(leaveMember);
+        final var memberBoard = boardRepository.findAllBoardByMember(leaveMember);
 
         if (!memberBoard.isEmpty()) {
             final var deleteBoard = boardRepository.deleteAll(leaveMember, deleteTime);

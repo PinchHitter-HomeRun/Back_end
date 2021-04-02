@@ -52,9 +52,9 @@ public class BoardController {
     @ApiOperation("모든 게시글 리스트 조회")
     @ResponseBody
     @GetMapping
-    public ResponseResult<BoardTitleRes> getAllBoard() {
+    public ResponseResult<BoardTitleRes> getAllBoard(@RequestParam("page") int page, @RequestParam("count") int count) {
         final var response = new BoardTitleRes();
-        final var findBoards = boardService.getAllBoards();
+        final var findBoards = boardService.getAllBoards(page, count);
 
         if (!findBoards.isSuccess()) {
             return new ResponseResult<>(response).setResult(findBoards.getResult()).build();
@@ -109,9 +109,11 @@ public class BoardController {
     })
     @ResponseBody
     @GetMapping("/brand")
-    public ResponseResult<BoardTitleRes> getBrandBoards(@RequestParam("brandId") Long brandId) {
+    public ResponseResult<BoardTitleRes> getBrandBoards(@RequestParam("brandId") Long brandId,
+                                                        @RequestParam("page") int page,
+                                                        @RequestParam("count") int count) {
         final var response = new BoardTitleRes();
-        final var findBoards = boardService.getBoardsByBrandId(brandId);
+        final var findBoards = boardService.getBoardsByBrandId(brandId, page, count);
 
         if (!findBoards.isSuccess()) {
             return new ResponseResult<>(response).setResult(findBoards.getResult());
@@ -128,9 +130,11 @@ public class BoardController {
     })
     @ResponseBody
     @GetMapping("/branch")
-    public ResponseResult<BoardTitleRes> getBranchBoards(@RequestParam("branchId") Long branchId) {
+    public ResponseResult<BoardTitleRes> getBranchBoards(@RequestParam("branchId") Long branchId,
+                                                         @RequestParam("page") int page,
+                                                         @RequestParam("count") int count) {
         final var response = new BoardTitleRes();
-        final var findBoards = boardService.getBoardsByBranchId(branchId);
+        final var findBoards = boardService.getBoardsByBranchId(branchId, page, count);
 
         if (!findBoards.isSuccess()) {
             return new ResponseResult<>(response).setResult(findBoards.getResult());
@@ -147,9 +151,11 @@ public class BoardController {
     })
     @ResponseBody
     @GetMapping("/member")
-    public ResponseResult<BoardTitleRes> getMemberBoards(@RequestParam("memberId") Long memberId) {
+    public ResponseResult<BoardTitleRes> getMemberBoards(@RequestParam("memberId") Long memberId,
+                                                         @RequestParam("page") int page,
+                                                         @RequestParam("count") int count) {
         final var response = new BoardTitleRes();
-        final var findBoards = boardService.getBoardsByBranchId(memberId);
+        final var findBoards = boardService.getBoardsByBranchId(memberId, page, count);
 
         if (!findBoards.isSuccess()) {
             return new ResponseResult<>(response).setResult(findBoards.getResult());

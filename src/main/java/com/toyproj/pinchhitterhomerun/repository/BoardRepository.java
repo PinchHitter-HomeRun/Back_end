@@ -1,21 +1,13 @@
 package com.toyproj.pinchhitterhomerun.repository;
 
-import com.toyproj.pinchhitterhomerun.bean.BoardTitleResultBean;
 import com.toyproj.pinchhitterhomerun.entity.Board;
-import com.toyproj.pinchhitterhomerun.entity.Branch;
-import com.toyproj.pinchhitterhomerun.entity.Brand;
 import com.toyproj.pinchhitterhomerun.entity.Member;
 import com.toyproj.pinchhitterhomerun.repository.interfaces.IBoardRepository;
-import com.toyproj.pinchhitterhomerun.type.PayType;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 public class BoardRepository implements IBoardRepository {
@@ -37,8 +29,10 @@ public class BoardRepository implements IBoardRepository {
     }
 
     @Override
-    public Collection<Board> findAll() {
+    public Collection<Board> findAll(int page, int count) {
         return em.createQuery("select bbs from Board bbs where bbs.deletedDate is null order by bbs.createdDate", Board.class)
+                .setMaxResults(count)
+                .setFirstResult(page * count)
                 .getResultList();
     }
 
@@ -54,30 +48,45 @@ public class BoardRepository implements IBoardRepository {
     }
 
     @Override
-    public Collection<Board> findByMember(Member member) {
+    public Collection<Board> findByMember(Member member, int page, int count) {
         return em.createQuery("select bbs from Board bbs where bbs.member = :member and bbs.deletedDate is null order by bbs.createdDate", Board.class)
                 .setParameter("member", member)
+                .setMaxResults(count)
+                .setFirstResult(page * count)
                 .getResultList();
     }
 
     @Override
-    public Collection<Board> findByMembers(Collection<Member> members) {
+    public Collection<Board> findByMembers(Collection<Member> members, int page, int count) {
         return em.createQuery("select bbs from Board bbs where bbs.member in :members and bbs.deletedDate is null order by bbs.createdDate", Board.class)
                 .setParameter("members", members)
+                .setMaxResults(count)
+                .setFirstResult(page * count)
                 .getResultList();
     }
 
     @Override
-    public Collection<Board> findByBranchId(Long branchId) {
+    public Collection<Board> findByBranchId(Long branchId, int page, int count) {
         return em.createQuery("select bbs from Board bbs where bbs.branchId = :branchId and bbs.deletedDate is null order by bbs.createdDate", Board.class)
                 .setParameter("branchId", branchId)
+                .setMaxResults(count)
+                .setFirstResult(page * count)
                 .getResultList();
     }
 
     @Override
-    public Collection<Board> findByBrandId(Long brandId) {
+    public Collection<Board> findByBrandId(Long brandId, int page, int count) {
         return em.createQuery("select bbs from Board bbs where bbs.brandId = :brandId and bbs.deletedDate is null order by bbs.createdDate", Board.class)
                 .setParameter("brandId", brandId)
+                .setMaxResults(count)
+                .setFirstResult(page * count)
+                .getResultList();
+    }
+
+    @Override
+    public Collection<Board> findAllBoardByMember(Member member) {
+        return em.createQuery("select bbs from Board bbs where bbs.member = :member", Board.class)
+                .setParameter("member", member)
                 .getResultList();
     }
 

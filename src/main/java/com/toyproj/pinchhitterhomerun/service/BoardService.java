@@ -70,8 +70,8 @@ public class BoardService {
     /**
      * 모든 게시글 조회
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getAllBoards() {
-        final var boards = boardRepository.findAll();
+    public ServiceResult<Collection<BoardTitleResultBean>> getAllBoards(int page, int count) {
+        final var boards = boardRepository.findAll(page, count);
 
         final var result = getBoardBean(boards);
 
@@ -121,7 +121,8 @@ public class BoardService {
             return new ServiceResult<>(ErrorMessage.BOARD_MEMBER_HAVE_NOT_BRANCH);
         }
 
-        final var findBoards = boardRepository.findByMember(findMember);
+        // 바로 이전글의 시간을 비교해야 하므로 최근의 10개 조회
+        final var findBoards = boardRepository.findByMember(findMember, 0, 10);
 
         if (findBoards.size() >= maxBoards) {
             return new ServiceResult<>(ErrorMessage.BOARD_CANNOT_WRITE_NO_MORE);
@@ -147,14 +148,14 @@ public class BoardService {
     /**
      * 사용자 id로 게시글 조회
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByMemberId(Long memberId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByMemberId(Long memberId, int page, int count) {
         final var findMember = memberRepository.findById(memberId);
 
         if (findMember == null) {
             return new ServiceResult<>(ErrorMessage.MEMBER_NOT_EXIST);
         }
 
-        final var boards = boardRepository.findByMember(findMember);
+        final var boards = boardRepository.findByMember(findMember, page, count);
         final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
@@ -163,14 +164,14 @@ public class BoardService {
     /**
      * 특정 브랜드의 모든 게시글 조회
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBrandId(Long brandId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBrandId(Long brandId, int page, int count) {
         final var findBrand = brandRepository.findById(brandId);
 
         if (findBrand == null) {
             return new ServiceResult<>(ErrorMessage.BRAND_NOT_EXIST);
         }
 
-        final var boards = boardRepository.findByBrandId(brandId);
+        final var boards = boardRepository.findByBrandId(brandId, page, count);
         final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
@@ -179,14 +180,14 @@ public class BoardService {
     /**
      * 특정 지점의 모든 게시글 조회
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBranchId(Long branchId) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByBranchId(Long branchId, int page, int count) {
         final var findBranch = branchRepository.findById(branchId);
 
         if (findBranch == null) {
             return new ServiceResult<>(ErrorMessage.BRANCH_NOT_EXIST);
         }
 
-        final var boards = boardRepository.findByBranchId(branchId);
+        final var boards = boardRepository.findByBranchId(branchId, page, count);
         final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
@@ -229,7 +230,7 @@ public class BoardService {
     /**
      * 사용자 이름으로 게시글 조회 (이름이 표함된 모든 게시글 조회) (2글자 이상)
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getBoardByContainsName(String name) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardByContainsName(String name, int page, int count) {
         if (name.length() < 2) {
             return new ServiceResult<>(ErrorMessage.BOARD_SEARCH_KEYWORD_HAVE_TO_OVER_TWO_LETTERS);
         }
@@ -240,7 +241,7 @@ public class BoardService {
             return new ServiceResult<>(ErrorMessage.SUCCESS, new ArrayList<>());
         }
 
-        final var boards = boardRepository.findByMembers(findMember);
+        final var boards = boardRepository.findByMembers(findMember, page, count);
         final var result = getBoardBean(boards);
 
         return new ServiceResult<>(ErrorMessage.SUCCESS, result);
@@ -274,7 +275,12 @@ public class BoardService {
     /**
      * 브랜드와 지역(시, 구, 동)으로 게시글 조회
      */
-    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByAddress(Long brandId, String city, String gu, String street) {
+    public ServiceResult<Collection<BoardTitleResultBean>> getBoardsByAddress(Long brandId,
+                                                                              String city,
+                                                                              String gu,
+                                                                              String street,
+                                                                              int page,
+                                                                              int count) {
         final var findBrand = brandRepository.findById(brandId);
 
         if (findBrand == null) {
@@ -293,7 +299,7 @@ public class BoardService {
         final var boards = new ArrayList<Board>();
 
         for (var branch : filteredBranches) {
-            final var findBoards = boardRepository.findByBranchId(branch.getId());
+            final var findBoards = boardRepository.findByBranchId(branch.getId(), page, count);
 
             if (findBoards != null) {
                 boards.addAll(findBoards);

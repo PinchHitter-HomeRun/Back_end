@@ -42,7 +42,6 @@ public class MemberRepository implements IMemberRepository {
                     .setParameter("sns", SnsType.None)
                     .getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -108,7 +107,7 @@ public class MemberRepository implements IMemberRepository {
                 .getResultList();
     }
 
-    @Override
+    // 이하 함수는 강제 업데이트
     public int updateBranch(Long memberId, Branch branch) {
         final var updatedRow = em.createQuery("update Member m set m.branch = :branch where m.id = :memberId and m.deletedDate is null")
                 .setParameter("branch", branch)
@@ -121,10 +120,21 @@ public class MemberRepository implements IMemberRepository {
         return updatedRow;
     }
 
-    @Override
     public int updateRole(Long memberId, Role role) {
         final var updatedRow = em.createQuery("update Member m set m.role = :role where m.id = :memberId and m.deletedDate is null")
                 .setParameter("role", role)
+                .setParameter("memberId", memberId)
+                .executeUpdate();
+
+        em.flush();
+        em.clear();
+
+        return updatedRow;
+    }
+
+    public int updateDeletedDate(Long memberId, LocalDateTime deleteTime) {
+        final var updatedRow = em.createQuery("update Member m set m.deletedDate = :deleteTime where m.id = :memberId and m.deletedDate is null")
+                .setParameter("deleteTime", deleteTime)
                 .setParameter("memberId", memberId)
                 .executeUpdate();
 

@@ -74,7 +74,7 @@ class BoardServiceTest extends TestHelper {
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var after = boardService.getBoardsByMemberId(testMemberId);
+        final var after = boardService.getBoardsByMemberId(testMemberId, 0, 10);
         assertThat(after.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
         assertThat(after.getResponse().iterator().next().getTitle()).isEqualTo(title);
     }
@@ -250,7 +250,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardByContainsName(testName);
+        final var result = boardService.getBoardByContainsName(testName, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -282,7 +282,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardByContainsName(testName);
+        final var result = boardService.getBoardByContainsName(testName, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -313,7 +313,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardByContainsName(testName);
+        final var result = boardService.getBoardByContainsName(testName, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.BOARD_SEARCH_KEYWORD_HAVE_TO_OVER_TWO_LETTERS.getMessage());
@@ -342,7 +342,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardsByMemberId(testMemberId);
+        final var result = boardService.getBoardsByMemberId(testMemberId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -355,7 +355,7 @@ class BoardServiceTest extends TestHelper {
         final var testMemberId = TestAccountManager.testMember.getId();
 
         // when
-        final var result = boardService.getBoardsByMemberId(testMemberId);
+        final var result = boardService.getBoardsByMemberId(testMemberId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -368,7 +368,7 @@ class BoardServiceTest extends TestHelper {
         final var testMemberId = 0L;
 
         // when
-        final var result = boardService.getBoardsByMemberId(testMemberId);
+        final var result = boardService.getBoardsByMemberId(testMemberId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.MEMBER_NOT_EXIST.getMessage());
@@ -402,7 +402,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardsByBrandId(testBrandId);
+        final var result = boardService.getBoardsByBrandId(testBrandId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -419,7 +419,7 @@ class BoardServiceTest extends TestHelper {
         final var testBrandId = branchData.getResponse().getBrand().getId();
 
         // when
-        final var result = boardService.getBoardsByBrandId(testBrandId);
+        final var result = boardService.getBoardsByBrandId(testBrandId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -432,7 +432,7 @@ class BoardServiceTest extends TestHelper {
         final var testBrandId = 0L;
 
         // when
-        final var result = boardService.getBoardsByBrandId(testBrandId);
+        final var result = boardService.getBoardsByBrandId(testBrandId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.BRAND_NOT_EXIST.getMessage());
@@ -462,7 +462,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getBoardsByBranchId(testBranchId);
+        final var result = boardService.getBoardsByBranchId(testBranchId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -475,7 +475,7 @@ class BoardServiceTest extends TestHelper {
         final var testBranchId = TestAccountManager.testMember.getBranch().getId();
 
         // when
-        final var result = boardService.getBoardsByBranchId(testBranchId);
+        final var result = boardService.getBoardsByBranchId(testBranchId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -488,7 +488,7 @@ class BoardServiceTest extends TestHelper {
         final var testBranchId = 0L;
 
         // when
-        final var result = boardService.getBoardsByBranchId(testBranchId);
+        final var result = boardService.getBoardsByBranchId(testBranchId, 0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.BRANCH_NOT_EXIST.getMessage());
@@ -522,7 +522,7 @@ class BoardServiceTest extends TestHelper {
         final var expectedStartDate = TimeManager.now().plusDays(1).plusHours(10);
         final var expectedEndDate = TimeManager.now().plusDays(2);
 
-        final var board = boardService.getBoardsByMemberId(testMemberId);
+        final var board = boardService.getBoardsByMemberId(testMemberId, 0, 10);
         assertThat(board.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var testBoardId = board.getResponse().iterator().next().getId();
@@ -599,7 +599,7 @@ class BoardServiceTest extends TestHelper {
         );
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var board = boardService.getBoardsByMemberId(originMemberId);
+        final var board = boardService.getBoardsByMemberId(originMemberId, 0, 10);
         assertThat(board.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var testBoardId = board.getResponse().iterator().next().getId();
@@ -653,7 +653,7 @@ class BoardServiceTest extends TestHelper {
         );
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var board = boardService.getBoardsByMemberId(testMemberId);
+        final var board = boardService.getBoardsByMemberId(testMemberId, 0, 10);
         assertThat(board.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var testBoardId = board.getResponse().iterator().next().getId();
@@ -703,7 +703,7 @@ class BoardServiceTest extends TestHelper {
         );
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var board = boardService.getBoardsByMemberId(originMemberId);
+        final var board = boardService.getBoardsByMemberId(originMemberId, 0, 10);
         assertThat(board.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var testBoardId = board.getResponse().iterator().next().getId();
@@ -741,7 +741,7 @@ class BoardServiceTest extends TestHelper {
         );
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
-        final var board = boardService.getBoardsByMemberId(testMemberId);
+        final var board = boardService.getBoardsByMemberId(testMemberId, 0, 10);
         assertThat(board.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         final var testBoardId = board.getResponse().iterator().next().getId();
@@ -790,7 +790,7 @@ class BoardServiceTest extends TestHelper {
         assertThat(write.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
 
         // when
-        final var result = boardService.getAllBoards();
+        final var result = boardService.getAllBoards(0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -803,7 +803,7 @@ class BoardServiceTest extends TestHelper {
         final var testMemberId = TestAccountManager.testMember.getId();
 
         // when
-        final var result = boardService.getAllBoards();
+        final var result = boardService.getAllBoards(0, 10);
 
         // then
         assertThat(result.getResult()).isEqualTo(ErrorMessage.SUCCESS.getMessage());
@@ -846,7 +846,9 @@ class BoardServiceTest extends TestHelper {
                 testBrandId,
                 testCity,
                 testGu,
-                testStreet
+                testStreet,
+                0,
+                10
         );
 
         // then
@@ -870,7 +872,9 @@ class BoardServiceTest extends TestHelper {
                 testBrandId,
                 testCity,
                 testGu,
-                testStreet
+                testStreet,
+                1,
+                10
         );
 
         // then
